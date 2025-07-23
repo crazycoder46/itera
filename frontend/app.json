@@ -30,14 +30,7 @@
     "web": {
       "favicon": "./assets/favicon.png",
       "bundler": "metro",
-      "output": "static",
-      "build": {
-        "babel": {
-          "include": [
-            "@expo/metro-runtime"
-          ]
-        }
-      }
+      "output": "static"
     },
     "platforms": ["ios", "android", "web"],
     "extra": {
