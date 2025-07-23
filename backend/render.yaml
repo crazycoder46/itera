@@ -1,0 +1,23 @@
+services:
+  - type: web
+    name: itera-backend
+    env: node
+    plan: free
+    buildCommand: npm install
+    startCommand: npm start
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: JWT_SECRET
+        generateValue: true
+      - key: DATABASE_URL
+        fromDatabase:
+          name: itera-db
+          property: connectionString
+    healthCheckPath: /health
+
+databases:
+  - name: itera-db
+    databaseName: itera_db
+    user: itera_user
+    plan: free 

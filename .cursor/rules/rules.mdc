@@ -1,0 +1,18 @@
+---
+description: 
+globs: 
+alwaysApply: true
+---
+### Geliştirme Kuralları 
+- Her görev tamamlandığında yol haritasındaki ilgili madde `[x]` olarak işaretlenir. 
+- Sadece sıradaki adıma odaklanılır, gelecek fazlardaki adımlar atlanmaz. 
+- Geliştirme **önce yerelde** yapılır, fazlar tamamlandıkça canlıya dağıtım düşünülür. 
+- Windows PowerShell, geliştirme terminali olarak kullanılır. 
+- **`expo-router` kesinlikle kullanılmayacak.** 
+- Tüm tasarımlar Tailwind CSS ile yapılacak. 
+-Projenin temel hedeflerini ve gereksinimlerini anlamak için her zaman prd.md dosyasını referans al. 
+- prd.md dosyasının Bölüm 2'sinde belirtilen kurallar, hedefler ve kısıtlamalar her zaman en yüksek önceliğe sahiptir ve asla göz ardı edilemez. 
+- Tamamlanma Onayı: Bir görev, yalnızca sen "tamam oldu" veya benzeri net bir onay cümlesi kullandığında tamamlanmış olarak kabul edilir. Bu onayı alana kadar o görevin çözümü üzerinde çalışmaya devam ederim. 
+- Tekrardan Kaçınma: Bir kez çözülmüş ve senin tarafından onaylanmış bir problem veya görev tekrar ele alınmaz. 
+
+- Bütünlüğün Korunması: Yeni bir görev üzerinde çalışırken, daha önce tamamlanmış ve onaylanmış olan işlevlerin bozulmadığından emin olunur. Mevcut kod tabanının kararlılığı korunur.
