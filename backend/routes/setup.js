@@ -179,4 +179,33 @@ router.post('/init-database', async (req, res) => {
   }
 });
 
+// Fix missing columns endpoint
+router.post('/fix-columns', async (req, res) => {
+  try {
+    console.log('Fixing missing columns...');
+    
+    // Add original_name column to note_images if it doesn't exist
+    await pool.query(`
+      ALTER TABLE note_images 
+      ADD COLUMN IF NOT EXISTS original_name VARCHAR(255)
+    `);
+    
+    console.log('Missing columns fixed successfully!');
+    
+    res.json({
+      success: true,
+      message: 'Missing columns fixed successfully!',
+      timestamp: new Date().toISOString()
+    });
+    
+  } catch (error) {
+    console.error('Column fix error:', error);
+    res.status(500).json({
+      success: false,
+      message: 'Column fix failed',
+      error: error.message
+    });
+  }
+});
+
 module.exports = router; 
