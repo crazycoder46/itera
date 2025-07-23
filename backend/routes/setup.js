@@ -184,10 +184,20 @@ router.post('/fix-columns', async (req, res) => {
   try {
     console.log('Fixing missing columns...');
     
-    // Add original_name column to note_images if it doesn't exist
+    // Add missing columns to note_images table
     await pool.query(`
       ALTER TABLE note_images 
       ADD COLUMN IF NOT EXISTS original_name VARCHAR(255)
+    `);
+    
+    await pool.query(`
+      ALTER TABLE note_images 
+      ADD COLUMN IF NOT EXISTS file_size INTEGER
+    `);
+    
+    await pool.query(`
+      ALTER TABLE note_images 
+      ADD COLUMN IF NOT EXISTS mime_type VARCHAR(100)
     `);
     
     console.log('Missing columns fixed successfully!');
