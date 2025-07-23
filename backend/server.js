@@ -53,6 +53,9 @@ app.use('/api/notes', require('./routes/notes'));
 // Shared routes
 app.use('/api/shared', require('./routes/shared'));
 
+// Setup routes (for database initialization)
+app.use('/api/setup', require('./routes/setup'));
+
 // Error handling middleware
 app.use((err, req, res, next) => {
   console.error('Error:', err);
