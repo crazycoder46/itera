@@ -4,7 +4,7 @@ import { useAuth } from '../context/AuthContext';
 import { useTheme } from '../context/ThemeContext';
 
 export default function SharedBrainsScreen({ navigation }) {
-  const { user, apiCall } = useAuth();
+  const { user, apiCall, language } = useAuth();
   const { colors, getText } = useTheme();
   
   // Premium kontrolü
@@ -20,19 +20,19 @@ export default function SharedBrainsScreen({ navigation }) {
           
           {/* Title */}
           <Text style={[styles.comingSoonTitle, { color: colors.text }]}>
-            {getText('language') === 'en' ? 'Shared Brains' : 'Paylaşımlı Beyinler'}
+            {language === 'en' ? 'Shared Brains' : 'Ortak Akıl'}
           </Text>
           
           {/* Subtitle */}
           <Text style={[styles.comingSoonSubtitle, { color: colors.textSecondary }]}>
-            {getText('language') === 'en' 
+            {language === 'en' 
               ? 'Coming Very Soon!' 
               : 'Çok Yakında!'}
           </Text>
           
           {/* Description */}
           <Text style={[styles.comingSoonDescription, { color: colors.textSecondary }]}>
-            {getText('language') === 'en' 
+            {language === 'en' 
               ? 'Share your notes with friends and collaborate on learning. This premium feature will be available soon!'
               : 'Notlarınızı arkadaşlarınızla paylaşın ve birlikte öğrenin. Bu premium özellik çok yakında kullanıma sunulacak!'}
           </Text>
@@ -40,7 +40,7 @@ export default function SharedBrainsScreen({ navigation }) {
           {/* Premium Badge */}
           <View style={styles.premiumBadge}>
             <Text style={styles.premiumBadgeText}>
-              {getText('language') === 'en' ? '✨ Premium Feature' : '✨ Premium Özellik'}
+              {language === 'en' ? '✨ Premium Feature' : '✨ Premium Özellik'}
             </Text>
           </View>
           
@@ -50,28 +50,28 @@ export default function SharedBrainsScreen({ navigation }) {
             onPress={() => {
               // TODO: Premium upgrade sayfasına yönlendir
               Alert.alert(
-                getText('language') === 'en' ? 'Coming Soon' : 'Çok Yakında',
-                getText('language') === 'en' 
+                language === 'en' ? 'Coming Soon' : 'Çok Yakında',
+                language === 'en' 
                   ? 'Premium features will be available soon!'
                   : 'Premium özellikler çok yakında kullanıma sunulacak!'
               );
             }}
           >
             <Text style={styles.upgradeButtonText}>
-              {getText('language') === 'en' ? 'Upgrade to Premium' : 'Premium\'a Yükselt'}
+              {language === 'en' ? 'Upgrade to Premium' : 'Premium\'a Yükselt'}
             </Text>
           </TouchableOpacity>
           
           {/* Features List */}
           <View style={styles.featuresList}>
             <Text style={[styles.featuresTitle, { color: colors.text }]}>
-              {getText('language') === 'en' ? 'What you\'ll get:' : 'Neler kazanacaksınız:'}
+              {language === 'en' ? 'What you\'ll get:' : 'Neler kazanacaksınız:'}
             </Text>
             
             <View style={styles.featureItem}>
               <Text style={styles.featureIcon}>📤</Text>
               <Text style={[styles.featureText, { color: colors.textSecondary }]}>
-                {getText('language') === 'en' 
+                {language === 'en' 
                   ? 'Share notes with friends'
                   : 'Arkadaşlarınızla not paylaşın'}
               </Text>
@@ -80,7 +80,7 @@ export default function SharedBrainsScreen({ navigation }) {
             <View style={styles.featureItem}>
               <Text style={styles.featureIcon}>📥</Text>
               <Text style={[styles.featureText, { color: colors.textSecondary }]}>
-                {getText('language') === 'en' 
+                {language === 'en' 
                   ? 'Receive shared notes'
                   : 'Paylaşılan notları alın'}
               </Text>
@@ -89,7 +89,7 @@ export default function SharedBrainsScreen({ navigation }) {
             <View style={styles.featureItem}>
               <Text style={styles.featureIcon}>🤝</Text>
               <Text style={[styles.featureText, { color: colors.textSecondary }]}>
-                {getText('language') === 'en' 
+                {language === 'en' 
                   ? 'Collaborate on learning'
                   : 'Birlikte öğrenin'}
               </Text>
@@ -105,10 +105,10 @@ export default function SharedBrainsScreen({ navigation }) {
     <View style={[styles.container, { backgroundColor: colors.background }]}>
       <View style={styles.comingSoonContainer}>
         <Text style={[styles.comingSoonTitle, { color: colors.text }]}>
-          {getText('language') === 'en' ? 'Shared Brains (Premium)' : 'Paylaşımlı Beyinler (Premium)'}
+          {language === 'en' ? 'Shared Brains (Premium)' : 'Ortak Akıl (Premium)'}
         </Text>
         <Text style={[styles.comingSoonDescription, { color: colors.textSecondary }]}>
-          {getText('language') === 'en' 
+          {language === 'en' 
             ? 'Premium features are being developed...'
             : 'Premium özellikler geliştiriliyor...'}
             </Text>
