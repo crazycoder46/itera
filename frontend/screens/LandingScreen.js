@@ -231,19 +231,17 @@ export default function LandingScreen({ navigation }) {
         </View>
         
         <View style={styles.navRight}>
-          {width > 768 && (
-            <TouchableOpacity 
-              style={[styles.navButton, { borderColor: colors.primary }]}
-              onPress={() => navigation.navigate('Login')}
-              accessibilityRole="button"
-              accessibilityLabel={language === 'en' ? 'Sign In' : 'Giriş Yap'}
-              accessibilityHint={language === 'en' ? 'Navigate to login page' : 'Giriş sayfasına git'}
-            >
-              <Text style={[styles.navButtonText, { color: colors.primary }]}>
-                {language === 'en' ? 'Sign In' : 'Giriş Yap'}
-              </Text>
-            </TouchableOpacity>
-          )}
+          <TouchableOpacity 
+            style={[styles.navButton, { borderColor: colors.primary }]}
+            onPress={() => navigation.navigate('Login')}
+            accessibilityRole="button"
+            accessibilityLabel={language === 'en' ? 'Sign In' : 'Giriş Yap'}
+            accessibilityHint={language === 'en' ? 'Navigate to login page' : 'Giriş sayfasına git'}
+          >
+            <Text style={[styles.navButtonText, { color: colors.primary }]}>
+              {language === 'en' ? 'Sign In' : 'Giriş Yap'}
+            </Text>
+          </TouchableOpacity>
           
           <TouchableOpacity 
             style={[styles.navButton, styles.navButtonFilled, { backgroundColor: colors.primary }]}
@@ -253,7 +251,7 @@ export default function LandingScreen({ navigation }) {
             accessibilityHint={language === 'en' ? 'Navigate to registration page' : 'Kayıt sayfasına git'}
           >
             <Text style={[styles.navButtonText, { color: '#ffffff' }]}>
-              {width > 768 ? (language === 'en' ? 'Sign Up' : 'Kayıt Ol') : (language === 'en' ? 'Join' : 'Kayıt')}
+              {language === 'en' ? 'Sign Up' : 'Kayıt Ol'}
             </Text>
           </TouchableOpacity>
           
@@ -999,133 +997,135 @@ export default function LandingScreen({ navigation }) {
   );
 }
 
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-  },
-  navbar: {
-    position: 'absolute',
-    top: 0,
-    left: 0,
-    right: 0,
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    paddingHorizontal: width > 768 ? 24 : 12,
-    paddingTop: width > 768 ? 35 : 25,
-    paddingBottom: 16,
-    zIndex: 1000,
-    backgroundColor: 'transparent',
-  },
-  logoContainer: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    flex: width > 768 ? 0 : 0,
-    maxWidth: width > 768 ? 'auto' : '40%',
-  },
-  logoImage: {
-    width: width > 768 ? 64 : 32,
-    height: width > 768 ? 64 : 32,
-    marginRight: width > 768 ? 12 : 4,
-  },
-  logoText: {
-    fontSize: width > 768 ? 28 : 18,
-    fontWeight: 'bold',
-  },
-  navRight: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: width > 768 ? 12 : 4,
-    flex: 0,
-    flexShrink: 0,
-  },
-  navButton: {
-    paddingHorizontal: width > 768 ? 16 : 8,
-    paddingVertical: width > 768 ? 8 : 4,
-    borderWidth: 1,
-    borderRadius: 6,
-  },
-  navButtonFilled: {
-    borderWidth: 0,
-  },
-  navButtonText: {
-    fontSize: width > 768 ? 14 : 11,
-    fontWeight: '600',
-  },
-  langButton: {
-    paddingHorizontal: width > 768 ? 12 : 6,
-    paddingVertical: width > 768 ? 6 : 3,
-    borderRadius: 12,
-    borderWidth: 2,
-    minWidth: width > 768 ? 'auto' : 32,
-  },
-  langText: {
-    fontSize: width > 768 ? 14 : 10,
-    fontWeight: 'bold',
-    textAlign: 'center',
-  },
+// Responsive styles function
+const createResponsiveStyles = () => {
+  const isWeb = width > 768;
+  
+  return StyleSheet.create({
+    container: {
+      flex: 1,
+    },
+    navbar: {
+      position: 'absolute',
+      top: 0,
+      left: 0,
+      right: 0,
+      flexDirection: 'row',
+      justifyContent: 'space-between',
+      alignItems: 'center',
+      paddingHorizontal: isWeb ? 24 : 16,
+      paddingTop: isWeb ? 35 : 40,
+      paddingBottom: 16,
+      zIndex: 1000,
+      backgroundColor: 'transparent',
+    },
+    logoContainer: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      flex: 0,
+    },
+    logoImage: {
+      width: isWeb ? 64 : 40,
+      height: isWeb ? 64 : 40,
+      marginRight: isWeb ? 12 : 8,
+    },
+    logoText: {
+      fontSize: isWeb ? 28 : 20,
+      fontWeight: 'bold',
+    },
+    navRight: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      gap: isWeb ? 12 : 8,
+      flexShrink: 0,
+    },
+    navButton: {
+      paddingHorizontal: isWeb ? 16 : 12,
+      paddingVertical: isWeb ? 8 : 6,
+      borderWidth: 1,
+      borderRadius: 8,
+    },
+    navButtonFilled: {
+      borderWidth: 0,
+    },
+    navButtonText: {
+      fontSize: isWeb ? 14 : 12,
+      fontWeight: '600',
+    },
+    langButton: {
+      paddingHorizontal: isWeb ? 12 : 10,
+      paddingVertical: isWeb ? 6 : 4,
+      borderRadius: 16,
+      borderWidth: 2,
+      minWidth: isWeb ? 'auto' : 36,
+    },
+    langText: {
+      fontSize: isWeb ? 14 : 12,
+      fontWeight: 'bold',
+      textAlign: 'center',
+    },
   scrollContainer: {
     flex: 1,
   },
-  heroSection: {
-    paddingTop: width > 768 ? 60 : 80,
-    paddingBottom: width > 768 ? 80 : 40,
-    paddingHorizontal: width > 768 ? 32 : 16,
-    alignItems: 'center',
-    minHeight: width > 768 ? 600 : 500,
-    justifyContent: 'center',
-  },
-  heroContainer: {
-    flexDirection: width > 768 ? 'row' : 'column',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-    width: '100%',
-    maxWidth: 1200,
-  },
-  heroTextContainer: {
-    flex: 1,
-    alignItems: width > 768 ? 'flex-start' : 'center',
-    paddingRight: width > 768 ? 40 : 0,
-    marginBottom: width > 768 ? 0 : 40,
-  },
-  heroImageContainer: {
-    flex: 1,
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  heroImage: {
-    width: width > 768 ? 800 : Math.min(width * 0.9, 400),
-    height: width > 768 ? 800 : Math.min(width * 0.9, 400),
-  },
-  heroTitle: {
-    fontSize: width > 768 ? 42 : 28,
-    fontWeight: 'bold',
-    marginBottom: width > 768 ? 24 : 16,
-    textAlign: width > 768 ? 'left' : 'center',
-    lineHeight: width > 768 ? 50 : 34,
-    maxWidth: 600,
-  },
-  heroSubtitle: {
-    fontSize: width > 768 ? 18 : 16,
-    textAlign: width > 768 ? 'left' : 'center',
-    lineHeight: width > 768 ? 28 : 24,
-    marginBottom: width > 768 ? 40 : 24,
-    maxWidth: 700,
-  },
-  primaryButton: {
-    paddingVertical: width > 768 ? 20 : 14,
-    paddingHorizontal: width > 768 ? 48 : 24,
-    borderRadius: 16,
-    alignItems: 'center',
-    boxShadow: '0 6px 25px rgba(0,0,0,0.25)',
-    marginBottom: width > 768 ? 24 : 16,
-    minWidth: width > 768 ? 320 : 260,
-    transform: [{ scale: 1 }],
-  },
-  primaryButtonText: {
-    fontSize: width > 768 ? 18 : 16,
-    fontWeight: 'bold',
-  },
+    heroSection: {
+      paddingTop: isWeb ? 60 : 120,
+      paddingBottom: isWeb ? 80 : 40,
+      paddingHorizontal: isWeb ? 32 : 20,
+      alignItems: 'center',
+      minHeight: isWeb ? 600 : 500,
+      justifyContent: 'center',
+    },
+    heroContainer: {
+      flexDirection: isWeb ? 'row' : 'column',
+      alignItems: 'center',
+      justifyContent: 'space-between',
+      width: '100%',
+      maxWidth: 1200,
+    },
+    heroTextContainer: {
+      flex: 1,
+      alignItems: isWeb ? 'flex-start' : 'center',
+      paddingRight: isWeb ? 40 : 0,
+      marginBottom: isWeb ? 0 : 40,
+    },
+    heroImageContainer: {
+      flex: 1,
+      alignItems: 'center',
+      justifyContent: 'center',
+    },
+    heroImage: {
+      width: isWeb ? 800 : Math.min(width * 0.85, 350),
+      height: isWeb ? 800 : Math.min(width * 0.85, 350),
+    },
+    heroTitle: {
+      fontSize: isWeb ? 42 : 30,
+      fontWeight: 'bold',
+      marginBottom: isWeb ? 24 : 16,
+      textAlign: isWeb ? 'left' : 'center',
+      lineHeight: isWeb ? 50 : 36,
+      maxWidth: 600,
+    },
+    heroSubtitle: {
+      fontSize: isWeb ? 18 : 16,
+      textAlign: isWeb ? 'left' : 'center',
+      lineHeight: isWeb ? 28 : 24,
+      marginBottom: isWeb ? 40 : 24,
+      maxWidth: 700,
+    },
+    primaryButton: {
+      paddingVertical: isWeb ? 20 : 16,
+      paddingHorizontal: isWeb ? 48 : 32,
+      borderRadius: 16,
+      alignItems: 'center',
+      boxShadow: '0 6px 25px rgba(0,0,0,0.25)',
+      marginBottom: isWeb ? 24 : 16,
+      minWidth: isWeb ? 320 : 280,
+      transform: [{ scale: 1 }],
+    },
+    primaryButtonText: {
+      fontSize: isWeb ? 18 : 16,
+      fontWeight: 'bold',
+    },
   secondaryLink: {
     paddingVertical: 8,
   },
@@ -1138,43 +1138,43 @@ const styles = StyleSheet.create({
     paddingHorizontal: 32,
     alignItems: 'center',
   },
-  sectionContainer: {
-    flexDirection: width > 768 ? 'row' : 'column',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-    width: '100%',
-    maxWidth: 1200,
-  },
-  sectionTextContainer: {
-    flex: 1,
-    alignItems: width > 768 ? 'flex-start' : 'center',
-    paddingHorizontal: width > 768 ? 20 : 0,
-    marginBottom: width > 768 ? 0 : 30,
-  },
-  sectionImageContainer: {
-    flex: 1,
-    alignItems: 'center',
-    justifyContent: 'center',
-    marginBottom: width > 768 ? 0 : 30,
-  },
-  sectionImage: {
-    width: width > 768 ? 550 : 380,
-    height: width > 768 ? 550 : 380,
-  },
-  sectionTitle: {
-    fontSize: 32,
-    fontWeight: 'bold',
-    textAlign: width > 768 ? 'left' : 'center',
-    marginBottom: 24,
-    lineHeight: 40,
-    maxWidth: 600,
-  },
-  sectionText: {
-    fontSize: 18,
-    textAlign: width > 768 ? 'left' : 'center',
-    lineHeight: 28,
-    maxWidth: 700,
-  },
+    sectionContainer: {
+      flexDirection: isWeb ? 'row' : 'column',
+      alignItems: 'center',
+      justifyContent: 'space-between',
+      width: '100%',
+      maxWidth: 1200,
+    },
+    sectionTextContainer: {
+      flex: 1,
+      alignItems: isWeb ? 'flex-start' : 'center',
+      paddingHorizontal: isWeb ? 20 : 0,
+      marginBottom: isWeb ? 0 : 30,
+    },
+    sectionImageContainer: {
+      flex: 1,
+      alignItems: 'center',
+      justifyContent: 'center',
+      marginBottom: isWeb ? 0 : 30,
+    },
+    sectionImage: {
+      width: isWeb ? 550 : 320,
+      height: isWeb ? 550 : 320,
+    },
+    sectionTitle: {
+      fontSize: isWeb ? 32 : 26,
+      fontWeight: 'bold',
+      textAlign: isWeb ? 'left' : 'center',
+      marginBottom: 24,
+      lineHeight: isWeb ? 40 : 32,
+      maxWidth: 600,
+    },
+    sectionText: {
+      fontSize: isWeb ? 18 : 16,
+      textAlign: isWeb ? 'left' : 'center',
+      lineHeight: isWeb ? 28 : 24,
+      maxWidth: 700,
+    },
   featureSection: {
     width: '100%',
     maxWidth: 1200,
@@ -1183,44 +1183,44 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     marginBottom: 40,
   },
-  featureContainer: {
-    flexDirection: width > 768 ? 'row' : 'column',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-    width: '100%',
-  },
-  featureTextContainer: {
-    flex: 1,
-    alignItems: width > 768 ? 'flex-start' : 'center',
-    paddingHorizontal: width > 768 ? 20 : 0,
-    marginBottom: width > 768 ? 0 : 20,
-  },
-  featureImageContainer: {
-    flex: 1,
-    alignItems: 'center',
-    justifyContent: 'center',
-    marginBottom: width > 768 ? 0 : 20,
-  },
-  featureImage: {
-    width: width > 768 ? 500 : 350,
-    height: width > 768 ? 500 : 350,
-  },
+    featureContainer: {
+      flexDirection: isWeb ? 'row' : 'column',
+      alignItems: 'center',
+      justifyContent: 'space-between',
+      width: '100%',
+    },
+    featureTextContainer: {
+      flex: 1,
+      alignItems: isWeb ? 'flex-start' : 'center',
+      paddingHorizontal: isWeb ? 20 : 0,
+      marginBottom: isWeb ? 0 : 20,
+    },
+    featureImageContainer: {
+      flex: 1,
+      alignItems: 'center',
+      justifyContent: 'center',
+      marginBottom: isWeb ? 0 : 20,
+    },
+    featureImage: {
+      width: isWeb ? 500 : 300,
+      height: isWeb ? 500 : 300,
+    },
   featureIcon: {
     fontSize: 48,
     marginBottom: 16,
   },
-  featureTitle: {
-    fontSize: 24,
-    fontWeight: 'bold',
-    marginBottom: 16,
-    textAlign: width > 768 ? 'left' : 'center',
-    lineHeight: 32,
-  },
-  featureDescription: {
-    fontSize: 16,
-    textAlign: width > 768 ? 'left' : 'center',
-    lineHeight: 24,
-  },
+    featureTitle: {
+      fontSize: isWeb ? 24 : 20,
+      fontWeight: 'bold',
+      marginBottom: 16,
+      textAlign: isWeb ? 'left' : 'center',
+      lineHeight: isWeb ? 32 : 26,
+    },
+    featureDescription: {
+      fontSize: isWeb ? 16 : 14,
+      textAlign: isWeb ? 'left' : 'center',
+      lineHeight: isWeb ? 24 : 20,
+    },
   statsContainer: {
     flexDirection: 'row',
     justifyContent: 'space-around',
@@ -1260,46 +1260,46 @@ const styles = StyleSheet.create({
     paddingHorizontal: 40,
     alignItems: 'center',
   },
-  ctaContainer: {
-    flexDirection: width > 768 ? 'row' : 'column',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-    width: '100%',
-    maxWidth: 1200,
-  },
-  ctaTextContainer: {
-    flex: 1,
-    alignItems: width > 768 ? 'flex-start' : 'center',
-    paddingRight: width > 768 ? 40 : 0,
-    marginBottom: width > 768 ? 0 : 30,
-  },
-  ctaImageContainer: {
-    flex: 1,
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  ctaImage: {
-    width: width > 768 ? 600 : 420,
-    height: width > 768 ? 600 : 420,
-  },
-  ctaTitle: {
-    fontSize: 28,
-    fontWeight: 'bold',
-    color: '#ffffff',
-    textAlign: width > 768 ? 'left' : 'center',
-    marginBottom: 16,
-    lineHeight: 36,
-    maxWidth: 600,
-  },
-  ctaSubtitle: {
-    fontSize: 16,
-    color: '#ffffff',
-    textAlign: width > 768 ? 'left' : 'center',
-    marginBottom: 32,
-    lineHeight: 24,
-    opacity: 0.9,
-    maxWidth: 500,
-  },
+    ctaContainer: {
+      flexDirection: isWeb ? 'row' : 'column',
+      alignItems: 'center',
+      justifyContent: 'space-between',
+      width: '100%',
+      maxWidth: 1200,
+    },
+    ctaTextContainer: {
+      flex: 1,
+      alignItems: isWeb ? 'flex-start' : 'center',
+      paddingRight: isWeb ? 40 : 0,
+      marginBottom: isWeb ? 0 : 30,
+    },
+    ctaImageContainer: {
+      flex: 1,
+      alignItems: 'center',
+      justifyContent: 'center',
+    },
+    ctaImage: {
+      width: isWeb ? 600 : 350,
+      height: isWeb ? 600 : 350,
+    },
+    ctaTitle: {
+      fontSize: isWeb ? 28 : 24,
+      fontWeight: 'bold',
+      color: '#ffffff',
+      textAlign: isWeb ? 'left' : 'center',
+      marginBottom: 16,
+      lineHeight: isWeb ? 36 : 30,
+      maxWidth: 600,
+    },
+    ctaSubtitle: {
+      fontSize: isWeb ? 16 : 14,
+      color: '#ffffff',
+      textAlign: isWeb ? 'left' : 'center',
+      marginBottom: 32,
+      lineHeight: isWeb ? 24 : 20,
+      opacity: 0.9,
+      maxWidth: 500,
+    },
   ctaButton: {
     paddingVertical: 20,
     paddingHorizontal: 40,
@@ -1326,24 +1326,27 @@ const styles = StyleSheet.create({
     fontWeight: '600',
   },
 
-  footer: {
-    padding: 20,
-    alignItems: 'center',
-  },
-  footerLinks: {
-    flexDirection: 'row',
-    justifyContent: 'center',
-    flexWrap: 'wrap',
-    marginBottom: 16,
-    gap: 24,
-  },
-  footerLink: {
-    fontSize: 14,
-    textDecorationLine: 'underline',
-    fontWeight: '500',
-  },
-  footerText: {
-    fontSize: 14,
-    textAlign: 'center',
-  },
-});
+    footer: {
+      padding: 20,
+      alignItems: 'center',
+    },
+    footerLinks: {
+      flexDirection: 'row',
+      justifyContent: 'center',
+      flexWrap: 'wrap',
+      marginBottom: 16,
+      gap: 24,
+    },
+    footerLink: {
+      fontSize: 14,
+      textDecorationLine: 'underline',
+      fontWeight: '500',
+    },
+    footerText: {
+      fontSize: 14,
+      textAlign: 'center',
+    },
+  });
+};
+
+const styles = createResponsiveStyles();

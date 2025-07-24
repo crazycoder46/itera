@@ -404,6 +404,20 @@ export const AuthProvider = ({ children }) => {
     return user?.is_premium === true;
   };
 
+  // User state'ini manuel güncelleme fonksiyonu (web için)
+  const refreshUser = async () => {
+    try {
+      if (typeof localStorage !== 'undefined') {
+        const storedUser = localStorage.getItem('user');
+        if (storedUser) {
+          setUser(JSON.parse(storedUser));
+        }
+      }
+    } catch (error) {
+      console.error('User refresh error:', error);
+    }
+  };
+
   const value = {
     user,
     token,
@@ -418,6 +432,7 @@ export const AuthProvider = ({ children }) => {
     uploadProfilePicture,
     deleteProfilePicture,
     getProfile,
+    refreshUser,
     updateLanguage,
     updateTheme,
     isAuthenticated: !!token,
