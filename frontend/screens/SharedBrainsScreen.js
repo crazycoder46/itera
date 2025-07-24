@@ -6,7 +6,7 @@ import { useTheme } from '../context/ThemeContext';
 export default function SharedBrainsScreen({ navigation }) {
   const { user, apiCall } = useAuth();
   const { colors, getText } = useTheme();
-
+  
   // Premium kontrolü
   const isPremium = user?.is_premium || false;
 
@@ -20,7 +20,7 @@ export default function SharedBrainsScreen({ navigation }) {
           
           {/* Title */}
           <Text style={[styles.comingSoonTitle, { color: colors.text }]}>
-            Shared Brains
+            {getText('language') === 'en' ? 'Shared Brains' : 'Paylaşımlı Beyinler'}
           </Text>
           
           {/* Subtitle */}
@@ -105,39 +105,39 @@ export default function SharedBrainsScreen({ navigation }) {
     <View style={[styles.container, { backgroundColor: colors.background }]}>
       <View style={styles.comingSoonContainer}>
         <Text style={[styles.comingSoonTitle, { color: colors.text }]}>
-          Shared Brains (Premium)
+          {getText('language') === 'en' ? 'Shared Brains (Premium)' : 'Paylaşımlı Beyinler (Premium)'}
         </Text>
         <Text style={[styles.comingSoonDescription, { color: colors.textSecondary }]}>
           {getText('language') === 'en' 
             ? 'Premium features are being developed...'
             : 'Premium özellikler geliştiriliyor...'}
-        </Text>
+            </Text>
+        </View>
       </View>
-    </View>
-  );
-}
+    );
+  }
 
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-  },
+  const styles = StyleSheet.create({
+    container: {
+      flex: 1,
+    },
   comingSoonContainer: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
+      flex: 1,
+      justifyContent: 'center',
+      alignItems: 'center',
     paddingHorizontal: 32,
-    paddingVertical: 48,
-  },
+      paddingVertical: 48,
+    },
   comingSoonIcon: {
     fontSize: 80,
     marginBottom: 24,
   },
   comingSoonTitle: {
     fontSize: 32,
-    fontWeight: 'bold',
+      fontWeight: 'bold',
     textAlign: 'center',
-    marginBottom: 12,
-  },
+      marginBottom: 12,
+    },
   comingSoonSubtitle: {
     fontSize: 20,
     fontWeight: '600',
@@ -154,14 +154,14 @@ const styles = StyleSheet.create({
   premiumBadge: {
     backgroundColor: '#fbbf24',
     paddingHorizontal: 16,
-    paddingVertical: 8,
+      paddingVertical: 8,
     borderRadius: 20,
     marginBottom: 24,
-  },
+    },
   premiumBadgeText: {
     color: '#92400e',
-    fontSize: 14,
-    fontWeight: 'bold',
+      fontSize: 14,
+      fontWeight: 'bold',
   },
   upgradeButton: {
     backgroundColor: '#3b82f6',
@@ -172,9 +172,9 @@ const styles = StyleSheet.create({
   },
   upgradeButtonText: {
     color: 'white',
-    fontSize: 16,
-    fontWeight: 'bold',
-  },
+      fontSize: 16,
+      fontWeight: 'bold',
+    },
   featuresList: {
     alignItems: 'flex-start',
     maxWidth: 300,
@@ -183,18 +183,18 @@ const styles = StyleSheet.create({
     fontSize: 18,
     fontWeight: '600',
     marginBottom: 16,
-  },
-  featureItem: {
-    flexDirection: 'row',
-    alignItems: 'center',
+    },
+    featureItem: {
+      flexDirection: 'row',
+      alignItems: 'center',
     marginBottom: 12,
-  },
-  featureIcon: {
+    },
+    featureIcon: {
     fontSize: 20,
     marginRight: 12,
-  },
-  featureText: {
-    fontSize: 16,
-    flex: 1,
-  },
+    },
+    featureText: {
+      fontSize: 16,
+      flex: 1,
+    },
 }); 

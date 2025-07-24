@@ -222,7 +222,8 @@ export default function ProfileScreen() {
 
             try {
               const token = localStorage.getItem('token');
-              const response = await fetch('http://localhost:3000/api/auth/profile/picture', {
+              const apiUrl = process.env.EXPO_PUBLIC_API_URL || 'http://localhost:3000';
+              const response = await fetch(`${apiUrl}/api/auth/profile/picture`, {
                 method: 'POST',
                 headers: {
                   'Authorization': `Bearer ${token}`,
@@ -548,7 +549,7 @@ export default function ProfileScreen() {
               onPress={handleUpgrade}
             >
               <Text style={styles.upgradeButtonText}>
-                🚀 {getText('language') === 'en' ? 'Upgrade to Advanced' : 'Advanced\'e Yükselt'}
+                🚀 {language === 'en' ? 'Upgrade to Advanced' : 'Advanced\'e Yükselt'}
               </Text>
             </TouchableOpacity>
           )}

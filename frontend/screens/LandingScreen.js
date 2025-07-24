@@ -231,17 +231,19 @@ export default function LandingScreen({ navigation }) {
         </View>
         
         <View style={styles.navRight}>
-          <TouchableOpacity 
-            style={[styles.navButton, { borderColor: colors.primary }]}
-            onPress={() => navigation.navigate('Login')}
-            accessibilityRole="button"
-            accessibilityLabel={language === 'en' ? 'Sign In' : 'Giriş Yap'}
-            accessibilityHint={language === 'en' ? 'Navigate to login page' : 'Giriş sayfasına git'}
-          >
-            <Text style={[styles.navButtonText, { color: colors.primary }]}>
-              {language === 'en' ? 'Sign In' : 'Giriş Yap'}
-            </Text>
-          </TouchableOpacity>
+          {width > 768 && (
+            <TouchableOpacity 
+              style={[styles.navButton, { borderColor: colors.primary }]}
+              onPress={() => navigation.navigate('Login')}
+              accessibilityRole="button"
+              accessibilityLabel={language === 'en' ? 'Sign In' : 'Giriş Yap'}
+              accessibilityHint={language === 'en' ? 'Navigate to login page' : 'Giriş sayfasına git'}
+            >
+              <Text style={[styles.navButtonText, { color: colors.primary }]}>
+                {language === 'en' ? 'Sign In' : 'Giriş Yap'}
+              </Text>
+            </TouchableOpacity>
+          )}
           
           <TouchableOpacity 
             style={[styles.navButton, styles.navButtonFilled, { backgroundColor: colors.primary }]}
@@ -251,7 +253,7 @@ export default function LandingScreen({ navigation }) {
             accessibilityHint={language === 'en' ? 'Navigate to registration page' : 'Kayıt sayfasına git'}
           >
             <Text style={[styles.navButtonText, { color: '#ffffff' }]}>
-              {language === 'en' ? 'Sign Up' : 'Kayıt Ol'}
+              {width > 768 ? (language === 'en' ? 'Sign Up' : 'Kayıt Ol') : (language === 'en' ? 'Join' : 'Kayıt')}
             </Text>
           </TouchableOpacity>
           
@@ -1022,9 +1024,9 @@ const styles = StyleSheet.create({
     maxWidth: width > 768 ? 'auto' : '50%',
   },
   logoImage: {
-    width: width > 768 ? 64 : 48,
-    height: width > 768 ? 64 : 48,
-    marginRight: width > 768 ? 12 : 8,
+    width: width > 768 ? 64 : 40,
+    height: width > 768 ? 64 : 40,
+    marginRight: width > 768 ? 12 : 6,
   },
   logoText: {
     fontSize: width > 768 ? 28 : 22,
@@ -1093,11 +1095,11 @@ const styles = StyleSheet.create({
     height: width > 768 ? 800 : 500,
   },
   heroTitle: {
-    fontSize: 42,
+    fontSize: width > 768 ? 42 : 32,
     fontWeight: 'bold',
     marginBottom: 24,
     textAlign: width > 768 ? 'left' : 'center',
-    lineHeight: 50,
+    lineHeight: width > 768 ? 50 : 38,
     maxWidth: 600,
   },
   heroSubtitle: {
@@ -1108,13 +1110,13 @@ const styles = StyleSheet.create({
     maxWidth: 700,
   },
   primaryButton: {
-    paddingVertical: 20,
-    paddingHorizontal: 48,
+    paddingVertical: width > 768 ? 20 : 16,
+    paddingHorizontal: width > 768 ? 48 : 32,
     borderRadius: 16,
     alignItems: 'center',
     boxShadow: '0 6px 25px rgba(0,0,0,0.25)',
     marginBottom: 24,
-    minWidth: 320,
+    minWidth: width > 768 ? 320 : 280,
     transform: [{ scale: 1 }],
   },
   primaryButtonText: {
