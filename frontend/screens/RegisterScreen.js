@@ -96,15 +96,25 @@ export default function RegisterScreen({ navigation }) {
     if (result.success) {
       // Web'de alert, mobilde Alert
       const successMsg = language === 'en' 
-        ? 'Registration successful! Welcome to Itera!' 
-        : 'Kayıt başarılı! Itera\'ya hoş geldiniz!';
+        ? 'Registration successful! Redirecting to login...' 
+        : 'Kayıt başarılı! Giriş sayfasına yönlendiriliyorsunuz...';
       
       if (typeof window !== 'undefined') {
         window.alert(successMsg);
+        // Web'de alert sonrası yönlendirme
+        setTimeout(() => {
+          navigation.navigate('Login');
+        }, 500);
       } else {
         Alert.alert(
           language === 'en' ? 'Success' : 'Başarılı', 
-          successMsg
+          successMsg,
+          [
+            {
+              text: 'OK',
+              onPress: () => navigation.navigate('Login')
+            }
+          ]
         );
       }
     } else {
