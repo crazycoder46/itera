@@ -103,6 +103,7 @@ router.post('/login', async (req, res) => {
         first_name: user.rows[0].first_name,
         last_name: user.rows[0].last_name,
         email: user.rows[0].email,
+        profile_picture: user.rows[0].profile_picture,
         is_premium: user.rows[0].is_premium || false
       }
     });

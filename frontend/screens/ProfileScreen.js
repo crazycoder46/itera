@@ -5,7 +5,7 @@ import { useAuth } from '../context/AuthContext';
 import { useTheme } from '../context/ThemeContext';
 
 export default function ProfileScreen() {
-  const { user, logout, testMode, updateProfile, uploadProfilePicture, deleteProfilePicture, refreshUser, language, updateLanguage, updateTheme, isPremium } = useAuth();
+  const { user, setUser, logout, testMode, updateProfile, uploadProfilePicture, deleteProfilePicture, language, updateLanguage, updateTheme, isPremium } = useAuth();
   const { colors, theme, getText } = useTheme();
   const [isEditing, setIsEditing] = useState(false);
   const [isChangingPassword, setIsChangingPassword] = useState(false);
@@ -234,20 +234,10 @@ export default function ProfileScreen() {
               const data = await response.json();
 
               if (response.ok) {
-                // AuthContext üzerinden user state'ini güncelle
+                // AuthContext user state'ini güncelle
                 const updatedUser = { ...user, profile_picture: data.user.profile_picture };
-                
-                // localStorage'a kaydet
-                try {
-                  localStorage.setItem('user', JSON.stringify(updatedUser));
-                  // User state'ini yenile
-                  await refreshUser();
-                  window.alert(data.message);
-                } catch (error) {
-                  console.error('Profile picture save error:', error);
-                  window.alert('Profil fotoğrafı kaydedildi ancak sayfa yenilenmesi gerekiyor');
-                  window.location.reload();
-                }
+                setUser(updatedUser);
+                window.alert(data.message);
               } else {
                 window.alert(data.message || 'Profil fotoğrafı yüklenirken hata oluştu');
               }
