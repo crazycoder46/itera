@@ -1085,7 +1085,7 @@ const createResponsiveStyles = () => {
     },
     heroTextContainer: {
       flex: 1,
-      alignItems: 'center',
+      alignItems: isWeb ? 'flex-start' : 'center',
       paddingRight: isWeb ? 40 : 0,
       marginBottom: isWeb ? 0 : 20,
       width: '100%',
@@ -1121,6 +1121,8 @@ const createResponsiveStyles = () => {
       paddingHorizontal: isWeb ? 48 : 32,
       borderRadius: 16,
       alignItems: 'center',
+      justifyContent: 'center',
+      alignSelf: isWeb ? 'flex-start' : 'center',
       boxShadow: '0 6px 25px rgba(0,0,0,0.25)',
       marginBottom: isWeb ? 24 : 16,
       minWidth: isWeb ? 320 : 280,
@@ -1132,10 +1134,12 @@ const createResponsiveStyles = () => {
     },
   secondaryLink: {
     paddingVertical: 8,
+    alignSelf: isWeb ? 'flex-start' : 'center',
   },
   secondaryLinkText: {
     fontSize: 16,
     fontWeight: '600',
+    textAlign: isWeb ? 'left' : 'center',
   },
     section: {
       paddingVertical: isWeb ? 30 : 20,

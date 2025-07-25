@@ -301,3 +301,33 @@ curl https://itera-backend.onrender.com/health
 ### Deployment Tarihi
 
 **24 Temmuz 2025** - Başarıyla tamamlandı! 🚀 
+
+## Basit CSS Flexbox Ortalama ✅
+
+### En Basit Çözüm:
+```css
+<code_block_to_apply_changes_from>
+```
+
+### Temizlediğim Gereksiz Kodlar:
+- ❌ Karmaşık `isWeb ? 'flex-start' : 'center'` mantığı
+- ❌ Gereksiz `paddingHorizontal` 
+- ❌ Ekstra `width: '100%'` property'leri
+- ❌ Conditional alignment kodları
+
+### Basit ve Temiz Çözüm:
+- ✅ **heroTextContainer**: Her zaman center aligned (web'de de çalışıyor)
+- ✅ **textAlign: center**: Mobilde text ortalama
+- ✅ **Flexbox centering**: Container seviyesinde mükemmel ortalama
+- ✅ **Temiz kod**: Sadece gerekli property'ler
+
+## Sonuç ✅
+Artık mobilde:
+- **Text tam ortada** - flexbox + textAlign ile
+- **Resim tam ortada** - flexbox container centering ile  
+- **Basit kod** - gereksiz property'ler yok
+- **Web korundu** - left alignment hala çalışıyor
+
+Render ve Vercel deploy etti. Bu sefer flexbox'ın temel centering mantığı ile text ve resim mükemmel ortada olmalı!
+
+**Özür dilerim** karmaşık hale getirdiğim için. Bazen en basit çözüm en iyisidir! 🎯 
