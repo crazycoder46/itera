@@ -844,6 +844,19 @@ export default function RichTextEditor({ initialContent = '', onContentChange })
                 }
               });
               
+              // Set cursor to end of content
+              setTimeout(() => {
+                if (editor && data.content && data.content.trim() !== '') {
+                  editor.focus();
+                  const range = document.createRange();
+                  const selection = window.getSelection();
+                  range.selectNodeContents(editor);
+                  range.collapse(false); // false means collapse to end
+                  selection.removeAllRanges();
+                  selection.addRange(range);
+                }
+              }, 50);
+              
               // Editör hazır olduğunu bildir
               window.parent.postMessage(JSON.stringify({
                 type: 'EDITOR_READY'
@@ -855,6 +868,23 @@ export default function RichTextEditor({ initialContent = '', onContentChange })
         console.error('Message parsing error:', error);
       }
     });
+    
+    // Template selection event listener for cursor positioning
+    if (typeof window !== 'undefined') {
+      window.addEventListener('template-selected', function(event) {
+        setTimeout(() => {
+          if (editor && editor.innerHTML.trim() !== '') {
+            editor.focus();
+            const range = document.createRange();
+            const selection = window.getSelection();
+            range.selectNodeContents(editor);
+            range.collapse(false); // Move cursor to end
+            selection.removeAllRanges();
+            selection.addRange(range);
+          }
+        }, 150);
+      });
+    }
     
     // Sayfa yüklendiğinde editörü başlat
     document.addEventListener('DOMContentLoaded', initEditor);
