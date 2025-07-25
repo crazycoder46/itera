@@ -14,7 +14,7 @@ export default function AddNoteModal({ visible, onClose, onSave, boxType, boxNam
     blank: {
       name: getText('blankNote'),
       content: '',
-      icon: '📝'
+      icon: ''
     },
     cornell: {
       name: getText('cornellMethod'),
@@ -48,12 +48,12 @@ export default function AddNoteModal({ visible, onClose, onSave, boxType, boxNam
         : `<h2>Cornell Metodu Notları</h2>
 <hr>
 <h3>Ana Konu:</h3>
-<p><em>Ana konunuzu veya başlığınızı buraya yazın...</em></p>
+<p><em>Ana konuyu veya başlığı buraya yazın...</em></p>
 
 <h3>Detaylı Notlar:</h3>
-<p>• Anahtar nokta 1</p>
-<p>• Anahtar nokta 2</p>
-<p>• Anahtar nokta 3</p>
+<p>• Önemli nokta 1</p>
+<p>• Önemli nokta 2</p>
+<p>• Önemli nokta 3</p>
 
 <h3>Anahtar Kelimeler ve Kavramlar:</h3>
 <ul>
@@ -64,150 +64,76 @@ export default function AddNoteModal({ visible, onClose, onSave, boxType, boxNam
 
 <h3>Özet:</h3>
 <blockquote>
-<p>Notlarınızdan ana fikirlerin ve önemli çıkarımların kısa bir özetini buraya yazın.</p>
+<p>Notlarınızdan çıkardığınız ana fikirlerin ve önemli noktaların kısa özetini buraya yazın.</p>
 </blockquote>
 
 <h3>Tekrar İçin Sorular:</h3>
 <p>1. En önemli kavram nedir?</p>
 <p>2. Bu, önceki konularla nasıl ilişkili?</p>
 <p>3. Sınav için neyi hatırlamalıyım?</p>`,
-      icon: '📋'
+      icon: ''
     },
     qa: {
       name: getText('qaCard'),
-      content: getText('language') === 'en' 
-        ? `<h2>Question & Answer Card</h2>
+      content: getText('language') === 'en'
+        ? `<h2>Question - Answer Card</h2>
 <hr>
 <h3>Question:</h3>
-<blockquote>
-<p><strong>Write your question here...</strong></p>
-<p><em>Make it specific and clear</em></p>
-</blockquote>
+<p>Write your question here</p>
 
 <h3>Answer:</h3>
-<p>• <strong>Key point 1:</strong> Detailed explanation</p>
-<p>• <strong>Key point 2:</strong> Detailed explanation</p>
-<p>• <strong>Key point 3:</strong> Detailed explanation</p>
+<p>Write the answer here</p>
 
 <h3>Additional Notes:</h3>
-<p>Add any extra context, examples, or related information here.</p>
-
-<h3>Related Topics:</h3>
-<ul>
-<li>Related topic 1</li>
-<li>Related topic 2</li>
-</ul>`
-        : `<h2>Soru & Cevap Kartı</h2>
+<p>Extra explanations or examples</p>`
+        : `<h2>Soru - Cevap Kartı</h2>
 <hr>
 <h3>Soru:</h3>
-<blockquote>
-<p><strong>Sorunuzu buraya yazın...</strong></p>
-<p><em>Spesifik ve açık olmasına dikkat edin</em></p>
-</blockquote>
+<p>Sorunuzu buraya yazın</p>
 
 <h3>Cevap:</h3>
-<p>• <strong>Ana nokta 1:</strong> Detaylı açıklama</p>
-<p>• <strong>Ana nokta 2:</strong> Detaylı açıklama</p>
-<p>• <strong>Ana nokta 3:</strong> Detaylı açıklama</p>
+<p>Cevabı buraya yazın</p>
 
 <h3>Ek Notlar:</h3>
-<p>Buraya ekstra bağlam, örnekler veya ilgili bilgiler ekleyin.</p>
-
-<h3>İlgili Konular:</h3>
-<ul>
-<li>İlgili konu 1</li>
-<li>İlgili konu 2</li>
-</ul>`,
-      icon: '❓'
+<p>Ek açıklamalar veya örnekler</p>`,
+      icon: ''
     },
     meeting: {
-      name: getText('meetingNote'),
+      name: getText('meetingNotes'),
       content: getText('language') === 'en'
         ? `<h2>Meeting Notes</h2>
 <hr>
-<h3>Meeting Details:</h3>
 <p><strong>Date:</strong> ${new Date().toLocaleDateString('en-US')}</p>
-<p><strong>Time:</strong> [Start Time] - [End Time]</p>
-<p><strong>Location:</strong> [Meeting Location/Platform]</p>
-<p><strong>Participants:</strong></p>
+<p><strong>Participants:</strong> </p>
+
+<h3>Agenda:</h3>
 <ul>
-<li>Participant 1 (Role)</li>
-<li>Participant 2 (Role)</li>
-<li>Participant 3 (Role)</li>
+<li>Item 1</li>
+<li>Item 2</li>
 </ul>
-
-<h3>Meeting Objectives:</h3>
-<p>• Primary objective</p>
-<p>• Secondary objective</p>
-
-<h3>Agenda & Discussion:</h3>
-<h4>1. Topic One</h4>
-<p>• Discussion points</p>
-<p>• Key insights</p>
-
-<h4>2. Topic Two</h4>
-<p>• Discussion points</p>
-<p>• Key insights</p>
 
 <h3>Decisions Made:</h3>
-<ul>
-<li><strong>Decision 1:</strong> Description and rationale</li>
-<li><strong>Decision 2:</strong> Description and rationale</li>
-</ul>
+<p>Record decisions here</p>
 
 <h3>Action Items:</h3>
-<ul>
-<li>☐ <strong>Task 1</strong> - Assigned to: [Name] - Due: [Date]</li>
-<li>☐ <strong>Task 2</strong> - Assigned to: [Name] - Due: [Date]</li>
-<li>☐ <strong>Task 3</strong> - Assigned to: [Name] - Due: [Date]</li>
-</ul>
-
-<h3>Next Steps:</h3>
-<p>• Next meeting date: [Date]</p>
-<p>• Follow-up required: [Details]</p>`
+<p>List action items and responsibilities</p>`
         : `<h2>Toplantı Notları</h2>
 <hr>
-<h3>Toplantı Detayları:</h3>
 <p><strong>Tarih:</strong> ${new Date().toLocaleDateString('tr-TR')}</p>
-<p><strong>Saat:</strong> [Başlangıç Saati] - [Bitiş Saati]</p>
-<p><strong>Konum:</strong> [Toplantı Yeri/Platform]</p>
-<p><strong>Katılımcılar:</strong></p>
+<p><strong>Katılımcılar:</strong> </p>
+
+<h3>Gündem:</h3>
 <ul>
-<li>Katılımcı 1 (Rol)</li>
-<li>Katılımcı 2 (Rol)</li>
-<li>Katılımcı 3 (Rol)</li>
+<li>Madde 1</li>
+<li>Madde 2</li>
 </ul>
-
-<h3>Toplantı Hedefleri:</h3>
-<p>• Birincil hedef</p>
-<p>• İkincil hedef</p>
-
-<h3>Gündem ve Tartışma:</h3>
-<h4>1. Birinci Konu</h4>
-<p>• Tartışma noktaları</p>
-<p>• Anahtar görüşler</p>
-
-<h4>2. İkinci Konu</h4>
-<p>• Tartışma noktaları</p>
-<p>• Anahtar görüşler</p>
 
 <h3>Alınan Kararlar:</h3>
-<ul>
-<li><strong>Karar 1:</strong> Açıklama ve gerekçe</li>
-<li><strong>Karar 2:</strong> Açıklama ve gerekçe</li>
-</ul>
+<p>Kararları buraya yazın</p>
 
 <h3>Eylem Planı:</h3>
-<ul>
-<li>☐ <strong>Görev 1</strong> - Sorumlu: [İsim] - Tarih: [Tarih]</li>
-<li>☐ <strong>Görev 2</strong> - Sorumlu: [İsim] - Tarih: [Tarih]</li>
-<li>☐ <strong>Görev 3</strong> - Sorumlu: [İsim] - Tarih: [Tarih]</li>
-</ul>
-
-<h3>Sonraki Adımlar:</h3>
-<p>• Sonraki toplantı tarihi: [Tarih]</p>
-<p>• Takip gereken konular: [Detaylar]</p>`,
-      icon: '🏢'
+<p>Yapılacaklar listesi ve sorumlular</p>`,
+      icon: ''
     },
     literature: {
       name: getText('literatureReview'),
@@ -226,7 +152,7 @@ export default function AddNoteModal({ visible, onClose, onSave, boxType, boxNam
 <p>What is the main research question or thesis statement?</p>
 </blockquote>
 
-<h3>Key Arguments & Findings:</h3>
+<h3>Main Arguments and Findings:</h3>
 <h4>Main Argument 1:</h4>
 <p>• Evidence or data supporting this argument</p>
 <p>• Author's reasoning</p>
@@ -237,10 +163,7 @@ export default function AddNoteModal({ visible, onClose, onSave, boxType, boxNam
 
 <h3>Important Quotes:</h3>
 <blockquote>
-<p>"Insert important quote here" (Page #)</p>
-</blockquote>
-<blockquote>
-<p>"Another significant quote" (Page #)</p>
+<p>"Important quote here" (Page #)</p>
 </blockquote>
 
 <h3>Methodology (if applicable):</h3>
@@ -260,7 +183,7 @@ export default function AddNoteModal({ visible, onClose, onSave, boxType, boxNam
 
 <h3>Connections:</h3>
 <p>• How does this relate to other readings?</p>
-<p>• How does this connect to course themes?</p>
+<p>• How does it connect to course themes?</p>
 <p>• Implications for further research</p>`
         : `<h2>Literatür İncelemesi</h2>
 <hr>
@@ -289,9 +212,6 @@ export default function AddNoteModal({ visible, onClose, onSave, boxType, boxNam
 <blockquote>
 <p>"Önemli alıntıyı buraya ekleyin" (Sayfa #)</p>
 </blockquote>
-<blockquote>
-<p>"Başka bir önemli alıntı" (Sayfa #)</p>
-</blockquote>
 
 <h3>Metodoloji (varsa):</h3>
 <p>• Kullanılan araştırma yöntemi</p>
@@ -312,7 +232,7 @@ export default function AddNoteModal({ visible, onClose, onSave, boxType, boxNam
 <p>• Bu, diğer okumalarla nasıl ilişkili?</p>
 <p>• Ders temaları ile nasıl bağlantılı?</p>
 <p>• İleri araştırma için çıkarımlar</p>`,
-      icon: '📚'
+      icon: ''
     }
   });
 
@@ -320,37 +240,7 @@ export default function AddNoteModal({ visible, onClose, onSave, boxType, boxNam
     setTemplate(templateKey);
     const templates = getTemplates();
     const newContent = templates[templateKey].content;
-    
-    // Template seçimi sadece editör boşken çalışsın (ilk kullanım için)
-    if (content.trim() === '') {
-      setContent(newContent);
-      // Editörü yeniden render etmek yerine içeriği güncelle
-      setEditorKey(prev => prev + 1);
-    } else {
-      // Eğer içerik varsa, kullanıcıya sor
-      const confirmMsg = getText('language') === 'en' 
-        ? 'This will replace your current content. Continue?' 
-        : 'Bu mevcut içeriğinizi değiştirecek. Devam et?';
-      
-      if (typeof window !== 'undefined') {
-        if (window.confirm(confirmMsg)) {
-          setContent(newContent);
-          setEditorKey(prev => prev + 1);
-        }
-      } else {
-        Alert.alert(
-          getText('warning') || 'Uyarı',
-          confirmMsg,
-          [
-            { text: getText('cancel') || 'İptal', style: 'cancel' },
-            { text: getText('continue') || 'Devam', onPress: () => {
-              setContent(newContent);
-              setEditorKey(prev => prev + 1);
-            }}
-          ]
-        );
-      }
-    }
+    setContent(newContent);
   };
 
   const handleSave = () => {
@@ -441,7 +331,6 @@ export default function AddNoteModal({ visible, onClose, onSave, boxType, boxNam
                     onPress={() => handleTemplateSelect(key)}
                     activeOpacity={0.7}
                   >
-                    <Text style={styles.templateIcon}>{tmpl.icon}</Text>
                     <Text style={[
                       styles.templateButtonText,
                       template === key && styles.templateButtonTextActive
