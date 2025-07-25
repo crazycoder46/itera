@@ -28,10 +28,20 @@ export const AuthProvider = ({ children }) => {
 
   const loadToken = async () => {
     try {
-      const storedToken = await AsyncStorage.getItem('token');
-      const storedUser = await AsyncStorage.getItem('user');
-      const storedLanguage = await AsyncStorage.getItem('language');
-      const storedTheme = await AsyncStorage.getItem('theme');
+      let storedToken, storedUser, storedLanguage, storedTheme;
+      
+      // Web için localStorage, mobil için AsyncStorage
+      if (typeof localStorage !== 'undefined') {
+        storedToken = localStorage.getItem('token');
+        storedUser = localStorage.getItem('user');
+        storedLanguage = localStorage.getItem('language');
+        storedTheme = localStorage.getItem('theme');
+      } else {
+        storedToken = await AsyncStorage.getItem('token');
+        storedUser = await AsyncStorage.getItem('user');
+        storedLanguage = await AsyncStorage.getItem('language');
+        storedTheme = await AsyncStorage.getItem('theme');
+      }
       
       if (storedToken && storedUser) {
         setToken(storedToken);
@@ -109,6 +119,13 @@ export const AuthProvider = ({ children }) => {
       if (response.ok) {
         await AsyncStorage.setItem('token', data.token);
         await AsyncStorage.setItem('user', JSON.stringify(data.user));
+        
+        // Web için de localStorage'a kaydet
+        if (typeof localStorage !== 'undefined') {
+          localStorage.setItem('token', data.token);
+          localStorage.setItem('user', JSON.stringify(data.user));
+        }
+        
         setToken(data.token);
         setUser(data.user);
         return { success: true };
@@ -167,8 +184,17 @@ export const AuthProvider = ({ children }) => {
   const logout = async () => {
     try {
       console.log('Logout başlatılıyor...');
+      
+      // Mobil için AsyncStorage temizliği
       await AsyncStorage.removeItem('token');
       await AsyncStorage.removeItem('user');
+      
+      // Web için localStorage temizliği
+      if (typeof localStorage !== 'undefined') {
+        localStorage.removeItem('token');
+        localStorage.removeItem('user');
+      }
+      
       // Dil ve tema ayarlarını koruyoruz
       setToken(null);
       setUser(null);

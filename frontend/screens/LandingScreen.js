@@ -1086,7 +1086,9 @@ const createResponsiveStyles = () => {
       flex: 1,
       alignItems: isWeb ? 'flex-start' : 'center',
       paddingRight: isWeb ? 40 : 0,
+      paddingHorizontal: isWeb ? 0 : 16,
       marginBottom: isWeb ? 0 : 40,
+      width: '100%',
     },
     heroImageContainer: {
       flex: 1,
@@ -1098,12 +1100,14 @@ const createResponsiveStyles = () => {
       height: isWeb ? 800 : Math.min(width * 0.85, 350),
     },
     heroTitle: {
-      fontSize: isWeb ? 42 : 30,
+      fontSize: isWeb ? 42 : 26,
       fontWeight: 'bold',
       marginBottom: isWeb ? 24 : 16,
       textAlign: isWeb ? 'left' : 'center',
-      lineHeight: isWeb ? 50 : 36,
+      lineHeight: isWeb ? 50 : 32,
       maxWidth: 600,
+      width: '100%',
+      paddingHorizontal: isWeb ? 0 : 8,
     },
     heroSubtitle: {
       fontSize: isWeb ? 18 : 16,
@@ -1133,11 +1137,11 @@ const createResponsiveStyles = () => {
     fontSize: 16,
     fontWeight: '600',
   },
-  section: {
-    paddingVertical: 30,
-    paddingHorizontal: 32,
-    alignItems: 'center',
-  },
+    section: {
+      paddingVertical: isWeb ? 30 : 20,
+      paddingHorizontal: isWeb ? 32 : 16,
+      alignItems: 'center',
+    },
     sectionContainer: {
       flexDirection: isWeb ? 'row' : 'column',
       alignItems: 'center',
@@ -1162,12 +1166,13 @@ const createResponsiveStyles = () => {
       height: isWeb ? 550 : 320,
     },
     sectionTitle: {
-      fontSize: isWeb ? 32 : 26,
+      fontSize: isWeb ? 32 : 22,
       fontWeight: 'bold',
       textAlign: isWeb ? 'left' : 'center',
       marginBottom: 24,
-      lineHeight: isWeb ? 40 : 32,
+      lineHeight: isWeb ? 40 : 28,
       maxWidth: 600,
+      paddingHorizontal: isWeb ? 0 : 16,
     },
     sectionText: {
       fontSize: isWeb ? 18 : 16,
