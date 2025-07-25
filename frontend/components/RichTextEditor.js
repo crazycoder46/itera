@@ -358,7 +358,7 @@ export default function RichTextEditor({ initialContent = '', onContentChange })
     contenteditable="true" 
     id="editor"
     data-placeholder="Buraya yazmaya başlayın..."
-  ></div>
+  >${initialContent || ''}</div>
   
   <script>
     let editor;
