@@ -848,20 +848,41 @@ export default function RichTextEditor({ initialContent = '', onContentChange })
               setTimeout(() => {
                 if (editor && data.content && data.content.trim() !== '') {
                   editor.focus();
+                  // Set cursor to end
                   const range = document.createRange();
-                  const selection = window.getSelection();
+                  const sel = window.getSelection();
                   range.selectNodeContents(editor);
-                  range.collapse(false); // false means collapse to end
-                  selection.removeAllRanges();
-                  selection.addRange(range);
+                  range.collapse(false);
+                  sel.removeAllRanges();
+                  sel.addRange(range);
                 }
-              }, 50);
-              
-              // Editör hazır olduğunu bildir
-              window.parent.postMessage(JSON.stringify({
-                type: 'EDITOR_READY'
-              }), '*');
-            }, 100); // Biraz daha uzun süre bekle
+              }, 10);
+            }, 10);
+            
+            notifyContentChange();
+          }
+        } else if (data.type === 'INSERT_TEXT') {
+          if (editor && data.text) {
+            // İmlecin bulunduğu yere text ekle
+            editor.focus();
+            const selection = window.getSelection();
+            const range = selection.getRangeAt(0);
+            
+            // Text'i HTML olarak ekle
+            const tempDiv = document.createElement('div');
+            tempDiv.innerHTML = data.text;
+            const fragment = document.createDocumentFragment();
+            let node;
+            while ((node = tempDiv.firstChild)) {
+              fragment.appendChild(node);
+            }
+            
+            range.insertNode(fragment);
+            range.collapse(false);
+            selection.removeAllRanges();
+            selection.addRange(range);
+            
+            notifyContentChange();
           }
         }
       } catch (error) {

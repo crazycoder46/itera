@@ -7,9 +7,7 @@ export default function AddNoteModal({ visible, onClose, onSave, boxType, boxNam
   const { getText } = useTheme();
   const [title, setTitle] = useState('');
   const [content, setContent] = useState('');
-  const [template, setTemplate] = useState('blank');
   const [editorKey, setEditorKey] = useState(0);
-  const [templateUsed, setTemplateUsed] = useState(false);
 
   const getTemplates = () => ({
     blank: {
@@ -238,13 +236,23 @@ export default function AddNoteModal({ visible, onClose, onSave, boxType, boxNam
   });
 
   const handleTemplateSelect = (templateKey) => {
-    if (templateUsed) return; // Zaten kullanıldı, çık
-    
-    setTemplate(templateKey);
     const templates = getTemplates();
-    const newContent = templates[templateKey].content;
+    const templateContent = templates[templateKey].content;
+    
+    // Mevcut içeriğe template'i ekle
+    const newContent = content + (content ? '\n\n' : '') + templateContent;
     setContent(newContent);
-    setTemplateUsed(true); // Artık template kullanıldı
+    
+    // Editor'a INSERT mesajı gönder
+    setTimeout(() => {
+      const iframe = document.querySelector('iframe[title="TipTap Editor"]');
+      if (iframe && iframe.contentWindow) {
+        iframe.contentWindow.postMessage(JSON.stringify({
+          type: 'INSERT_TEXT',
+          text: (content ? '\n\n' : '') + templateContent
+        }), '*');
+      }
+    }, 100);
   };
 
   const handleSave = () => {
@@ -271,9 +279,7 @@ export default function AddNoteModal({ visible, onClose, onSave, boxType, boxNam
   const handleClose = () => {
     setTitle('');
     setContent('');
-    setTemplate('blank');
     setEditorKey(0);
-    setTemplateUsed(false);
     onClose();
   };
 
@@ -329,20 +335,11 @@ export default function AddNoteModal({ visible, onClose, onSave, boxType, boxNam
                 {Object.entries(getTemplates()).map(([key, tmpl]) => (
                   <TouchableOpacity
                     key={key}
-                    style={[
-                      styles.templateButton,
-                      template === key && styles.templateButtonActive,
-                      templateUsed && styles.templateButtonDisabled
-                    ]}
+                    style={styles.templateButton}
                     onPress={() => handleTemplateSelect(key)}
-                    activeOpacity={templateUsed ? 1 : 0.7}
-                    disabled={templateUsed}
+                    activeOpacity={0.7}
                   >
-                    <Text style={[
-                      styles.templateButtonText,
-                      template === key && styles.templateButtonTextActive,
-                      templateUsed && styles.templateButtonTextDisabled
-                    ]}>
+                    <Text style={styles.templateButtonText}>
                       {tmpl.name}
                     </Text>
                   </TouchableOpacity>
@@ -466,14 +463,6 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.15,
     elevation: 2,
   },
-  templateButtonDisabled: {
-    opacity: 0.5,
-    backgroundColor: '#e0e0e0',
-    borderColor: '#d0d0d0',
-    shadowColor: '#a0a0a0',
-    shadowOpacity: 0.05,
-    elevation: 0,
-  },
   templateButtonText: {
     color: '#374151',
     fontSize: 11,
@@ -483,9 +472,6 @@ const styles = StyleSheet.create({
   },
   templateButtonTextActive: {
     color: '#ffffff',
-  },
-  templateButtonTextDisabled: {
-    color: '#9ca3af',
   },
   templateIcon: {
     fontSize: 14,
