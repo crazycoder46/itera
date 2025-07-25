@@ -15,6 +15,26 @@ export default function RichTextEditor({ initialContent = '', onContentChange })
 
   const isWeb = Platform.OS === 'web';
 
+  // initialContent değiştiğinde editor'ı güncelle
+  useEffect(() => {
+    if (initialContent !== editorContent) {
+      setEditorContent(initialContent);
+      
+      // Editor'a mesaj gönder
+      if (isWeb && iframeRef.current) {
+        iframeRef.current.contentWindow.postMessage(JSON.stringify({
+          type: 'SET_CONTENT',
+          content: initialContent
+        }), '*');
+      } else if (webViewRef.current) {
+        webViewRef.current.postMessage(JSON.stringify({
+          type: 'SET_CONTENT', 
+          content: initialContent
+        }));
+      }
+    }
+  }, [initialContent]);
+
   // Resim yükleme fonksiyonu
   const uploadImage = async (imageUri, noteId = null) => {
     try {
