@@ -7,7 +7,7 @@ export default function AddNoteModal({ visible, onClose, onSave, boxType, boxNam
   const { getText } = useTheme();
   const [title, setTitle] = useState('');
   const [content, setContent] = useState('');
-  const [editorKey, setEditorKey] = useState(0);
+  const [selectedTemplate, setSelectedTemplate] = useState(null);
 
   const getTemplates = () => ({
     blank: {
@@ -235,6 +235,20 @@ export default function AddNoteModal({ visible, onClose, onSave, boxType, boxNam
     }
   });
 
+  const insertTemplate = (templateKey) => {
+    const templates = getTemplates();
+    const templateContent = templates[templateKey].content;
+    
+    // Mevcut content'e template ekle
+    const currentContent = content.trim();
+    const newContent = currentContent 
+      ? currentContent + '\n\n' + templateContent 
+      : templateContent;
+    
+    setContent(newContent);
+    setSelectedTemplate(templateKey);
+  };
+
   const handleSave = () => {
     if (!title.trim()) {
       const errorMsg = getText('enterNoteTitle');
@@ -259,7 +273,7 @@ export default function AddNoteModal({ visible, onClose, onSave, boxType, boxNam
   const handleClose = () => {
     setTitle('');
     setContent('');
-    setEditorKey(0);
+    setSelectedTemplate(null);
     onClose();
   };
 
@@ -309,28 +323,23 @@ export default function AddNoteModal({ visible, onClose, onSave, boxType, boxNam
               {getText('richTextEditor')}
             </Text>
             
-            {/* Template Selection - Direct onclick */}
+            {/* Template Selection - Basit sistem */}
             <View style={styles.templateSection}>
               <ScrollView horizontal showsHorizontalScrollIndicator={false} style={styles.templatesContainer}>
                 {Object.entries(getTemplates()).map(([key, tmpl]) => (
                   <TouchableOpacity
                     key={key}
-                    style={styles.templateButton}
-                    onPress={() => {
-                      // Direkt iframe'e gömülü JavaScript çağır
-                      const iframe = document.querySelector('iframe[title="TipTap Editor"]');
-                      if (iframe && iframe.contentDocument) {
-                        const editor = iframe.contentDocument.getElementById('editor');
-                        if (editor) {
-                          // Template content'i direkt cursor pozisyonuna ekle
-                          editor.focus();
-                          document.execCommand('insertHTML', false, tmpl.content);
-                        }
-                      }
-                    }}
+                    style={[
+                      styles.templateButton,
+                      selectedTemplate === key && styles.templateButtonActive
+                    ]}
+                    onPress={() => insertTemplate(key)}
                     activeOpacity={0.7}
                   >
-                    <Text style={styles.templateButtonText}>
+                    <Text style={[
+                      styles.templateButtonText,
+                      selectedTemplate === key && styles.templateButtonTextActive
+                    ]}>
                       {tmpl.name}
                     </Text>
                   </TouchableOpacity>
@@ -339,7 +348,6 @@ export default function AddNoteModal({ visible, onClose, onSave, boxType, boxNam
             </View>
             
             <RichTextEditor
-              key={editorKey}
               initialContent={content}
               onContentChange={setContent}
             />
