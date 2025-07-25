@@ -159,34 +159,24 @@ export default function EditNoteScreen({ route, navigation }) {
           />
         </View>
 
-        {/* Content Input */}
-        <View style={styles.section}>
+        {/* Content Input - Made larger for better user experience */}
+        <View style={[styles.section, styles.contentSection]}>
           <Text style={styles.sectionTitle}>
             {getText('contentRichTextEditor')}
           </Text>
-          <EditRichTextEditor
-            initialContent={content}
-            onContentChange={(newContent) => {
-              console.log('=== CONTENT CHANGE IN EDITNOTESCREEN ===');
-              console.log('Old content length:', content.length);
-              console.log('New content length:', newContent.length);
-              console.log('Content actually changed:', content !== newContent);
-              console.log('New content preview:', newContent.substring(0, 200) + '...');
-              setContent(newContent);
-            }}
-            noteId={note.id}
-          />
-        </View>
-
-        {/* Markdown Help */}
-        <View style={styles.section}>
-          <Text style={styles.sectionTitle}>
-            {getText('markdownHelp')}
-          </Text>
-          <View style={styles.markdownHelp}>
-            <Text style={styles.markdownHelpText}>
-              {getText('markdownHelpText')}
-            </Text>
+          <View style={styles.editorContainer}>
+            <EditRichTextEditor
+              initialContent={content}
+              onContentChange={(newContent) => {
+                console.log('=== CONTENT CHANGE IN EDITNOTESCREEN ===');
+                console.log('Old content length:', content.length);
+                console.log('New content length:', newContent.length);
+                console.log('Content actually changed:', content !== newContent);
+                console.log('New content preview:', newContent.substring(0, 200) + '...');
+                setContent(newContent);
+              }}
+              noteId={note.id}
+            />
           </View>
         </View>
 
@@ -208,6 +198,7 @@ const styles = StyleSheet.create({
     paddingTop: 48,
     paddingBottom: 16,
     paddingHorizontal: 24,
+    backgroundColor: '#2563eb',
   },
   cancelButton: {
     paddingVertical: 8,
@@ -243,58 +234,45 @@ const styles = StyleSheet.create({
     padding: 24,
   },
   boxInfo: {
-    backgroundColor: '#f0f9ff',
-    padding: 16,
+    backgroundColor: '#f3f4f6',
+    padding: 12,
     borderRadius: 8,
-    marginBottom: 24,
+    marginBottom: 16,
   },
   boxInfoText: {
     fontSize: 14,
-    color: '#0284c7',
+    color: '#4b5563',
     textAlign: 'center',
   },
   section: {
     marginBottom: 24,
   },
+  contentSection: {
+    flex: 1,
+    marginBottom: 16,
+  },
   sectionTitle: {
     fontSize: 16,
     fontWeight: 'bold',
     color: '#1f2937',
-    marginBottom: 12,
+    marginBottom: 8,
   },
   titleInput: {
     borderWidth: 1,
     borderColor: '#d1d5db',
     borderRadius: 8,
-    paddingHorizontal: 16,
-    paddingVertical: 12,
+    paddingHorizontal: 12,
+    paddingVertical: 8,
     fontSize: 16,
     backgroundColor: '#fff',
   },
-  contentInput: {
-    borderWidth: 1,
-    borderColor: '#d1d5db',
+  editorContainer: {
+    flex: 1,
+    minHeight: 400,
     borderRadius: 8,
-    paddingHorizontal: 16,
-    paddingVertical: 12,
-    fontSize: 14,
-    backgroundColor: '#fff',
-    minHeight: 300,
-    fontFamily: 'monospace',
-  },
-  markdownHelp: {
-    backgroundColor: '#f9fafb',
-    padding: 16,
-    borderRadius: 8,
-    borderLeftWidth: 4,
-    borderLeftColor: '#2563eb',
-  },
-  markdownHelpText: {
-    fontSize: 12,
-    color: '#6b7280',
-    fontFamily: 'monospace',
+    overflow: 'hidden',
   },
   spacer: {
-    height: 50,
+    height: 40,
   },
 }); 

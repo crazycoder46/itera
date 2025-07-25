@@ -808,15 +808,6 @@ export default function EditRichTextEditor({ initialContent = '', onContentChang
 
   return (
     <View style={styles.container}>
-      {/* Native resim ekleme butonu */}
-      <View style={styles.nativeToolbar}>
-        <TouchableOpacity onPress={pickImage} style={styles.imageButton}>
-          <Text style={styles.imageButtonText}>
-            {getText('language') === 'en' ? '📷 Add Image' : '📷 Resim Ekle'}
-          </Text>
-        </TouchableOpacity>
-      </View>
-
       {/* Platform'a göre editör */}
       {isWeb ? (
         <iframe
@@ -853,33 +844,20 @@ export default function EditRichTextEditor({ initialContent = '', onContentChang
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#fff',
-  },
-  nativeToolbar: {
-    flexDirection: 'row',
-    padding: 8,
-    backgroundColor: '#f9fafb',
-    borderBottomWidth: 1,
-    borderBottomColor: '#e5e7eb',
-  },
-  imageButton: {
-    backgroundColor: '#3b82f6',
-    paddingHorizontal: 16,
-    paddingVertical: 8,
-    borderRadius: 6,
-  },
-  imageButtonText: {
-    color: '#fff',
-    fontSize: 14,
-    fontWeight: '500',
-  },
-  iframe: {
-    flex: 1,
-    width: '100%',
-    border: 'none',
+    minHeight: 300,
   },
   webView: {
     flex: 1,
+    borderWidth: 1,
+    borderColor: '#d1d5db',
+    borderRadius: 8,
+  },
+  iframe: {
+    flex: 1,
+    border: '1px solid #d1d5db',
+    borderRadius: 8,
+    width: '100%',
+    minHeight: 400,
   },
   loadingOverlay: {
     position: 'absolute',
@@ -887,12 +865,13 @@ const styles = StyleSheet.create({
     left: 0,
     right: 0,
     bottom: 0,
-    backgroundColor: 'rgba(255, 255, 255, 0.9)',
     justifyContent: 'center',
     alignItems: 'center',
+    backgroundColor: 'rgba(255, 255, 255, 0.8)',
+    zIndex: 1,
   },
   loadingText: {
-    fontSize: 16,
-    color: '#6b7280',
+    fontSize: 18,
+    color: '#333',
   },
 }); 

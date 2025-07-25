@@ -5,9 +5,46 @@ import RichTextEditor from './RichTextEditor';
 
 export default function AddNoteModal({ visible, onClose, onSave, boxType, boxName }) {
   const { getText } = useTheme();
-  const [title, setTitle] = useState('');
+    const [title, setTitle] = useState('');
   const [content, setContent] = useState('');
+  const [template, setTemplate] = useState('blank');
 
+  const getTemplates = () => ({
+    blank: {
+      name: getText('blankNote'),
+      content: ''
+    },
+    cornell: {
+      name: getText('cornellMethod'),
+      content: getText('language') === 'en' 
+        ? '# Note Title\n\n## Main Notes\n\n\n## Key Points\n- \n- \n- \n\n## Summary\n\n'
+        : '# Not Başlığı\n\n## Ana Notlar\n\n\n## Anahtar Noktalar\n- \n- \n- \n\n## Özet\n\n'
+    },
+    qa: {
+      name: getText('qaCard'),
+      content: getText('language') === 'en' 
+        ? '# Question\n\n\n## Answer\n\n'
+        : '# Soru\n\n\n## Cevap\n\n'
+    },
+    meeting: {
+      name: getText('meetingNote'),
+      content: getText('language') === 'en'
+        ? '# Meeting: [Title]\n\n**Date:** \n**Participants:** \n\n## Agenda\n- \n- \n\n## Decisions\n- \n- \n\n## Actions\n- [ ] \n- [ ] \n'
+        : '# Toplantı: [Başlık]\n\n**Tarih:** \n**Katılımcılar:** \n\n## Gündem\n- \n- \n\n## Kararlar\n- \n- \n\n## Aksiyonlar\n- [ ] \n- [ ] \n'
+    },
+    literature: {
+      name: getText('literatureReview'),
+      content: getText('language') === 'en'
+        ? '# [Source Name]\n\n**Author:** \n**Year:** \n**Type:** \n\n## Main Ideas\n\n\n## Important Quotes\n\n\n## Personal Notes\n\n'
+        : '# [Kaynak Adı]\n\n**Yazar:** \n**Yıl:** \n**Tür:** \n\n## Ana Fikirler\n\n\n## Önemli Alıntılar\n\n\n## Kişisel Notlar\n\n'
+    }
+  });
+
+  const handleTemplateSelect = (templateKey) => {
+    setTemplate(templateKey);
+    const templates = getTemplates();
+    setContent(templates[templateKey].content);
+  };
 
 
   const handleSave = () => {
@@ -34,6 +71,7 @@ export default function AddNoteModal({ visible, onClose, onSave, boxType, boxNam
   const handleClose = () => {
     setTitle('');
     setContent('');
+    setTemplate('blank');
     onClose();
   };
 
@@ -82,6 +120,30 @@ export default function AddNoteModal({ visible, onClose, onSave, boxType, boxNam
             <Text style={styles.sectionTitle}>
               {getText('richTextEditor')}
             </Text>
+            
+            {/* Template Selection */}
+            <View style={styles.templateSection}>
+              <ScrollView horizontal showsHorizontalScrollIndicator={false} style={styles.templatesContainer}>
+                {Object.entries(getTemplates()).map(([key, tmpl]) => (
+                  <TouchableOpacity
+                    key={key}
+                    style={[
+                      styles.templateButton,
+                      template === key && styles.templateButtonActive
+                    ]}
+                    onPress={() => handleTemplateSelect(key)}
+                  >
+                    <Text style={[
+                      styles.templateButtonText,
+                      template === key && styles.templateButtonTextActive
+                    ]}>
+                      {tmpl.name}
+                    </Text>
+                  </TouchableOpacity>
+                ))}
+              </ScrollView>
+            </View>
+            
             <RichTextEditor
               initialContent={content}
               onContentChange={setContent}
@@ -163,6 +225,9 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
     color: '#1f2937',
     marginBottom: 8,
+  },
+  templateSection: {
+    marginBottom: 12,
   },
   templatesContainer: {
     marginBottom: 8,
