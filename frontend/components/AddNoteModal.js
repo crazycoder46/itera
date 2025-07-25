@@ -238,13 +238,13 @@ export default function AddNoteModal({ visible, onClose, onSave, boxType, boxNam
     const templates = getTemplates();
     const templateContent = templates[templateKey].content;
     
-    // Sadece iframe'e INSERT mesajı gönder - React state'i hiç güncellememe
+    // Önce canvas'ı sil, sonra şablonu ekle
     setTimeout(() => {
       const iframe = document.querySelector('iframe[title="TipTap Editor"]');
       if (iframe && iframe.contentWindow) {
         iframe.contentWindow.postMessage(JSON.stringify({
-          type: 'INSERT_TEXT',
-          text: templateContent
+          type: 'SET_CONTENT',
+          content: templateContent
         }), '*');
       }
     }, 50);
