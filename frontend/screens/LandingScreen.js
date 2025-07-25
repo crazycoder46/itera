@@ -1085,19 +1085,17 @@ const createResponsiveStyles = () => {
     },
     heroTextContainer: {
       flex: 1,
-      alignItems: isWeb ? 'flex-start' : 'center',
+      alignItems: 'center',
       paddingRight: isWeb ? 40 : 0,
-      paddingHorizontal: isWeb ? 0 : 0,
       marginBottom: isWeb ? 0 : 20,
       width: '100%',
-      justifyContent: isWeb ? 'flex-start' : 'center',
+      justifyContent: 'center',
     },
     heroImageContainer: {
       flex: 1,
       alignItems: 'center',
       justifyContent: 'center',
       width: '100%',
-      paddingHorizontal: isWeb ? 0 : 0,
     },
     heroImage: {
       width: isWeb ? 800 : Math.min(width * 0.8, 320),
@@ -1110,7 +1108,6 @@ const createResponsiveStyles = () => {
       textAlign: isWeb ? 'left' : 'center',
       lineHeight: isWeb ? 50 : 30,
       maxWidth: 600,
-      width: isWeb ? 'auto' : '100%',
     },
     heroSubtitle: {
       fontSize: isWeb ? 18 : 16,
@@ -1118,7 +1115,6 @@ const createResponsiveStyles = () => {
       lineHeight: isWeb ? 28 : 24,
       marginBottom: isWeb ? 40 : 24,
       maxWidth: 700,
-      width: isWeb ? 'auto' : '100%',
     },
     primaryButton: {
       paddingVertical: isWeb ? 20 : 16,
