@@ -213,7 +213,7 @@ export default function BoxDetailScreen({ route, navigation }) {
                 >
                   <Text style={styles.noteTitle}>{note.title}</Text>
                   <Text style={styles.notePreview}>
-                    {truncateContent(note.content.replace(/[#*`>\-]/g, '').trim())}
+                    {truncateContent(note.content)}
                   </Text>
                   <Text style={styles.noteDate}>
                     {new Date(note.created_at).toLocaleDateString('tr-TR')}
