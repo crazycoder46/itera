@@ -160,7 +160,8 @@ export default function EditRichTextEditor({ initialContent = '', onContentChang
           .editor-container {
             display: flex;
             flex-direction: column;
-            height: 100vh;
+            min-height: 100vh;
+            max-height: none;
           }
           
           .toolbar {
@@ -170,6 +171,7 @@ export default function EditRichTextEditor({ initialContent = '', onContentChang
             gap: 8px;
             flex-wrap: wrap;
             background: #f9fafb;
+            flex-shrink: 0;
           }
           
           .toolbar button {
@@ -197,13 +199,23 @@ export default function EditRichTextEditor({ initialContent = '', onContentChang
           .editor {
             flex: 1;
             padding: 16px;
-            overflow-y: auto;
+            overflow: auto;
+            min-height: 50vh;
             outline: none;
           }
           
           /* TipTap Styles */
           .ProseMirror {
             min-height: 100%;
+            outline: none;
+            overflow-wrap: break-word;
+            word-wrap: break-word;
+            word-break: break-word;
+            white-space: pre-wrap;
+          }
+          
+          /* ProseMirror editör alanının kaydırma optimizasyonu */
+          .ProseMirror:focus {
             outline: none;
           }
           
@@ -300,13 +312,29 @@ export default function EditRichTextEditor({ initialContent = '', onContentChang
           
           .ProseMirror .image-resizer .resize-handle {
             position: absolute;
-            width: 10px;
-            height: 10px;
+            width: 16px;
+            height: 16px;
             background: #3b82f6;
             border: 2px solid #fff;
             border-radius: 50%;
             opacity: 0;
             transition: opacity 0.2s;
+            touch-action: none;
+            cursor: pointer;
+          }
+          
+          /* Mobilde resize handle'ları daha büyük */
+          @media (max-width: 768px) {
+            .ProseMirror .image-resizer .resize-handle {
+              width: 20px;
+              height: 20px;
+              opacity: 0.8;
+            }
+            
+            .ProseMirror .image-resizer:hover .resize-handle,
+            .ProseMirror .image-resizer.ProseMirror-selectednode .resize-handle {
+              opacity: 1;
+            }
           }
           
           .ProseMirror .image-resizer:hover .resize-handle,
@@ -315,9 +343,17 @@ export default function EditRichTextEditor({ initialContent = '', onContentChang
           }
           
           .ProseMirror .image-resizer .resize-handle.bottom-right {
-            bottom: -5px;
-            right: -5px;
+            bottom: -8px;
+            right: -8px;
             cursor: se-resize;
+          }
+          
+          /* Mobilde bottom-right handle pozisyonu */
+          @media (max-width: 768px) {
+            .ProseMirror .image-resizer .resize-handle.bottom-right {
+              bottom: -10px;
+              right: -10px;
+            }
           }
           
           .ProseMirror-selectednode {
@@ -491,51 +527,60 @@ export default function EditRichTextEditor({ initialContent = '', onContentChang
                   const handleMouseUp = () => {
                     if (isResizing) {
                       isResizing = false
-                      
-                      // Editördeki attribute'ları güncelle
-                      const newWidth = parseInt(img.style.width)
-                      const newHeight = parseInt(img.style.height)
-                      
-                      console.log('Resize finished, updating attributes:', { newWidth, newHeight });
-                      
-                      // Transaction kullanarak güvenli güncelleme
-                      const pos = getPos()
-                      if (pos !== null && pos !== undefined) {
-                        editor.view.dispatch(
-                          editor.view.state.tr.setNodeMarkup(pos, null, {
-                            ...node.attrs,
-                            width: newWidth,
-                            height: newHeight
-                          })
-                        )
-                        
-                        // Değişikliği hemen bildir
-                        setTimeout(() => {
-                          const html = editor.getHTML()
-                          console.log('Transaction completed, new HTML:', html);
-                          notifyContentChange(html)
-                        }, 50)
-                      } else {
-                        // Fallback: Eski yöntem
-                        updateAttributes({
-                          width: newWidth,
-                          height: newHeight
-                        })
-                        
-                        setTimeout(() => {
-                          const html = editor.getHTML()
-                          console.log('Fallback update completed, new HTML:', html);
-                          notifyContentChange(html)
-                        }, 100)
-                      }
+                      document.removeEventListener('mousemove', handleMouseMove)
+                      document.removeEventListener('mouseup', handleMouseUp)
                     }
-                    
-                    document.removeEventListener('mousemove', handleMouseMove)
-                    document.removeEventListener('mouseup', handleMouseUp)
                   }
                   
                   document.addEventListener('mousemove', handleMouseMove)
                   document.addEventListener('mouseup', handleMouseUp)
+                })
+                
+                // Touch event desteği - mobil için
+                resizeHandle.addEventListener('touchstart', (e) => {
+                  e.preventDefault()
+                  e.stopPropagation()
+                  isResizing = true
+                  const touch = e.touches[0]
+                  startX = touch.clientX
+                  startY = touch.clientY
+                  startWidth = img.offsetWidth || parseInt(img.style.width) || img.naturalWidth
+                  startHeight = img.offsetHeight || parseInt(img.style.height) || img.naturalHeight
+                  
+                  const handleTouchMove = (e) => {
+                    if (!isResizing) return
+                    e.preventDefault()
+                    
+                    const touch = e.touches[0]
+                    const deltaX = touch.clientX - startX
+                    const deltaY = touch.clientY - startY
+                    
+                    const newWidth = Math.max(50, startWidth + deltaX)
+                    const aspectRatio = startHeight / startWidth
+                    const newHeight = Math.round(newWidth * aspectRatio)
+                    
+                    img.style.width = newWidth + 'px'
+                    img.style.height = newHeight + 'px'
+                    container.style.width = newWidth + 'px'
+                    container.style.height = newHeight + 'px'
+                    
+                    // Resize sırasında da attribute'ları güncelle
+                    updateAttributes({
+                      width: newWidth,
+                      height: newHeight
+                    })
+                  }
+                  
+                  const handleTouchEnd = () => {
+                    if (isResizing) {
+                      isResizing = false
+                      document.removeEventListener('touchmove', handleTouchMove)
+                      document.removeEventListener('touchend', handleTouchEnd)
+                    }
+                  }
+                  
+                  document.addEventListener('touchmove', handleTouchMove, { passive: false })
+                  document.addEventListener('touchend', handleTouchEnd)
                 })
                 
                 // Resim seçildiğinde
@@ -844,20 +889,23 @@ export default function EditRichTextEditor({ initialContent = '', onContentChang
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    minHeight: 300,
+    minHeight: 400,
+    maxHeight: 'none',
   },
   webView: {
     flex: 1,
     borderWidth: 1,
     borderColor: '#d1d5db',
     borderRadius: 8,
+    minHeight: 400,
   },
   iframe: {
     flex: 1,
     border: '1px solid #d1d5db',
     borderRadius: 8,
     width: '100%',
-    minHeight: 400,
+    minHeight: 500,
+    resize: 'vertical',
   },
   loadingOverlay: {
     position: 'absolute',
