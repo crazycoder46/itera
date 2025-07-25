@@ -239,20 +239,14 @@ export default function AddNoteModal({ visible, onClose, onSave, boxType, boxNam
     const templates = getTemplates();
     const templateContent = templates[templateKey].content;
     
-    // Mevcut içeriğe template'i ekle
-    const newContent = content + (content ? '\n\n' : '') + templateContent;
-    setContent(newContent);
-    
-    // Editor'a INSERT mesajı gönder
-    setTimeout(() => {
-      const iframe = document.querySelector('iframe[title="TipTap Editor"]');
-      if (iframe && iframe.contentWindow) {
-        iframe.contentWindow.postMessage(JSON.stringify({
-          type: 'INSERT_TEXT',
-          text: (content ? '\n\n' : '') + templateContent
-        }), '*');
-      }
-    }, 100);
+    // Editor'a direkt INSERT mesajı gönder - başka hiçbir şey yapma
+    const iframe = document.querySelector('iframe[title="TipTap Editor"]');
+    if (iframe && iframe.contentWindow) {
+      iframe.contentWindow.postMessage(JSON.stringify({
+        type: 'INSERT_TEXT',
+        text: templateContent
+      }), '*');
+    }
   };
 
   const handleSave = () => {
