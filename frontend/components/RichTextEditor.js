@@ -12,34 +12,8 @@ export default function RichTextEditor({ initialContent = '', onContentChange })
   const { getText } = useTheme();
   const [isLoading, setIsLoading] = useState(true);
   const [editorContent, setEditorContent] = useState(initialContent);
-  const [lastInitialContent, setLastInitialContent] = useState(initialContent);
 
   const isWeb = Platform.OS === 'web';
-
-  // initialContent değiştiğinde güncelle (sadece gerçekten değişmişse)
-  useEffect(() => {
-    if (initialContent !== lastInitialContent) {
-      setEditorContent(initialContent);
-      setLastInitialContent(initialContent);
-      
-      // Editor'a SET_CONTENT mesajı gönder
-      if (isWeb && iframeRef.current) {
-        setTimeout(() => {
-          iframeRef.current.contentWindow.postMessage(JSON.stringify({
-            type: 'SET_CONTENT',
-            content: initialContent
-          }), '*');
-        }, 100);
-      } else if (webViewRef.current) {
-        setTimeout(() => {
-          webViewRef.current.postMessage(JSON.stringify({
-            type: 'SET_CONTENT',
-            content: initialContent
-          }));
-        }, 100);
-      }
-    }
-  }, [initialContent, lastInitialContent, isWeb]);
 
   // Resim yükleme fonksiyonu
   const uploadImage = async (imageUri, noteId = null) => {

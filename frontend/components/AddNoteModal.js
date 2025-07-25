@@ -7,7 +7,6 @@ export default function AddNoteModal({ visible, onClose, onSave, boxType, boxNam
   const { getText } = useTheme();
   const [title, setTitle] = useState('');
   const [content, setContent] = useState('');
-  const [selectedTemplate, setSelectedTemplate] = useState(null);
 
   const getTemplates = () => ({
     blank: {
@@ -239,14 +238,14 @@ export default function AddNoteModal({ visible, onClose, onSave, boxType, boxNam
     const templates = getTemplates();
     const templateContent = templates[templateKey].content;
     
-    // Mevcut content'e template ekle
+    // Mevcut content'e template ekle (her tıklamada)
     const currentContent = content.trim();
     const newContent = currentContent 
       ? currentContent + '\n\n' + templateContent 
       : templateContent;
     
     setContent(newContent);
-    setSelectedTemplate(templateKey);
+    // selectedTemplate kaldırıldı - artık template "seçimi" yok, sadece "ekleme" var
   };
 
   const handleSave = () => {
@@ -273,7 +272,6 @@ export default function AddNoteModal({ visible, onClose, onSave, boxType, boxNam
   const handleClose = () => {
     setTitle('');
     setContent('');
-    setSelectedTemplate(null);
     onClose();
   };
 
@@ -323,23 +321,17 @@ export default function AddNoteModal({ visible, onClose, onSave, boxType, boxNam
               {getText('richTextEditor')}
             </Text>
             
-            {/* Template Selection - Basit sistem */}
+            {/* Template Ekleme Butonları - Her tıklamada ekler */}
             <View style={styles.templateSection}>
               <ScrollView horizontal showsHorizontalScrollIndicator={false} style={styles.templatesContainer}>
                 {Object.entries(getTemplates()).map(([key, tmpl]) => (
                   <TouchableOpacity
                     key={key}
-                    style={[
-                      styles.templateButton,
-                      selectedTemplate === key && styles.templateButtonActive
-                    ]}
+                    style={styles.templateButton}
                     onPress={() => insertTemplate(key)}
                     activeOpacity={0.7}
                   >
-                    <Text style={[
-                      styles.templateButtonText,
-                      selectedTemplate === key && styles.templateButtonTextActive
-                    ]}>
+                    <Text style={styles.templateButtonText}>
                       {tmpl.name}
                     </Text>
                   </TouchableOpacity>
