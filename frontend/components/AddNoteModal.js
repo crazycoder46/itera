@@ -238,14 +238,16 @@ export default function AddNoteModal({ visible, onClose, onSave, boxType, boxNam
     const templates = getTemplates();
     const templateContent = templates[templateKey].content;
     
-    // Mevcut content'e template ekle (her tıklamada)
-    const currentContent = content.trim();
-    const newContent = currentContent 
-      ? currentContent + '\n\n' + templateContent 
-      : templateContent;
-    
-    setContent(newContent);
-    // selectedTemplate kaldırıldı - artık template "seçimi" yok, sadece "ekleme" var
+    // Sadece iframe'e INSERT mesajı gönder - React state'i hiç güncellememe
+    setTimeout(() => {
+      const iframe = document.querySelector('iframe[title="TipTap Editor"]');
+      if (iframe && iframe.contentWindow) {
+        iframe.contentWindow.postMessage(JSON.stringify({
+          type: 'INSERT_TEXT',
+          text: templateContent
+        }), '*');
+      }
+    }, 50);
   };
 
   const handleSave = () => {
@@ -340,7 +342,7 @@ export default function AddNoteModal({ visible, onClose, onSave, boxType, boxNam
             </View>
             
             <RichTextEditor
-              initialContent={content}
+              initialContent=""
               onContentChange={setContent}
             />
           </View>
