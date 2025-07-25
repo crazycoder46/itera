@@ -933,60 +933,10 @@ export default function RichTextEditor({ initialContent = '', onContentChange })
     }
   };
 
-  // Şablon ekleme fonksiyonu
-  const insertTemplate = (templateType) => {
-    let templateContent = '';
-    
-    switch(templateType) {
-      case 'empty':
-        // Boş not - sadece placeholder
-        templateContent = '';
-        break;
-      case 'cornell':
-        templateContent = '<h2>Cornell Metodu Not Şablonu</h2><hr><h3>Ana Konu:</h3><p>Konu başlığını buraya yazın</p><br><h3>Notlar:</h3><p>Detaylı notlarınızı buraya yazın</p><br><h3>Anahtar Kelimeler:</h3><ul><li>Anahtar kelime 1</li><li>Anahtar kelime 2</li></ul><br><h3>Özet:</h3><p>Konunun özetini buraya yazın</p>';
-        break;
-      case 'qa':
-        templateContent = '<h2>Soru - Cevap Kartı</h2><hr><h3>Soru:</h3><p>Sorunuzu buraya yazın</p><br><h3>Cevap:</h3><p>Cevabı buraya yazın</p><br><h3>Açıklama:</h3><p>Ek açıklamalar veya örnekler</p>';
-        break;
-      case 'summary':
-        templateContent = '<h2>Toplantı Notu</h2><hr><p><strong>Tarih:</strong> ' + new Date().toLocaleDateString('tr-TR') + '</p><p><strong>Katılımcılar:</strong> </p><br><h3>Gündem:</h3><ul><li>Madde 1</li><li>Madde 2</li></ul><br><h3>Alınan Kararlar:</h3><p>Kararları buraya yazın</p><br><h3>Eylem Planı:</h3><p>Yapılacaklar listesi</p>';
-        break;
-      default:
-        return;
-    }
-    
-    // Şablonu editöre gönder
-    if (isWeb && iframeRef.current) {
-      iframeRef.current.contentWindow.postMessage(JSON.stringify({
-        type: 'SET_CONTENT',
-        content: templateContent
-      }), '*');
-    } else if (webViewRef.current) {
-      webViewRef.current.postMessage(JSON.stringify({
-        type: 'SET_CONTENT',
-        content: templateContent
-      }));
-    }
-  };
+
 
   return (
     <View style={styles.container}>
-      {/* Şablon toolbar */}
-      <View style={styles.templateToolbar}>
-        <TouchableOpacity onPress={() => insertTemplate('empty')} style={styles.templateButton}>
-          <Text style={styles.templateButtonText}>Boş Not</Text>
-        </TouchableOpacity>
-        <TouchableOpacity onPress={() => insertTemplate('cornell')} style={styles.templateButton}>
-          <Text style={styles.templateButtonText}>Cornell Metodu</Text>
-        </TouchableOpacity>
-        <TouchableOpacity onPress={() => insertTemplate('qa')} style={styles.templateButton}>
-          <Text style={styles.templateButtonText}>Soru - Cevap Kartı</Text>
-        </TouchableOpacity>
-        <TouchableOpacity onPress={() => insertTemplate('summary')} style={styles.templateButton}>
-          <Text style={styles.templateButtonText}>Toplantı Notu</Text>
-        </TouchableOpacity>
-      </View>
-
       {/* Platform'a göre editör */}
       {isWeb ? (
         <iframe
@@ -1024,26 +974,6 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     minHeight: 300,
-  },
-  templateToolbar: {
-    flexDirection: 'row',
-    flexWrap: 'wrap',
-    gap: 8,
-    marginBottom: 10,
-    paddingHorizontal: 4,
-  },
-  templateButton: {
-    backgroundColor: '#f8f9fa',
-    paddingVertical: 8,
-    paddingHorizontal: 12,
-    borderRadius: 6,
-    borderWidth: 1,
-    borderColor: '#dee2e6',
-  },
-  templateButtonText: {
-    color: '#495057',
-    fontSize: 12,
-    fontWeight: '600',
   },
   webView: {
     flex: 1,
