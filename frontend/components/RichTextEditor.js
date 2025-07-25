@@ -205,11 +205,22 @@ export default function RichTextEditor({ initialContent = '', onContentChange })
       outline: none;
       font-size: 16px;
       line-height: 1.6;
+      position: relative;
     }
     
     .editor:focus {
       border-color: #007bff;
       box-shadow: 0 0 0 2px rgba(0, 123, 255, 0.25);
+    }
+    
+    .editor:empty:before {
+      content: attr(data-placeholder);
+      color: #999;
+      font-style: italic;
+      pointer-events: none;
+      position: absolute;
+      top: 20px;
+      left: 20px;
     }
     
     .editor h1 {
@@ -245,6 +256,7 @@ export default function RichTextEditor({ initialContent = '', onContentChange })
     
     .editor img {
       max-width: 100%;
+      width: auto;
       height: auto;
       border-radius: 8px;
       margin: 10px 0;
@@ -252,6 +264,24 @@ export default function RichTextEditor({ initialContent = '', onContentChange })
       cursor: pointer;
       transition: all 0.2s;
       position: relative;
+    }
+    
+    /* Mobil cihazlarda resim genişliği */
+    @media (max-width: 768px) {
+      .editor img {
+        max-width: calc(100vw - 80px);
+        width: auto;
+        height: auto;
+      }
+    }
+    
+    /* Desktop'ta resim genişliği */
+    @media (min-width: 769px) {
+      .editor img {
+        max-width: calc(100% - 40px);
+        width: auto;
+        height: auto;
+      }
     }
     
     .editor img:hover {
@@ -321,7 +351,10 @@ export default function RichTextEditor({ initialContent = '', onContentChange })
     <button onclick="execCommand('insertUnorderedList')" id="ul-btn">• List</button>
     <button onclick="execCommand('insertOrderedList')" id="ol-btn">1. List</button>
     <button onclick="toggleQuote()" id="quote-btn">Quote</button>
-    <button onclick="insertImage()" id="image-btn">📷 Image</button>
+    <button onclick="insertTemplate('empty')" id="empty-btn">Boş Not</button>
+    <button onclick="insertTemplate('cornell')" id="cornell-btn">Cornell Metodu</button>
+    <button onclick="insertTemplate('qa')" id="qa-btn">Soru - Cevap Kartı</button>
+    <button onclick="insertTemplate('summary')" id="summary-btn">Toplantı Notu</button>
   </div>
   <div 
     class="editor" 
@@ -359,9 +392,10 @@ export default function RichTextEditor({ initialContent = '', onContentChange })
       });
       editor.addEventListener('mouseup', updateToolbar);
       
-      // Placeholder text
+      // Placeholder text - gerçek placeholder
       if (editor.innerHTML.trim() === '') {
-        editor.innerHTML = '<p>Notunuzu buraya yazın...</p>';
+        editor.innerHTML = '';
+        editor.setAttribute('data-placeholder', 'Notunuzu buraya yazın...');
       }
       
       // Mevcut resimleri wrap et (sayfa yüklendiğinde)
@@ -701,10 +735,31 @@ export default function RichTextEditor({ initialContent = '', onContentChange })
       }
     }
     
-    function insertImage() {
-      window.parent.postMessage(JSON.stringify({
-        type: 'PICK_IMAGE'
-      }), '*');
+    function insertTemplate(templateType) {
+      if (!editor) return;
+      
+      let templateContent = '';
+      
+      switch(templateType) {
+        case 'empty':
+          templateContent = '<p>Not başlığını girin...</p><br><p>İçeriğinizi buraya yazın...</p>';
+          break;
+        case 'cornell':
+          templateContent = '<h2>Cornell Metodu Not Şablonu</h2><hr><h3>Ana Konu:</h3><p>Konu başlığını buraya yazın</p><br><h3>Notlar:</h3><p>Detaylı notlarınızı buraya yazın</p><br><h3>Anahtar Kelimeler:</h3><ul><li>Anahtar kelime 1</li><li>Anahtar kelime 2</li></ul><br><h3>Özet:</h3><p>Konunun özetini buraya yazın</p>';
+          break;
+        case 'qa':
+          templateContent = '<h2>Soru - Cevap Kartı</h2><hr><h3>Soru:</h3><p>Sorunuzu buraya yazın</p><br><h3>Cevap:</h3><p>Cevabı buraya yazın</p><br><h3>Açıklama:</h3><p>Ek açıklamalar veya örnekler</p>';
+          break;
+        case 'summary':
+          templateContent = '<h2>Toplantı Notu</h2><hr><p><strong>Tarih:</strong> ' + new Date().toLocaleDateString('tr-TR') + '</p><p><strong>Katılımcılar:</strong> </p><br><h3>Gündem:</h3><ul><li>Madde 1</li><li>Madde 2</li></ul><br><h3>Alınan Kararlar:</h3><p>Kararları buraya yazın</p><br><h3>Eylem Planı:</h3><p>Yapılacaklar listesi</p>';
+          break;
+        default:
+          return;
+      }
+      
+      editor.innerHTML = templateContent;
+      editor.focus();
+      notifyContentChange();
     }
     
     function insertImageToEditor(imageUrl, isPlaceholder = false) {
@@ -798,7 +853,12 @@ export default function RichTextEditor({ initialContent = '', onContentChange })
           }
         } else if (data.type === 'SET_CONTENT') {
           if (editor) {
-            editor.innerHTML = data.content || '<p>Notunuzu buraya yazın...</p>';
+            if (data.content && data.content.trim() !== '') {
+              editor.innerHTML = data.content;
+            } else {
+              editor.innerHTML = '';
+              editor.setAttribute('data-placeholder', 'Notunuzu buraya yazın...');
+            }
             // Mevcut resimleri wrap et
             setTimeout(() => {
               const images = editor.querySelectorAll('img');
@@ -899,15 +959,6 @@ export default function RichTextEditor({ initialContent = '', onContentChange })
 
   return (
     <View style={styles.container}>
-      {/* Native resim ekleme butonu */}
-      <View style={styles.nativeToolbar}>
-        <TouchableOpacity onPress={pickImage} style={styles.imageButton}>
-          <Text style={styles.imageButtonText}>
-            {getText('language') === 'en' ? '📷 Add Image' : '📷 Resim Ekle'}
-          </Text>
-        </TouchableOpacity>
-      </View>
-
       {/* Platform'a göre editör */}
       {isWeb ? (
         <iframe
@@ -945,22 +996,6 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     minHeight: 300,
-  },
-  nativeToolbar: {
-    flexDirection: 'row',
-    justifyContent: 'flex-end',
-    marginBottom: 10,
-  },
-  imageButton: {
-    backgroundColor: '#3b82f6',
-    paddingVertical: 8,
-    paddingHorizontal: 15,
-    borderRadius: 8,
-  },
-  imageButtonText: {
-    color: 'white',
-    fontSize: 14,
-    fontWeight: 'bold',
   },
   webView: {
     flex: 1,
