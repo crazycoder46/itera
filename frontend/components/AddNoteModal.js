@@ -235,20 +235,6 @@ export default function AddNoteModal({ visible, onClose, onSave, boxType, boxNam
     }
   });
 
-  const handleTemplateSelect = (templateKey) => {
-    const templates = getTemplates();
-    const templateContent = templates[templateKey].content;
-    
-    // Editor'a direkt INSERT mesajı gönder - başka hiçbir şey yapma
-    const iframe = document.querySelector('iframe[title="TipTap Editor"]');
-    if (iframe && iframe.contentWindow) {
-      iframe.contentWindow.postMessage(JSON.stringify({
-        type: 'INSERT_TEXT',
-        text: templateContent
-      }), '*');
-    }
-  };
-
   const handleSave = () => {
     if (!title.trim()) {
       const errorMsg = getText('enterNoteTitle');
@@ -323,14 +309,25 @@ export default function AddNoteModal({ visible, onClose, onSave, boxType, boxNam
               {getText('richTextEditor')}
             </Text>
             
-            {/* Template Selection - More aesthetic */}
+            {/* Template Selection - Direct onclick */}
             <View style={styles.templateSection}>
               <ScrollView horizontal showsHorizontalScrollIndicator={false} style={styles.templatesContainer}>
                 {Object.entries(getTemplates()).map(([key, tmpl]) => (
                   <TouchableOpacity
                     key={key}
                     style={styles.templateButton}
-                    onPress={() => handleTemplateSelect(key)}
+                    onPress={() => {
+                      // Direkt iframe'e gömülü JavaScript çağır
+                      const iframe = document.querySelector('iframe[title="TipTap Editor"]');
+                      if (iframe && iframe.contentDocument) {
+                        const editor = iframe.contentDocument.getElementById('editor');
+                        if (editor) {
+                          // Template content'i direkt cursor pozisyonuna ekle
+                          editor.focus();
+                          document.execCommand('insertHTML', false, tmpl.content);
+                        }
+                      }
+                    }}
                     activeOpacity={0.7}
                   >
                     <Text style={styles.templateButtonText}>
