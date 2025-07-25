@@ -294,12 +294,17 @@ export default function LandingScreen({ navigation }) {
               style={[
                 styles.heroTextContainer,
                 {
-                  transform: [{
+                  transform: width > 768 ? [{
                     translateX: slideAnim.interpolate({
                       inputRange: [0, 30],
                       outputRange: [-30, 0]
                     })
                   }, {
+                    translateY: slideAnim.interpolate({
+                      inputRange: [0, 30],
+                      outputRange: [30, 0]
+                    })
+                  }] : [{
                     translateY: slideAnim.interpolate({
                       inputRange: [0, 30],
                       outputRange: [30, 0]
@@ -369,12 +374,17 @@ export default function LandingScreen({ navigation }) {
                 styles.heroImageContainer,
                 {
                   opacity: fadeAnim1,
-                  transform: [{
+                  transform: width > 768 ? [{
                     translateX: slideAnim.interpolate({
                       inputRange: [0, 30],
                       outputRange: [30, 0]
                     })
                   }, {
+                    translateY: slideAnim.interpolate({
+                      inputRange: [0, 30],
+                      outputRange: [30, 0]
+                    })
+                  }] : [{
                     translateY: slideAnim.interpolate({
                       inputRange: [0, 30],
                       outputRange: [30, 0]
