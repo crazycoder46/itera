@@ -241,6 +241,8 @@ export default function AddNoteModal({ visible, onClose, onSave, boxType, boxNam
     const templates = getTemplates();
     const newContent = templates[templateKey].content;
     setContent(newContent);
+    // Editor'ı yeniden mount et ki yeni content ile başlasın
+    setEditorKey(prev => prev + 1);
   };
 
   const handleSave = () => {
