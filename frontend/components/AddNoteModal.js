@@ -9,6 +9,7 @@ export default function AddNoteModal({ visible, onClose, onSave, boxType, boxNam
   const [content, setContent] = useState('');
   const [template, setTemplate] = useState('blank');
   const [editorKey, setEditorKey] = useState(0);
+  const [templateUsed, setTemplateUsed] = useState(false);
 
   const getTemplates = () => ({
     blank: {
@@ -237,11 +238,13 @@ export default function AddNoteModal({ visible, onClose, onSave, boxType, boxNam
   });
 
   const handleTemplateSelect = (templateKey) => {
+    if (templateUsed) return; // Zaten kullanıldı, çık
+    
     setTemplate(templateKey);
     const templates = getTemplates();
     const newContent = templates[templateKey].content;
     setContent(newContent);
-    setEditorKey(prev => prev + 1);
+    setTemplateUsed(true); // Artık template kullanıldı
   };
 
   const handleSave = () => {
@@ -270,6 +273,7 @@ export default function AddNoteModal({ visible, onClose, onSave, boxType, boxNam
     setContent('');
     setTemplate('blank');
     setEditorKey(0);
+    setTemplateUsed(false);
     onClose();
   };
 
@@ -327,14 +331,17 @@ export default function AddNoteModal({ visible, onClose, onSave, boxType, boxNam
                     key={key}
                     style={[
                       styles.templateButton,
-                      template === key && styles.templateButtonActive
+                      template === key && styles.templateButtonActive,
+                      templateUsed && styles.templateButtonDisabled
                     ]}
                     onPress={() => handleTemplateSelect(key)}
-                    activeOpacity={0.7}
+                    activeOpacity={templateUsed ? 1 : 0.7}
+                    disabled={templateUsed}
                   >
                     <Text style={[
                       styles.templateButtonText,
-                      template === key && styles.templateButtonTextActive
+                      template === key && styles.templateButtonTextActive,
+                      templateUsed && styles.templateButtonTextDisabled
                     ]}>
                       {tmpl.name}
                     </Text>
@@ -459,6 +466,14 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.15,
     elevation: 2,
   },
+  templateButtonDisabled: {
+    opacity: 0.5,
+    backgroundColor: '#e0e0e0',
+    borderColor: '#d0d0d0',
+    shadowColor: '#a0a0a0',
+    shadowOpacity: 0.05,
+    elevation: 0,
+  },
   templateButtonText: {
     color: '#374151',
     fontSize: 11,
@@ -468,6 +483,9 @@ const styles = StyleSheet.create({
   },
   templateButtonTextActive: {
     color: '#ffffff',
+  },
+  templateButtonTextDisabled: {
+    color: '#9ca3af',
   },
   templateIcon: {
     fontSize: 14,
