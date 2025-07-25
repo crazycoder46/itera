@@ -241,8 +241,17 @@ export default function AddNoteModal({ visible, onClose, onSave, boxType, boxNam
     const templates = getTemplates();
     const newContent = templates[templateKey].content;
     setContent(newContent);
-    // Editor'ı yeniden mount et ki yeni content ile başlasın
-    setEditorKey(prev => prev + 1);
+    
+    // Editor'a direkt mesaj gönder
+    setTimeout(() => {
+      const iframe = document.querySelector('iframe[title="TipTap Editor"]');
+      if (iframe && iframe.contentWindow) {
+        iframe.contentWindow.postMessage(JSON.stringify({
+          type: 'SET_CONTENT',
+          content: newContent
+        }), '*');
+      }
+    }, 100);
   };
 
   const handleSave = () => {
