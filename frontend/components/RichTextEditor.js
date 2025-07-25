@@ -985,16 +985,16 @@ export default function RichTextEditor({ initialContent = '', onContentChange })
         return;
     }
     
-    // Şablonu editöre gönder
+    // Şablonu editöre gönder - INSERT_TEXT kullan ki imleç konumu korunsun
     if (isWeb && iframeRef.current) {
       iframeRef.current.contentWindow.postMessage(JSON.stringify({
-        type: 'SET_CONTENT',
-        content: templateContent
+        type: 'INSERT_TEXT',
+        text: templateContent
       }), '*');
     } else if (webViewRef.current) {
       webViewRef.current.postMessage(JSON.stringify({
-        type: 'SET_CONTENT',
-        content: templateContent
+        type: 'INSERT_TEXT',
+        text: templateContent
       }));
     }
   };

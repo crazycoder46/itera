@@ -320,19 +320,37 @@ export default function AddNoteModal({ visible, onClose, onSave, boxType, boxNam
     setTemplate(templateKey);
     const templates = getTemplates();
     const newContent = templates[templateKey].content;
-    setContent(newContent);
     
-    // Force re-render RichTextEditor with new content and fix cursor position
-    setEditorKey(prev => prev + 1);
-    
-    // Focus to the end of content after template is loaded
-    setTimeout(() => {
-      // This will be handled by the RichTextEditor component
-      const focusEvent = new CustomEvent('template-selected', {
-        detail: { content: newContent, templateKey }
-      });
-      window.dispatchEvent && window.dispatchEvent(focusEvent);
-    }, 100);
+    // Template seçimi sadece editör boşken çalışsın (ilk kullanım için)
+    if (content.trim() === '') {
+      setContent(newContent);
+      // Editörü yeniden render etmek yerine içeriği güncelle
+      setEditorKey(prev => prev + 1);
+    } else {
+      // Eğer içerik varsa, kullanıcıya sor
+      const confirmMsg = getText('language') === 'en' 
+        ? 'This will replace your current content. Continue?' 
+        : 'Bu mevcut içeriğinizi değiştirecek. Devam et?';
+      
+      if (typeof window !== 'undefined') {
+        if (window.confirm(confirmMsg)) {
+          setContent(newContent);
+          setEditorKey(prev => prev + 1);
+        }
+      } else {
+        Alert.alert(
+          getText('warning') || 'Uyarı',
+          confirmMsg,
+          [
+            { text: getText('cancel') || 'İptal', style: 'cancel' },
+            { text: getText('continue') || 'Devam', onPress: () => {
+              setContent(newContent);
+              setEditorKey(prev => prev + 1);
+            }}
+          ]
+        );
+      }
+    }
   };
 
   const handleSave = () => {

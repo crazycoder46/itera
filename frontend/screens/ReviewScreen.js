@@ -84,7 +84,6 @@ export default function ReviewScreen({ navigation }) {
     if (typeof window !== 'undefined') {
       // Web ortamı - HTML render
       let html = content
-        .replace(/<img[^>]*>/g, '<div style="background-color: #f3f4f6; padding: 12px; border-radius: 8px; text-align: center; color: #6b7280; font-style: italic; margin: 12px 0;">📷 [Resim]</div>') // Replace img tags safely
         .replace(/^# (.*$)/gim, '<h1 style="font-size: 24px; font-weight: bold; margin: 16px 0; color: #1f2937;">$1</h1>')
         .replace(/^## (.*$)/gim, '<h2 style="font-size: 20px; font-weight: bold; margin: 14px 0; color: #1f2937;">$1</h2>')
         .replace(/^### (.*$)/gim, '<h3 style="font-size: 18px; font-weight: bold; margin: 12px 0; color: #1f2937;">$1</h3>')
