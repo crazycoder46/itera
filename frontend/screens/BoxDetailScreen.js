@@ -149,8 +149,16 @@ export default function BoxDetailScreen({ route, navigation }) {
   };
 
   const truncateContent = (content, maxLength = 150) => {
-    if (content.length <= maxLength) return content;
-    return content.substring(0, maxLength) + '...';
+    // Remove HTML img tags and other HTML content for security
+    let cleanContent = content
+      .replace(/<img[^>]*>/g, '[Resim]') // Replace img tags with [Resim]
+      .replace(/<[^>]*>/g, '') // Remove all other HTML tags
+      .replace(/[#*`>\-]/g, '') // Remove markdown characters
+      .replace(/\s+/g, ' ') // Replace multiple spaces with single space
+      .trim(); // Trim whitespace
+    
+    if (cleanContent.length <= maxLength) return cleanContent;
+    return cleanContent.substring(0, maxLength) + '...';
   };
 
   return (

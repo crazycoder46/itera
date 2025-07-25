@@ -5,47 +5,56 @@ import RichTextEditor from './RichTextEditor';
 
 export default function AddNoteModal({ visible, onClose, onSave, boxType, boxName }) {
   const { getText } = useTheme();
-    const [title, setTitle] = useState('');
+  const [title, setTitle] = useState('');
   const [content, setContent] = useState('');
   const [template, setTemplate] = useState('blank');
+  const [editorKey, setEditorKey] = useState(0);
 
   const getTemplates = () => ({
     blank: {
       name: getText('blankNote'),
-      content: ''
+      content: '',
+      icon: '📝'
     },
     cornell: {
       name: getText('cornellMethod'),
       content: getText('language') === 'en' 
         ? '# Note Title\n\n## Main Notes\n\n\n## Key Points\n- \n- \n- \n\n## Summary\n\n'
-        : '# Not Başlığı\n\n## Ana Notlar\n\n\n## Anahtar Noktalar\n- \n- \n- \n\n## Özet\n\n'
+        : '# Not Başlığı\n\n## Ana Notlar\n\n\n## Anahtar Noktalar\n- \n- \n- \n\n## Özet\n\n',
+      icon: '📋'
     },
     qa: {
       name: getText('qaCard'),
       content: getText('language') === 'en' 
         ? '# Question\n\n\n## Answer\n\n'
-        : '# Soru\n\n\n## Cevap\n\n'
+        : '# Soru\n\n\n## Cevap\n\n',
+      icon: '❓'
     },
     meeting: {
       name: getText('meetingNote'),
       content: getText('language') === 'en'
         ? '# Meeting: [Title]\n\n**Date:** \n**Participants:** \n\n## Agenda\n- \n- \n\n## Decisions\n- \n- \n\n## Actions\n- [ ] \n- [ ] \n'
-        : '# Toplantı: [Başlık]\n\n**Tarih:** \n**Katılımcılar:** \n\n## Gündem\n- \n- \n\n## Kararlar\n- \n- \n\n## Aksiyonlar\n- [ ] \n- [ ] \n'
+        : '# Toplantı: [Başlık]\n\n**Tarih:** \n**Katılımcılar:** \n\n## Gündem\n- \n- \n\n## Kararlar\n- \n- \n\n## Aksiyonlar\n- [ ] \n- [ ] \n',
+      icon: '🏢'
     },
     literature: {
       name: getText('literatureReview'),
       content: getText('language') === 'en'
         ? '# [Source Name]\n\n**Author:** \n**Year:** \n**Type:** \n\n## Main Ideas\n\n\n## Important Quotes\n\n\n## Personal Notes\n\n'
-        : '# [Kaynak Adı]\n\n**Yazar:** \n**Yıl:** \n**Tür:** \n\n## Ana Fikirler\n\n\n## Önemli Alıntılar\n\n\n## Kişisel Notlar\n\n'
+        : '# [Kaynak Adı]\n\n**Yazar:** \n**Yıl:** \n**Tür:** \n\n## Ana Fikirler\n\n\n## Önemli Alıntılar\n\n\n## Kişisel Notlar\n\n',
+      icon: '📚'
     }
   });
 
   const handleTemplateSelect = (templateKey) => {
     setTemplate(templateKey);
     const templates = getTemplates();
-    setContent(templates[templateKey].content);
+    const newContent = templates[templateKey].content;
+    setContent(newContent);
+    
+    // Force re-render RichTextEditor with new content
+    setEditorKey(prev => prev + 1);
   };
-
 
   const handleSave = () => {
     if (!title.trim()) {
@@ -72,6 +81,7 @@ export default function AddNoteModal({ visible, onClose, onSave, boxType, boxNam
     setTitle('');
     setContent('');
     setTemplate('blank');
+    setEditorKey(0);
     onClose();
   };
 
@@ -121,7 +131,7 @@ export default function AddNoteModal({ visible, onClose, onSave, boxType, boxNam
               {getText('richTextEditor')}
             </Text>
             
-            {/* Template Selection */}
+            {/* Template Selection - More aesthetic */}
             <View style={styles.templateSection}>
               <ScrollView horizontal showsHorizontalScrollIndicator={false} style={styles.templatesContainer}>
                 {Object.entries(getTemplates()).map(([key, tmpl]) => (
@@ -132,7 +142,9 @@ export default function AddNoteModal({ visible, onClose, onSave, boxType, boxNam
                       template === key && styles.templateButtonActive
                     ]}
                     onPress={() => handleTemplateSelect(key)}
+                    activeOpacity={0.7}
                   >
+                    <Text style={styles.templateIcon}>{tmpl.icon}</Text>
                     <Text style={[
                       styles.templateButtonText,
                       template === key && styles.templateButtonTextActive
@@ -145,6 +157,7 @@ export default function AddNoteModal({ visible, onClose, onSave, boxType, boxNam
             </View>
             
             <RichTextEditor
+              key={editorKey}
               initialContent={content}
               onContentChange={setContent}
             />
@@ -233,25 +246,44 @@ const styles = StyleSheet.create({
     marginBottom: 8,
   },
   templateButton: {
-    paddingHorizontal: 16,
-    paddingVertical: 8,
-    backgroundColor: '#f3f4f6',
-    borderRadius: 20,
-    marginRight: 8,
-    borderWidth: 1,
-    borderColor: '#d1d5db',
+    flexDirection: 'row',
+    alignItems: 'center',
+    paddingHorizontal: 20,
+    paddingVertical: 12,
+    backgroundColor: '#ffffff',
+    borderRadius: 25,
+    marginRight: 12,
+    borderWidth: 2,
+    borderColor: '#e5e7eb',
+    shadowColor: '#000',
+    shadowOffset: {
+      width: 0,
+      height: 2,
+    },
+    shadowOpacity: 0.1,
+    shadowRadius: 3,
+    elevation: 3,
+    minWidth: 120,
   },
   templateButtonActive: {
     backgroundColor: '#2563eb',
     borderColor: '#2563eb',
+    shadowColor: '#2563eb',
+    shadowOpacity: 0.25,
+    elevation: 5,
   },
   templateButtonText: {
     color: '#374151',
-    fontSize: 14,
-    fontWeight: '500',
+    fontSize: 13,
+    fontWeight: '600',
+    marginLeft: 8,
+    textAlign: 'center',
   },
   templateButtonTextActive: {
-    color: '#fff',
+    color: '#ffffff',
+  },
+  templateIcon: {
+    fontSize: 18,
   },
   titleInput: {
     borderWidth: 1,
