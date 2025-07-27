@@ -28,6 +28,7 @@
     "web": {
       "favicon": "./assets/favicon.png",
       "bundler": "metro",
+      "title": "Itera",
       "googleAnalytics": {
         "measurementId": "G-6957MVS7HL"
       }
