@@ -559,7 +559,7 @@ export default function EditRichTextEditor({ initialContent = '', onContentChang
                     // DOM'u güncelle, TipTap editörü otomatik olarak content'i güncelleyecek
                   }
                   
-                  const handleMouseUp = () => {
+                                    const handleMouseUp = () => {
                     if (isResizing) {
                       isResizing = false
                       document.removeEventListener('mousemove', handleMouseMove)
@@ -567,24 +567,33 @@ export default function EditRichTextEditor({ initialContent = '', onContentChang
                       
                       // Resize işleminden sonra content'i güncelle
                       setTimeout(() => {
-                        // TipTap editörünün content'ini zorla güncelle
-                        const currentContent = editor.getHTML()
-                        console.log('Content after mouse resize:', currentContent);
-                        
-                        // Resim boyutlarını kontrol et
-                        const editorEl = document.querySelector('#editor');
-                        const images = editorEl ? editorEl.querySelectorAll('img') : [];
-                        images.forEach((img, index) => {
-                          console.log('Image ' + index + ' after mouse resize:', {
-                            src: img.src,
-                            width: img.getAttribute('width'),
-                            height: img.getAttribute('height'),
-                            styleWidth: img.style.width,
-                            styleHeight: img.style.height
+                        try {
+                          // TipTap editörünün content'ini zorla güncelle
+                          const currentContent = editor.getHTML()
+                          console.log('Content after mouse resize:', currentContent);
+                          
+                          // Resim boyutlarını kontrol et
+                          const editorEl = document.querySelector('#editor');
+                          const images = editorEl ? editorEl.querySelectorAll('img') : [];
+                          images.forEach((img, index) => {
+                            console.log('Image ' + index + ' after mouse resize:', {
+                              src: img.src,
+                              width: img.getAttribute('width'),
+                              height: img.getAttribute('height'),
+                              styleWidth: img.style.width,
+                              styleHeight: img.style.height
+                            });
                           });
-                        });
-                        
-                        notifyContentChange(currentContent)
+                          
+                          // Content değişikliğini parent'a bildir
+                          if (typeof currentContent === 'string') {
+                            notifyContentChange(currentContent)
+                          } else {
+                            console.error('Invalid content type:', typeof currentContent);
+                          }
+                        } catch (error) {
+                          console.error('Error updating content after resize:', error);
+                        }
                       }, 100);
                     }
                   }
@@ -624,7 +633,7 @@ export default function EditRichTextEditor({ initialContent = '', onContentChang
                     // DOM'u güncelle, TipTap editörü otomatik olarak content'i güncelleyecek
                   }
                   
-                  const handleTouchEnd = () => {
+                                    const handleTouchEnd = () => {
                     if (isResizing) {
                       isResizing = false
                       document.removeEventListener('touchmove', handleTouchMove)
@@ -632,24 +641,33 @@ export default function EditRichTextEditor({ initialContent = '', onContentChang
                       
                       // Resize işleminden sonra content'i güncelle
                       setTimeout(() => {
-                        // TipTap editörünün content'ini zorla güncelle
-                        const currentContent = editor.getHTML()
-                        console.log('Content after touch resize:', currentContent);
-                        
-                        // Resim boyutlarını kontrol et
-                        const editorEl = document.querySelector('#editor');
-                        const images = editorEl ? editorEl.querySelectorAll('img') : [];
-                        images.forEach((img, index) => {
-                          console.log('Image ' + index + ' after touch resize:', {
-                            src: img.src,
-                            width: img.getAttribute('width'),
-                            height: img.getAttribute('height'),
-                            styleWidth: img.style.width,
-                            styleHeight: img.style.height
+                        try {
+                          // TipTap editörünün content'ini zorla güncelle
+                          const currentContent = editor.getHTML()
+                          console.log('Content after touch resize:', currentContent);
+                          
+                          // Resim boyutlarını kontrol et
+                          const editorEl = document.querySelector('#editor');
+                          const images = editorEl ? editorEl.querySelectorAll('img') : [];
+                          images.forEach((img, index) => {
+                            console.log('Image ' + index + ' after touch resize:', {
+                              src: img.src,
+                              width: img.getAttribute('width'),
+                              height: img.getAttribute('height'),
+                              styleWidth: img.style.width,
+                              styleHeight: img.style.height
+                            });
                           });
-                        });
-                        
-                        notifyContentChange(currentContent)
+                          
+                          // Content değişikliğini parent'a bildir
+                          if (typeof currentContent === 'string') {
+                            notifyContentChange(currentContent)
+                          } else {
+                            console.error('Invalid content type:', typeof currentContent);
+                          }
+                        } catch (error) {
+                          console.error('Error updating content after touch resize:', error);
+                        }
                       }, 100);
                     }
                   }
@@ -736,11 +754,21 @@ export default function EditRichTextEditor({ initialContent = '', onContentChang
           }
           
           function notifyContentChange(content) {
+            // Content'in string olduğundan emin ol
+            if (typeof content !== 'string') {
+              console.error('Invalid content type for notification:', typeof content);
+              return;
+            }
+            
             console.log('Notifying parent of content change:', content);
-            window.parent.postMessage(JSON.stringify({
-              type: 'CONTENT_CHANGED',
-              content: content
-            }), '*')
+            try {
+              window.parent.postMessage(JSON.stringify({
+                type: 'CONTENT_CHANGED',
+                content: content
+              }), '*')
+            } catch (error) {
+              console.error('Error sending message to parent:', error);
+            }
           }
           
           function updateToolbarState() {
@@ -800,6 +828,12 @@ export default function EditRichTextEditor({ initialContent = '', onContentChang
           // Parent'dan gelen mesajları dinle
           window.addEventListener('message', function(event) {
             try {
+              // Event.data string mi kontrol et
+              if (typeof event.data !== 'string') {
+                console.log('Skipping non-string message:', event.data);
+                return;
+              }
+              
               const message = JSON.parse(event.data)
               console.log('Editor received message:', message.type);
               
