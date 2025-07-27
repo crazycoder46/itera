@@ -109,6 +109,19 @@ export default function EditRichTextEditor({ initialContent = '', onContentChang
             }));
           }
           
+          // Resim değiştirme işleminden sonra content'i hemen güncelle
+          setTimeout(() => {
+            if (isWeb && iframeRef.current) {
+              iframeRef.current.contentWindow.postMessage(JSON.stringify({
+                type: 'FORCE_CONTENT_UPDATE'
+              }), '*');
+            } else if (webViewRef.current) {
+              webViewRef.current.postMessage(JSON.stringify({
+                type: 'FORCE_CONTENT_UPDATE'
+              }));
+            }
+          }, 100);
+          
           // Resim ekleme işleminden sonra content'i güncelle
           setTimeout(() => {
             if (isWeb && iframeRef.current) {
@@ -120,7 +133,20 @@ export default function EditRichTextEditor({ initialContent = '', onContentChang
                 type: 'GET_CONTENT'
               }));
             }
-          }, 500);
+          }, 1000); // Daha uzun timeout
+          
+          // Ek olarak, resim işleminden sonra content'i zorla güncelle
+          setTimeout(() => {
+            if (isWeb && iframeRef.current) {
+              iframeRef.current.contentWindow.postMessage(JSON.stringify({
+                type: 'FORCE_CONTENT_UPDATE'
+              }), '*');
+            } else if (webViewRef.current) {
+              webViewRef.current.postMessage(JSON.stringify({
+                type: 'FORCE_CONTENT_UPDATE'
+              }));
+            }
+          }, 2000);
           
         } catch (uploadError) {
           console.error('Resim yükleme başarısız:', uploadError);
@@ -785,6 +811,15 @@ export default function EditRichTextEditor({ initialContent = '', onContentChang
                     content: content
                   }), '*')
                 }
+              } else if (message.type === 'FORCE_CONTENT_UPDATE') {
+                if (editor) {
+                  const content = editor.getHTML()
+                  console.log('Force content update:', content);
+                  window.parent.postMessage(JSON.stringify({
+                    type: 'CONTENT_CHANGED',
+                    content: content
+                  }), '*')
+                }
               }
             } catch (error) {
               console.error('Message handling error:', error)
@@ -870,6 +905,11 @@ export default function EditRichTextEditor({ initialContent = '', onContentChang
         // WebView için GET_CONTENT mesajını işle
         webViewRef.current?.postMessage(JSON.stringify({
           type: 'GET_CONTENT'
+        }));
+      } else if (message.type === 'FORCE_CONTENT_UPDATE') {
+        // WebView için FORCE_CONTENT_UPDATE mesajını işle
+        webViewRef.current?.postMessage(JSON.stringify({
+          type: 'FORCE_CONTENT_UPDATE'
         }));
       }
     } catch (error) {
