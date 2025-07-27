@@ -1,10 +1,11 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { View, Text, TouchableOpacity } from 'react-native';
 
 import CustomAlert from './components/CustomAlert';
+import { trackPageView, trackUserAction } from './utils/analytics';
 
 import { AuthProvider, useAuth } from './context/AuthContext';
 import { ThemeProvider, useTheme } from './context/ThemeContext';
@@ -365,6 +366,23 @@ function AppStack() {
 // Main App Component
 function AppContent() {
   const { user, loading } = useAuth();
+
+  // Track app initialization
+  useEffect(() => {
+    trackPageView('app_launch');
+    trackUserAction('app_opened', 'App Lifecycle');
+  }, []);
+
+  // Track authentication state changes
+  useEffect(() => {
+    if (user) {
+      trackPageView('authenticated_user');
+      trackUserAction('user_logged_in', 'Authentication');
+    } else {
+      trackPageView('unauthenticated_user');
+      trackUserAction('user_logged_out', 'Authentication');
+    }
+  }, [user]);
 
   if (loading) {
     return (
