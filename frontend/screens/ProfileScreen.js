@@ -3,6 +3,7 @@ import { View, Text, TouchableOpacity, Alert, StyleSheet, ScrollView, TextInput,
 import * as ImagePicker from 'expo-image-picker';
 import { useAuth } from '../context/AuthContext';
 import { useTheme } from '../context/ThemeContext';
+import CustomAlert from '../components/CustomAlert';
 
 export default function ProfileScreen() {
   const { user, setUser, logout, testMode, updateProfile, uploadProfilePicture, deleteProfilePicture, language, updateLanguage, updateTheme, isPremium } = useAuth();
@@ -11,6 +12,8 @@ export default function ProfileScreen() {
   const [isChangingPassword, setIsChangingPassword] = useState(false);
   const [showLanguageModal, setShowLanguageModal] = useState(false);
   const [showThemeModal, setShowThemeModal] = useState(false);
+  const [alertVisible, setAlertVisible] = useState(false);
+  const [alertConfig, setAlertConfig] = useState({});
   const [editedUser, setEditedUser] = useState({
     first_name: user?.first_name || '',
     last_name: user?.last_name || '',
@@ -32,6 +35,16 @@ export default function ProfileScreen() {
     { code: 'dark', name: getText('darkTheme') }
   ];
 
+  const showAlert = (title, message, type = 'info', onConfirm = null) => {
+    setAlertConfig({
+      title,
+      message,
+      type,
+      onConfirm: onConfirm || (() => setAlertVisible(false))
+    });
+    setAlertVisible(true);
+  };
+
   useEffect(() => {
     if (user) {
       setEditedUser({
@@ -45,11 +58,7 @@ export default function ProfileScreen() {
   const handleSaveProfile = async () => {
     if (!editedUser.first_name.trim() || !editedUser.last_name.trim()) {
       const message = 'Ad ve soyad alanları boş olamaz';
-      if (typeof window !== 'undefined') {
-        window.alert(message);
-      } else {
-        Alert.alert('Hata', message);
-      }
+      showAlert('Hata', message, 'error');
       return;
     }
 
@@ -61,59 +70,35 @@ export default function ProfileScreen() {
 
       if (result.success) {
         const message = result.message || 'Profil başarıyla güncellendi';
-        if (typeof window !== 'undefined') {
-          window.alert(message);
-        } else {
-          Alert.alert('Başarılı', message);
-        }
+        showAlert('Başarılı', message, 'success');
         setIsEditing(false);
       } else {
         const message = result.message || 'Profil güncellenirken hata oluştu';
-        if (typeof window !== 'undefined') {
-          window.alert(message);
-        } else {
-          Alert.alert('Hata', message);
-        }
+        showAlert('Hata', message, 'error');
       }
     } catch (error) {
       console.error('Profile save error:', error);
       const message = 'Profil güncellenirken hata oluştu';
-      if (typeof window !== 'undefined') {
-        window.alert(message);
-      } else {
-        Alert.alert('Hata', message);
-      }
+      showAlert('Hata', message, 'error');
     }
   };
 
   const handleChangePassword = async () => {
     if (!passwordData.newPassword.trim() || !passwordData.confirmPassword.trim()) {
       const message = 'Yeni şifre alanları boş olamaz';
-      if (typeof window !== 'undefined') {
-        window.alert(message);
-      } else {
-        Alert.alert('Hata', message);
-      }
+      showAlert('Hata', message, 'error');
       return;
     }
 
     if (passwordData.newPassword !== passwordData.confirmPassword) {
       const message = 'Yeni şifreler eşleşmiyor';
-      if (typeof window !== 'undefined') {
-        window.alert(message);
-      } else {
-        Alert.alert('Hata', message);
-      }
+      showAlert('Hata', message, 'error');
       return;
     }
 
     if (passwordData.newPassword.length < 6) {
       const message = 'Şifre en az 6 karakter olmalıdır';
-      if (typeof window !== 'undefined') {
-        window.alert(message);
-      } else {
-        Alert.alert('Hata', message);
-      }
+      showAlert('Hata', message, 'error');
       return;
     }
 
@@ -124,11 +109,7 @@ export default function ProfileScreen() {
 
       if (result.success) {
         const message = 'Şifre başarıyla değiştirildi';
-        if (typeof window !== 'undefined') {
-          window.alert(message);
-        } else {
-          Alert.alert('Başarılı', message);
-        }
+        showAlert('Başarılı', message, 'success');
         setIsChangingPassword(false);
         setPasswordData({
           currentPassword: '',
@@ -137,20 +118,12 @@ export default function ProfileScreen() {
         });
       } else {
         const message = result.message || 'Şifre değiştirilirken hata oluştu';
-        if (typeof window !== 'undefined') {
-          window.alert(message);
-        } else {
-          Alert.alert('Hata', message);
-        }
+        showAlert('Hata', message, 'error');
       }
     } catch (error) {
       console.error('Password change error:', error);
       const message = 'Şifre değiştirilirken hata oluştu';
-      if (typeof window !== 'undefined') {
-        window.alert(message);
-      } else {
-        Alert.alert('Hata', message);
-      }
+      showAlert('Hata', message, 'error');
     }
   };
 
@@ -173,11 +146,7 @@ export default function ProfileScreen() {
   };
 
   const handleUpgrade = () => {
-    if (typeof window !== 'undefined') {
-      window.alert(getText('premiumFeatures'));
-    } else {
-      Alert.alert('Premium', getText('premiumFeatures'));
-    }
+    showAlert('Premium', getText('premiumFeatures'), 'info');
   };
 
   const handleLanguageSelect = async (languageCode) => {
@@ -186,11 +155,7 @@ export default function ProfileScreen() {
     
     // Dil değişikliği mesajı
     const message = languageCode === 'en' ? 'Language changed to English!' : 'Dil Türkçe olarak değiştirildi!';
-    if (typeof window !== 'undefined') {
-      window.alert(message);
-    } else {
-      Alert.alert('Info', message);
-    }
+    showAlert('Bilgi', message, 'success');
   };
 
   const handleThemeSelect = async (themeCode) => {
@@ -199,11 +164,7 @@ export default function ProfileScreen() {
     
     // Tema değişikliği mesajı
     const message = themeCode === 'dark' ? 'Koyu tema aktif edildi!' : 'Açık tema aktif edildi!';
-    if (typeof window !== 'undefined') {
-      window.alert(message);
-    } else {
-      Alert.alert('Tema', message);
-    }
+    showAlert('Tema', message, 'success');
   };
 
   const handleProfilePictureChange = async () => {
@@ -237,13 +198,13 @@ export default function ProfileScreen() {
                 // AuthContext user state'ini güncelle
                 const updatedUser = { ...user, profile_picture: data.user.profile_picture };
                 setUser(updatedUser);
-                window.alert(data.message);
+                showAlert('Başarılı', data.message, 'success');
               } else {
-                window.alert(data.message || 'Profil fotoğrafı yüklenirken hata oluştu');
+                showAlert('Hata', data.message || 'Profil fotoğrafı yüklenirken hata oluştu', 'error');
               }
             } catch (error) {
               console.error('Upload error:', error);
-              window.alert('Profil fotoğrafı yüklenirken hata oluştu');
+              showAlert('Hata', 'Profil fotoğrafı yüklenirken hata oluştu', 'error');
             }
           }
         };
@@ -276,11 +237,7 @@ export default function ProfileScreen() {
     } catch (error) {
       console.error('Profile picture change error:', error);
       const message = 'Profil fotoğrafı yüklenirken hata oluştu';
-      if (typeof window !== 'undefined') {
-        window.alert(message);
-      } else {
-        Alert.alert('Hata', message);
-      }
+      showAlert('Hata', message, 'error');
     }
   };
 
@@ -290,43 +247,21 @@ export default function ProfileScreen() {
         ? 'Are you sure you want to delete your profile picture?' 
         : 'Profil fotoğrafınızı silmek istediğinizden emin misiniz?';
       
-      if (typeof window !== 'undefined') {
-        const confirmed = window.confirm(confirmMessage);
-        if (!confirmed) return;
-      } else {
-        Alert.alert(
-          getText('language') === 'en' ? 'Delete Profile Picture' : 'Profil Fotoğrafını Sil',
-          confirmMessage,
-          [
-            { text: getText('language') === 'en' ? 'Cancel' : 'İptal', style: 'cancel' },
-            { text: getText('language') === 'en' ? 'Delete' : 'Sil', onPress: performDelete, style: 'destructive' }
-          ]
-        );
-        return;
-      }
-
-      async function performDelete() {
-        const result = await deleteProfilePicture();
-        const message = result.message || (getText('language') === 'en' ? 'Profile picture deleted' : 'Profil fotoğrafı silindi');
-        
-        if (typeof window !== 'undefined') {
-          window.alert(message);
-        } else {
-          Alert.alert(result.success ? 'Başarılı' : 'Hata', message);
+      showAlert(
+        getText('language') === 'en' ? 'Delete Profile Picture' : 'Profil Fotoğrafını Sil',
+        confirmMessage,
+        'warning',
+        async () => {
+          setAlertVisible(false);
+          const result = await deleteProfilePicture();
+          const message = result.message || (getText('language') === 'en' ? 'Profile picture deleted' : 'Profil fotoğrafı silindi');
+          showAlert(result.success ? 'Başarılı' : 'Hata', message, result.success ? 'success' : 'error');
         }
-      }
-
-      if (typeof window !== 'undefined') {
-        await performDelete();
-      }
+      );
     } catch (error) {
       console.error('Profile picture delete error:', error);
       const message = getText('language') === 'en' ? 'Error deleting profile picture' : 'Profil fotoğrafı silinirken hata oluştu';
-      if (typeof window !== 'undefined') {
-        window.alert(message);
-      } else {
-        Alert.alert('Hata', message);
-      }
+      showAlert('Hata', message, 'error');
     }
   };
 
@@ -668,6 +603,18 @@ export default function ProfileScreen() {
           </View>
         </View>
       </Modal>
+      
+      {/* Custom Alert */}
+      <CustomAlert
+        visible={alertVisible}
+        title={alertConfig.title}
+        message={alertConfig.message}
+        type={alertConfig.type}
+        onConfirm={alertConfig.onConfirm}
+        onCancel={() => setAlertVisible(false)}
+        confirmText={getText('ok')}
+        cancelText={getText('cancel')}
+      />
     </ScrollView>
   );
 }
