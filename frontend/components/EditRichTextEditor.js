@@ -496,6 +496,18 @@ export default function EditRichTextEditor({ initialContent = '', onContentChang
             
             addNodeView() {
               return ({ node, updateAttributes, getPos, editor }) => {
+                // updateAttributes fonksiyonunu güvenli hale getir
+                const safeUpdateAttributes = (attrs) => {
+                  try {
+                    if (typeof updateAttributes === 'function') {
+                      updateAttributes(attrs)
+                    } else {
+                      console.warn('updateAttributes is not available')
+                    }
+                  } catch (error) {
+                    console.error('Error updating attributes:', error)
+                  }
+                }
                 const container = document.createElement('div')
                 container.className = 'image-resizer'
                 container.style.display = 'inline-block'
@@ -561,7 +573,7 @@ export default function EditRichTextEditor({ initialContent = '', onContentChang
                     // TipTap editörünün node'unu güncelle
                     const pos = getPos()
                     if (pos !== undefined) {
-                      updateAttributes({
+                      safeUpdateAttributes({
                         width: newWidth,
                         height: newHeight
                       })
@@ -604,6 +616,28 @@ export default function EditRichTextEditor({ initialContent = '', onContentChang
                           console.error('Error updating content after resize:', error);
                         }
                       }, 100);
+                      
+                      // Ek olarak, resize işleminden hemen sonra content'i zorla güncelle
+                      setTimeout(() => {
+                        try {
+                          const pos = getPos()
+                          if (pos !== undefined) {
+                            // Node'u zorla güncelle
+                            editor.commands.setNodeSelection(pos)
+                            editor.commands.updateAttributes('image', {
+                              width: img.offsetWidth,
+                              height: img.offsetHeight
+                            })
+                            
+                            // Content'i tekrar kontrol et
+                            const updatedContent = editor.getHTML()
+                            console.log('Updated content after force update:', updatedContent)
+                            notifyContentChange(updatedContent)
+                          }
+                        } catch (error) {
+                          console.error('Error in force update:', error)
+                        }
+                      }, 200);
                     }
                   }
                   
@@ -644,7 +678,7 @@ export default function EditRichTextEditor({ initialContent = '', onContentChang
                     // TipTap editörünün node'unu güncelle
                     const pos = getPos()
                     if (pos !== undefined) {
-                      updateAttributes({
+                      safeUpdateAttributes({
                         width: newWidth,
                         height: newHeight
                       })
@@ -687,6 +721,28 @@ export default function EditRichTextEditor({ initialContent = '', onContentChang
                           console.error('Error updating content after touch resize:', error);
                         }
                       }, 100);
+                      
+                      // Ek olarak, resize işleminden hemen sonra content'i zorla güncelle
+                      setTimeout(() => {
+                        try {
+                          const pos = getPos()
+                          if (pos !== undefined) {
+                            // Node'u zorla güncelle
+                            editor.commands.setNodeSelection(pos)
+                            editor.commands.updateAttributes('image', {
+                              width: img.offsetWidth,
+                              height: img.offsetHeight
+                            })
+                            
+                            // Content'i tekrar kontrol et
+                            const updatedContent = editor.getHTML()
+                            console.log('Updated content after force update:', updatedContent)
+                            notifyContentChange(updatedContent)
+                          }
+                        } catch (error) {
+                          console.error('Error in force update:', error)
+                        }
+                      }, 200);
                     }
                   }
                   
