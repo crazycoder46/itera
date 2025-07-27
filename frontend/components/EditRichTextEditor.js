@@ -796,12 +796,32 @@ export default function EditRichTextEditor({ initialContent = '', onContentChang
                 if (editor && message.imageUrl) {
                   console.log('Inserting image:', message.imageUrl);
                   editor.chain().focus().setImage({ src: message.imageUrl }).run()
+                  
+                  // Resim ekleme işleminden sonra content değişikliğini parent'a bildir
+                  setTimeout(() => {
+                    const updatedContent = editor.getHTML()
+                    console.log('Content after image insertion:', updatedContent);
+                    window.parent.postMessage(JSON.stringify({
+                      type: 'CONTENT_CHANGED',
+                      content: updatedContent
+                    }), '*')
+                  }, 100);
                 }
               } else if (message.type === 'REPLACE_PLACEHOLDER') {
                 if (editor) {
                   const content = editor.getHTML()
                   const newContent = content.replace(message.oldUrl, message.newUrl)
                   editor.commands.setContent(newContent)
+                  
+                  // Resim değiştirme işleminden sonra content değişikliğini parent'a bildir
+                  setTimeout(() => {
+                    const updatedContent = editor.getHTML()
+                    console.log('Content after image replacement:', updatedContent);
+                    window.parent.postMessage(JSON.stringify({
+                      type: 'CONTENT_CHANGED',
+                      content: updatedContent
+                    }), '*')
+                  }, 100);
                 }
               } else if (message.type === 'GET_CONTENT') {
                 if (editor) {
