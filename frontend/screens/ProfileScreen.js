@@ -57,8 +57,11 @@ export default function ProfileScreen() {
 
   const handleSaveProfile = async () => {
     if (!editedUser.first_name.trim() || !editedUser.last_name.trim()) {
-      const message = 'Ad ve soyad alanları boş olamaz';
-      showAlert('Hata', message, 'error');
+      const title = language === 'en' ? 'Error' : 'Hata';
+      const message = language === 'en' 
+        ? 'First name and last name fields cannot be empty' 
+        : 'Ad ve soyad alanları boş olamaz';
+      showAlert(title, message, 'error');
       return;
     }
 
@@ -69,36 +72,53 @@ export default function ProfileScreen() {
       });
 
       if (result.success) {
-        const message = result.message || 'Profil başarıyla güncellendi';
-        showAlert('Başarılı', message, 'success');
+        const title = language === 'en' ? 'Success' : 'Başarılı';
+        const message = result.message || (language === 'en' 
+          ? 'Profile updated successfully' 
+          : 'Profil başarıyla güncellendi');
+        showAlert(title, message, 'success');
         setIsEditing(false);
       } else {
-        const message = result.message || 'Profil güncellenirken hata oluştu';
-        showAlert('Hata', message, 'error');
+        const title = language === 'en' ? 'Error' : 'Hata';
+        const message = result.message || (language === 'en' 
+          ? 'Error updating profile' 
+          : 'Profil güncellenirken hata oluştu');
+        showAlert(title, message, 'error');
       }
     } catch (error) {
-      console.error('Profile save error:', error);
-      const message = 'Profil güncellenirken hata oluştu';
-      showAlert('Hata', message, 'error');
+      const title = language === 'en' ? 'Error' : 'Hata';
+      const message = language === 'en' 
+        ? 'Error updating profile' 
+        : 'Profil güncellenirken hata oluştu';
+      showAlert(title, message, 'error');
     }
   };
 
   const handleChangePassword = async () => {
     if (!passwordData.newPassword.trim() || !passwordData.confirmPassword.trim()) {
-      const message = 'Yeni şifre alanları boş olamaz';
-      showAlert('Hata', message, 'error');
+      const title = language === 'en' ? 'Error' : 'Hata';
+      const message = language === 'en' 
+        ? 'New password fields cannot be empty' 
+        : 'Yeni şifre alanları boş olamaz';
+      showAlert(title, message, 'error');
       return;
     }
 
     if (passwordData.newPassword !== passwordData.confirmPassword) {
-      const message = 'Yeni şifreler eşleşmiyor';
-      showAlert('Hata', message, 'error');
+      const title = language === 'en' ? 'Error' : 'Hata';
+      const message = language === 'en' 
+        ? 'New passwords do not match' 
+        : 'Yeni şifreler eşleşmiyor';
+      showAlert(title, message, 'error');
       return;
     }
 
     if (passwordData.newPassword.length < 6) {
-      const message = 'Şifre en az 6 karakter olmalıdır';
-      showAlert('Hata', message, 'error');
+      const title = language === 'en' ? 'Error' : 'Hata';
+      const message = language === 'en' 
+        ? 'Password must be at least 6 characters' 
+        : 'Şifre en az 6 karakter olmalıdır';
+      showAlert(title, message, 'error');
       return;
     }
 
@@ -108,8 +128,11 @@ export default function ProfileScreen() {
       });
 
       if (result.success) {
-        const message = 'Şifre başarıyla değiştirildi';
-        showAlert('Başarılı', message, 'success');
+        const title = language === 'en' ? 'Success' : 'Başarılı';
+        const message = language === 'en' 
+          ? 'Password changed successfully' 
+          : 'Şifre başarıyla değiştirildi';
+        showAlert(title, message, 'success');
         setIsChangingPassword(false);
         setPasswordData({
           currentPassword: '',
@@ -117,13 +140,18 @@ export default function ProfileScreen() {
           confirmPassword: ''
         });
       } else {
-        const message = result.message || 'Şifre değiştirilirken hata oluştu';
-        showAlert('Hata', message, 'error');
+        const title = language === 'en' ? 'Error' : 'Hata';
+        const message = result.message || (language === 'en' 
+          ? 'Error changing password' 
+          : 'Şifre değiştirilirken hata oluştu');
+        showAlert(title, message, 'error');
       }
     } catch (error) {
-      console.error('Password change error:', error);
-      const message = 'Şifre değiştirilirken hata oluştu';
-      showAlert('Hata', message, 'error');
+      const title = language === 'en' ? 'Error' : 'Hata';
+      const message = language === 'en' 
+        ? 'Error changing password' 
+        : 'Şifre değiştirilirken hata oluştu';
+      showAlert(title, message, 'error');
     }
   };
 
@@ -154,8 +182,11 @@ export default function ProfileScreen() {
     setShowLanguageModal(false);
     
     // Dil değişikliği mesajı
-    const message = languageCode === 'en' ? 'Language changed to English!' : 'Dil Türkçe olarak değiştirildi!';
-    showAlert('Bilgi', message, 'success');
+    const title = languageCode === 'en' ? 'Information' : 'Bilgi';
+    const message = languageCode === 'en' 
+      ? 'Language changed to English!' 
+      : 'Dil Türkçe olarak değiştirildi!';
+    showAlert(title, message, 'success');
   };
 
   const handleThemeSelect = async (themeCode) => {
@@ -163,8 +194,11 @@ export default function ProfileScreen() {
     setShowThemeModal(false);
     
     // Tema değişikliği mesajı
-    const message = themeCode === 'dark' ? 'Koyu tema aktif edildi!' : 'Açık tema aktif edildi!';
-    showAlert('Tema', message, 'success');
+    const title = language === 'en' ? 'Theme' : 'Tema';
+    const message = themeCode === 'dark' 
+      ? (language === 'en' ? 'Dark theme activated!' : 'Koyu tema aktif edildi!')
+      : (language === 'en' ? 'Light theme activated!' : 'Açık tema aktif edildi!');
+    showAlert(title, message, 'success');
   };
 
   const handleProfilePictureChange = async () => {
@@ -254,19 +288,22 @@ export default function ProfileScreen() {
 
   const handleDeleteProfilePicture = async () => {
     try {
-      const confirmMessage = getText('language') === 'en' 
+      const title = language === 'en' ? 'Delete Profile Picture' : 'Profil Fotoğrafını Sil';
+      const confirmMessage = language === 'en' 
         ? 'Are you sure you want to delete your profile picture?' 
         : 'Profil fotoğrafınızı silmek istediğinizden emin misiniz?';
       
       showAlert(
-        getText('language') === 'en' ? 'Delete Profile Picture' : 'Profil Fotoğrafını Sil',
+        title,
         confirmMessage,
         'warning',
         async () => {
           setAlertVisible(false);
           const result = await deleteProfilePicture();
-          const message = result.message || (getText('language') === 'en' ? 'Profile picture deleted' : 'Profil fotoğrafı silindi');
-          showAlert(result.success ? 'Başarılı' : 'Hata', message, result.success ? 'success' : 'error');
+          const successTitle = language === 'en' ? 'Success' : 'Başarılı';
+          const errorTitle = language === 'en' ? 'Error' : 'Hata';
+          const message = result.message || (language === 'en' ? 'Profile picture deleted successfully' : 'Profil fotoğrafı başarıyla silindi');
+          showAlert(result.success ? successTitle : errorTitle, message, result.success ? 'success' : 'error');
         }
       );
     } catch (error) {
