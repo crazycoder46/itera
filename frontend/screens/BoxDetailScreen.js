@@ -3,6 +3,7 @@ import { View, Text, TouchableOpacity, StyleSheet, ScrollView, Alert } from 'rea
 import { useAuth } from '../context/AuthContext';
 import { useTheme } from '../context/ThemeContext';
 import AddNoteModal from '../components/AddNoteModal';
+import CustomAlert from '../components/CustomAlert';
 
 export default function BoxDetailScreen({ route, navigation }) {
   const { box } = route.params;
@@ -11,6 +12,8 @@ export default function BoxDetailScreen({ route, navigation }) {
   const [notes, setNotes] = useState([]);
   const [loading, setLoading] = useState(true);
   const [showAddModal, setShowAddModal] = useState(false);
+  const [alertVisible, setAlertVisible] = useState(false);
+  const [alertConfig, setAlertConfig] = useState({});
 
   useEffect(() => {
     loadBoxNotes();
@@ -24,6 +27,16 @@ export default function BoxDetailScreen({ route, navigation }) {
 
     return unsubscribe;
   }, [navigation]);
+
+  const showAlert = (title, message, type = 'info', onConfirm = null) => {
+    setAlertConfig({
+      title,
+      message,
+      type,
+      onConfirm: onConfirm || (() => setAlertVisible(false))
+    });
+    setAlertVisible(true);
+  };
 
   const loadBoxNotes = async () => {
     try {
@@ -60,18 +73,10 @@ export default function BoxDetailScreen({ route, navigation }) {
       if (response.success) {
         loadBoxNotes(); // Notları yeniden yükle
         const successMsg = getText('noteAddedSuccess');
-        if (typeof window !== 'undefined') {
-          window.alert(successMsg);
-        } else {
-          Alert.alert(getText('success'), successMsg);
-        }
+        showAlert(getText('success'), successMsg, 'success');
       } else {
         const errorMsg = getText('noteAddError');
-        if (typeof window !== 'undefined') {
-          window.alert(errorMsg + response.message);
-        } else {
-          Alert.alert(getText('error'), errorMsg + response.message);
-        }
+        showAlert(getText('error'), errorMsg + response.message, 'error');
       }
     } catch (error) {
       console.error('Not ekleme hatası:', error);
@@ -79,51 +84,33 @@ export default function BoxDetailScreen({ route, navigation }) {
   };
 
   const handleDeleteNote = async (noteId) => {
-    const confirmDelete = () => {
-      const confirmMsg = getText('deleteNoteConfirm');
-      if (typeof window !== 'undefined') {
-        return window.confirm(confirmMsg);
-      } else {
-        return new Promise((resolve) => {
-          Alert.alert(
-            getText('deleteNoteTitle'),
-            confirmMsg,
-            [
-              { text: getText('cancel'), onPress: () => resolve(false), style: 'cancel' },
-              { text: getText('delete'), onPress: () => resolve(true), style: 'destructive' }
-            ]
-          );
-        });
-      }
-    };
+    showAlert(
+      getText('deleteNoteTitle'),
+      getText('deleteNoteConfirm'),
+      'warning',
+      async () => {
+        setAlertVisible(false);
+        const confirmed = true;
+        if (!confirmed) return;
 
-    const confirmed = await confirmDelete();
-    if (!confirmed) return;
+        try {
+          const response = await apiCall(`/api/notes/${noteId}`, {
+            method: 'DELETE'
+          });
 
-    try {
-      const response = await apiCall(`/api/notes/${noteId}`, {
-        method: 'DELETE'
-      });
-
-      if (response.success) {
-        loadBoxNotes(); // Notları yeniden yükle
-        const successMsg = getText('noteDeletedSuccess');
-        if (typeof window !== 'undefined') {
-          window.alert(successMsg);
-        } else {
-          Alert.alert(getText('success'), successMsg);
-        }
-      } else {
-        const errorMsg = getText('noteDeleteError');
-        if (typeof window !== 'undefined') {
-          window.alert(errorMsg + response.message);
-        } else {
-          Alert.alert(getText('error'), errorMsg + response.message);
+          if (response.success) {
+            loadBoxNotes(); // Notları yeniden yükle
+            const successMsg = getText('noteDeletedSuccess');
+            showAlert(getText('success'), successMsg, 'success');
+          } else {
+            const errorMsg = getText('noteDeleteError');
+            showAlert(getText('error'), errorMsg + response.message, 'error');
+          }
+        } catch (error) {
+          console.error('Not silme hatası:', error);
         }
       }
-    } catch (error) {
-      console.error('Not silme hatası:', error);
-    }
+    );
   };
 
   const handleNotePress = (note) => {
@@ -249,6 +236,18 @@ export default function BoxDetailScreen({ route, navigation }) {
         onSave={handleSaveNote}
         boxType={box.id}
         boxName={box.name}
+      />
+      
+      {/* Custom Alert */}
+      <CustomAlert
+        visible={alertVisible}
+        title={alertConfig.title}
+        message={alertConfig.message}
+        type={alertConfig.type}
+        onConfirm={alertConfig.onConfirm}
+        onCancel={() => setAlertVisible(false)}
+        confirmText={getText('ok')}
+        cancelText={getText('cancel')}
       />
     </View>
   );
