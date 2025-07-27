@@ -334,9 +334,9 @@ curl https://itera-backend.onrender.com/health
 
 - [x] Custom domain name (iterapp.org)
 - [x] Google Analytics integration
+- [x] SEO optimizasyonları
 - [ ] Error monitoring (Sentry)
 - [ ] Performance monitoring
-- [ ] SEO optimizasyonları
 - [ ] Backup stratejisi
 - [ ] Premium features development
 - [ ] Mobile app store deployment

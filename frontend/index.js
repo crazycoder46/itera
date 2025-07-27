@@ -56,7 +56,7 @@ if (Platform.OS === 'web') {
   createMetaTag('og:title', 'Itera - Bilimsel Öğrenme Uygulaması | Leitner Sistemi', true);
   createMetaTag('og:description', 'Bilimsel Leitner Metodu ile öğrenme potansiyelinizi ortaya çıkarın. Spaced repetition tekniği ile bilgiyi kalıcı hale getirin. Ücretsiz başlayın!', true);
   createMetaTag('og:type', 'website', true);
-  createMetaTag('og:url', typeof window !== 'undefined' ? window.location.href : 'https://itera.app', true);
+  createMetaTag('og:url', typeof window !== 'undefined' ? window.location.href : 'https://iterapp.org', true);
   createMetaTag('og:site_name', 'Itera', true);
   createMetaTag('og:locale', 'tr_TR', true);
   createMetaTag('og:locale:alternate', 'en_US', true);
@@ -71,7 +71,7 @@ if (Platform.OS === 'web') {
   // Canonical URL
   const canonical = document.createElement('link');
   canonical.setAttribute('rel', 'canonical');
-  canonical.setAttribute('href', typeof window !== 'undefined' ? window.location.href : 'https://itera.app');
+  canonical.setAttribute('href', typeof window !== 'undefined' ? window.location.href : 'https://iterapp.org');
   document.head.appendChild(canonical);
   
   // Alternate language versions
@@ -83,9 +83,9 @@ if (Platform.OS === 'web') {
     document.head.appendChild(link);
   };
   
-  createAlternateLink('tr', typeof window !== 'undefined' ? window.location.href + '?lang=tr' : 'https://itera.app?lang=tr');
-  createAlternateLink('en', typeof window !== 'undefined' ? window.location.href + '?lang=en' : 'https://itera.app?lang=en');
-  createAlternateLink('x-default', typeof window !== 'undefined' ? window.location.href : 'https://itera.app');
+  createAlternateLink('tr', typeof window !== 'undefined' ? window.location.href + '?lang=tr' : 'https://iterapp.org?lang=tr');
+  createAlternateLink('en', typeof window !== 'undefined' ? window.location.href + '?lang=en' : 'https://iterapp.org?lang=en');
+  createAlternateLink('x-default', typeof window !== 'undefined' ? window.location.href : 'https://iterapp.org');
   
   // JSON-LD Structured Data
   const structuredData = {
@@ -94,7 +94,7 @@ if (Platform.OS === 'web') {
     "name": "Itera",
     "alternateName": "Itera Learning App",
     "description": "Bilimsel Leitner Metodu ile öğrenme potansiyelinizi ortaya çıkarın. Spaced repetition tekniği ile bilgiyi kalıcı hale getirin.",
-    "url": typeof window !== 'undefined' ? window.location.origin : 'https://itera.app',
+    "url": typeof window !== 'undefined' ? window.location.origin : 'https://iterapp.org',
     "applicationCategory": "EducationalApplication",
     "operatingSystem": "Web, iOS, Android",
     "offers": {
@@ -112,7 +112,7 @@ if (Platform.OS === 'web') {
       "name": "Itera",
       "logo": {
         "@type": "ImageObject",
-        "url": typeof window !== 'undefined' ? window.location.origin + "/static/media/logo.png" : 'https://itera.app/static/media/logo.png'
+        "url": typeof window !== 'undefined' ? window.location.origin + "/static/media/logo.png" : 'https://iterapp.org/static/media/logo.png'
       }
     },
     "inLanguage": ["tr", "en"],
@@ -128,16 +128,22 @@ if (Platform.OS === 'web') {
       "Akıllı Takvim Sistemi",
       "Çoklu Dil Desteği (TR/EN)",
       "Dark/Light Tema",
-      "Resim Ekleme Desteği"
-    ]
+      "Cloud Storage",
+      "Shared Brains (Premium)"
+    ],
+    "screenshot": typeof window !== 'undefined' ? window.location.origin + "/static/media/screenshot.png" : 'https://iterapp.org/static/media/screenshot.png',
+    "softwareVersion": "1.0.0",
+    "datePublished": "2024-12-19",
+    "dateModified": "2024-12-19"
   };
-  
+
+  // Add structured data to head
   const script = document.createElement('script');
   script.type = 'application/ld+json';
-  script.innerHTML = JSON.stringify(structuredData);
+  script.text = JSON.stringify(structuredData);
   document.head.appendChild(script);
-  
-  // Additional SEO optimizations
+
+  // Preconnect to external domains for performance
   const createLinkTag = (rel, href, type = null) => {
     const link = document.createElement('link');
     link.setAttribute('rel', rel);
@@ -145,22 +151,12 @@ if (Platform.OS === 'web') {
     if (type) link.setAttribute('type', type);
     document.head.appendChild(link);
   };
-  
-  // Preconnect to external domains (if any)
+
+  // Performance optimizations
   createLinkTag('preconnect', 'https://fonts.googleapis.com');
-  createLinkTag('preconnect', 'https://fonts.gstatic.com');
-  
-  // Theme color for mobile browsers
-  createMetaTag('theme-color', '#3b82f6');
-  createMetaTag('msapplication-TileColor', '#3b82f6');
-  
-  // Favicon and app icons
-  createLinkTag('icon', '/favicon.ico', 'image/x-icon');
-  createLinkTag('apple-touch-icon', '/apple-touch-icon.png');
-  createLinkTag('shortcut icon', '/favicon.ico');
+  createLinkTag('preconnect', 'https://fonts.gstatic.com', 'crossorigin');
+  createLinkTag('preconnect', 'https://www.googletagmanager.com');
+  createLinkTag('dns-prefetch', 'https://www.google-analytics.com');
 }
 
-// registerRootComponent calls AppRegistry.registerComponent('main', () => App);
-// It also ensures that whether you load the app in Expo Go or in a native build,
-// the environment is set up appropriately
 registerRootComponent(App);
