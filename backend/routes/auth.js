@@ -192,7 +192,7 @@ router.post('/profile/picture', auth, profileUpload.single('profilePicture'), as
 
     res.json({
       success: true,
-      message: 'Profil fotoğrafı başarıyla Cloudinary\'ye yüklendi',
+      message: 'Profil fotoğrafı başarıyla yüklendi',
       user: result.rows[0],
       profilePicture: profilePictureUrl
     });

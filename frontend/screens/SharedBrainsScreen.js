@@ -50,10 +50,10 @@ export default function SharedBrainsScreen({ navigation }) {
             onPress={() => {
               // TODO: Premium upgrade sayfasına yönlendir
               Alert.alert(
-                language === 'en' ? 'Coming Soon' : 'Çok Yakında',
+                language === 'en' ? 'Advanced Package' : 'Advanced Paket',
                 language === 'en' 
-                  ? 'Premium features will be available soon!'
-                  : 'Premium özellikler çok yakında kullanıma sunulacak!'
+                  ? 'Advanced Package Features:\n\n• High storage capacity\n• Shared Brains\n• Ad-free experience'
+                  : 'Advanced Paket Özellikleri:\n\n• Yüksek depolama alanı\n• Ortak akıl (Shared Brains)\n• Reklamsız deneyim'
               );
             }}
           >

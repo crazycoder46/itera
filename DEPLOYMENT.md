@@ -7,6 +7,7 @@ Bu rehber, Itera uygulamasının gerçek deployment sürecini ve karşılaşıla
 - **Backend**: Render.com (ücretsiz)
 - **Frontend**: Vercel (ücretsiz)
 - **Veritabanı**: Render PostgreSQL (ücretsiz)
+- **Resim Depolama**: Cloudinary (ücretsiz)
 
 ## 📋 Ön Gereksinimler
 
@@ -180,6 +181,48 @@ if (!isPremium) {
   return <ComingSoonScreen />;
 }
 ```
+
+#### 4.4. Cloudinary Entegrasyonu
+
+**Problem**: Yerel dosya sistemi ile resim yükleme Render.com'da sorun çıkarıyordu.
+
+**Çözüm**: Cloudinary cloud storage entegrasyonu
+
+**Metodoloji**:
+1. **Cloudinary Hesap Kurulumu**:
+   - [Cloudinary.com](https://cloudinary.com) → Ücretsiz hesap
+   - Cloud name, API key, API secret alındı
+   - Environment variables'a eklendi
+
+2. **Backend Entegrasyonu**:
+   - `cloudinary` npm paketi eklendi
+   - `backend/config/cloudinary.js` konfigürasyon dosyası oluşturuldu
+   - Multer middleware'i Cloudinary upload ile değiştirildi
+   - Resim yükleme endpoint'i güncellendi
+
+3. **Veritabanı Güncellemesi**:
+   - `note_images` tablosuna `cloudinary_public_id` kolonu eklendi
+   - Cloudinary'den dönen public_id'ler saklanıyor
+   - Resim silme işlemi Cloudinary'den de silme yapacak şekilde güncellendi
+
+4. **Frontend Güncellemesi**:
+   - Resim URL'leri Cloudinary CDN'den geliyor
+   - Responsive image loading için Cloudinary transformation parametreleri
+   - Image optimization otomatik olarak Cloudinary tarafından yapılıyor
+
+**Environment Variables**:
+```
+CLOUDINARY_CLOUD_NAME=your_cloud_name
+CLOUDINARY_API_KEY=your_api_key
+CLOUDINARY_API_SECRET=your_api_secret
+```
+
+**Avantajlar**:
+- ✅ **CDN**: Hızlı global resim dağıtımı
+- ✅ **Optimizasyon**: Otomatik boyutlandırma ve sıkıştırma
+- ✅ **Güvenilirlik**: Render.com dosya sistemi sorunları yok
+- ✅ **Ölçeklenebilirlik**: Ücretsiz plan 25GB storage
+- ✅ **Transformasyon**: URL parametreleri ile resim manipülasyonu
 
 ### 5. Final Deployment Durumu
 

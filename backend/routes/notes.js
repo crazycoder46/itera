@@ -810,7 +810,7 @@ router.post('/upload-image', auth, (req, res) => {
         imageUrl,
         imageId: imageRecord.rows[0].id,
         publicId: publicId,
-        message: 'Resim başarıyla Cloudinary\'ye yüklendi'
+        message: 'Fotoğraf başarıyla yüklendi'
       });
     } catch (error) {
       console.error('Resim yükleme hatası:', error);
