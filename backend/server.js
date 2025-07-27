@@ -56,6 +56,9 @@ app.use('/api/shared', require('./routes/shared'));
 // Setup routes (for database initialization)
 app.use('/api/setup', require('./routes/setup'));
 
+// Analytics routes
+app.use('/api/analytics', require('./routes/analytics'));
+
 // Error handling middleware
 app.use((err, req, res, next) => {
   console.error('Error:', err);
