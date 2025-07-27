@@ -109,6 +109,19 @@ export default function EditRichTextEditor({ initialContent = '', onContentChang
             }));
           }
           
+          // Resim ekleme işleminden sonra content'i güncelle
+          setTimeout(() => {
+            if (isWeb && iframeRef.current) {
+              iframeRef.current.contentWindow.postMessage(JSON.stringify({
+                type: 'GET_CONTENT'
+              }), '*');
+            } else if (webViewRef.current) {
+              webViewRef.current.postMessage(JSON.stringify({
+                type: 'GET_CONTENT'
+              }));
+            }
+          }, 500);
+          
         } catch (uploadError) {
           console.error('Resim yükleme başarısız:', uploadError);
           
@@ -764,6 +777,14 @@ export default function EditRichTextEditor({ initialContent = '', onContentChang
                   const newContent = content.replace(message.oldUrl, message.newUrl)
                   editor.commands.setContent(newContent)
                 }
+              } else if (message.type === 'GET_CONTENT') {
+                if (editor) {
+                  const content = editor.getHTML()
+                  window.parent.postMessage(JSON.stringify({
+                    type: 'CONTENT_CHANGED',
+                    content: content
+                  }), '*')
+                }
               }
             } catch (error) {
               console.error('Message handling error:', error)
@@ -845,6 +866,11 @@ export default function EditRichTextEditor({ initialContent = '', onContentChang
       } else if (message.type === 'EDITOR_ERROR') {
         console.error('TipTap Editor Error:', message.error);
         setIsLoading(false);
+      } else if (message.type === 'GET_CONTENT') {
+        // WebView için GET_CONTENT mesajını işle
+        webViewRef.current?.postMessage(JSON.stringify({
+          type: 'GET_CONTENT'
+        }));
       }
     } catch (error) {
       console.error('Mesaj işleme hatası:', error);
