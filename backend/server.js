@@ -59,6 +59,9 @@ app.use('/api/setup', require('./routes/setup'));
 // Analytics routes
 app.use('/api/analytics', require('./routes/analytics'));
 
+// Admin routes
+app.use('/api/admin', require('./routes/admin'));
+
 // Error handling middleware
 app.use((err, req, res, next) => {
   console.error('Error:', err);
