@@ -576,15 +576,6 @@ export default function EditRichTextEditor({ initialContent = '', onContentChang
                       isResizing = false
                       document.removeEventListener('touchmove', handleTouchMove)
                       document.removeEventListener('touchend', handleTouchEnd)
-                      
-                      // Mobil web'de resize sonrası content change'i bildir
-                      setTimeout(() => {
-                        const content = editor.getHTML()
-                        window.parent.postMessage(JSON.stringify({
-                          type: 'CONTENT_CHANGED',
-                          content: content
-                        }), '*')
-                      }, 100)
                     }
                   }
                   
