@@ -79,26 +79,20 @@ export default function HomeScreen({ navigation }) {
 
   const loadNotes = async () => {
     try {
-      console.log('Not yükleme başlatılıyor...');
       const response = await apiCall('/api/notes', {
         method: 'GET'
       });
       
-      console.log('API Response:', response);
-      
       if (response.success) {
         setNotes(response.notes || []);
-        console.log('Notlar yüklendi:', response.notes?.length || 0);
         
         // Tekrar sayısını ayrı bir API çağrısı ile al
         loadTodayReviewCount();
       } else {
-        console.error('Not yükleme hatası:', response.message);
         setNotes([]);
         setTodayReviewCount(0);
       }
     } catch (error) {
-      console.error('API çağrısı hatası:', error);
       setNotes([]);
       setTodayReviewCount(0);
     }
@@ -146,14 +140,11 @@ export default function HomeScreen({ navigation }) {
   };
 
   const handleLogout = () => {
-    console.log('Çıkış butonuna tıklandı!');
-    
     // Web'de confirm kullan, mobilde Alert
     if (typeof window !== 'undefined') {
       // Web ortamı
       const confirmed = window.confirm('Çıkış yapmak istediğinizden emin misiniz?');
       if (confirmed) {
-        console.log('Çıkış Yap onaylandı');
         logout();
       }
     } else {
@@ -164,7 +155,6 @@ export default function HomeScreen({ navigation }) {
         [
           { text: 'İptal', style: 'cancel' },
           { text: 'Çıkış Yap', onPress: async () => {
-            console.log('Çıkış Yap butonuna basıldı');
             await logout();
           }, style: 'destructive' }
         ]
@@ -178,13 +168,10 @@ export default function HomeScreen({ navigation }) {
 
   const handleSaveNote = async (noteData) => {
     try {
-      console.log('Not ekleniyor:', noteData);
       const response = await apiCall('/api/notes', {
         method: 'POST',
         body: JSON.stringify(noteData),
       });
-
-      console.log('Not ekleme response:', response);
 
       if (response.success) {
         // Notları ve tekrar sayısını yeniden yükle
@@ -196,7 +183,6 @@ export default function HomeScreen({ navigation }) {
         showAlert(getText('language') === 'en' ? 'Error' : 'Hata', errorMsg + response.message, 'error');
       }
     } catch (error) {
-      console.error('Not ekleme hatası:', error);
       const errorMsg = getText('language') === 'en' ? 'Error adding note' : 'Not eklenirken hata oluştu';
       showAlert(getText('language') === 'en' ? 'Error' : 'Hata', errorMsg, 'error');
     }

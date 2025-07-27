@@ -166,15 +166,13 @@ export const AuthProvider = ({ children }) => {
 
   const logout = async () => {
     try {
-      console.log('Logout başlatılıyor...');
       await AsyncStorage.removeItem('token');
       await AsyncStorage.removeItem('user');
       // Dil ve tema ayarlarını koruyoruz
       setToken(null);
       setUser(null);
-      console.log('Logout tamamlandı');
     } catch (error) {
-      console.error('Logout error:', error);
+      // Silent error handling
     }
   };
 
@@ -222,10 +220,6 @@ export const AuthProvider = ({ children }) => {
     try {
       const fullUrl = `${API_BASE_URL}${endpoint}`;
       
-      console.log('API Call URL:', fullUrl);
-      console.log('API Call Options:', options);
-      console.log('Token:', token);
-      
       // Headers'ı ayarla
       const headers = {
         'Authorization': `Bearer ${token}`,
@@ -241,20 +235,15 @@ export const AuthProvider = ({ children }) => {
         ...options,
         headers,
       });
-
-      console.log('API Response Status:', response.status);
       
       if (!response.ok) {
         const errorText = await response.text();
-        console.log('API Error Response:', errorText);
         throw new Error(`HTTP error! status: ${response.status}, message: ${errorText}`);
       }
 
       const data = await response.json();
-      console.log('API Response Data:', data);
       return data;
     } catch (error) {
-      console.error('API call error:', error);
       return { success: false, message: 'Bağlantı hatası: ' + error.message };
     }
   };

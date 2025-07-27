@@ -214,7 +214,11 @@ export default function ProfileScreen() {
         const permissionResult = await ImagePicker.requestMediaLibraryPermissionsAsync();
         
         if (permissionResult.granted === false) {
-          Alert.alert('İzin Gerekli', 'Profil fotoğrafı yüklemek için galeri erişim izni gerekiyor.');
+          const title = language === 'en' ? 'Permission Required' : 'İzin Gerekli';
+          const message = language === 'en' 
+            ? 'Gallery access permission is required to upload profile picture.'
+            : 'Profil fotoğrafı yüklemek için galeri erişim izni gerekiyor.';
+          Alert.alert(title, message);
           return;
         }
 
@@ -228,16 +232,23 @@ export default function ProfileScreen() {
         if (!result.canceled && result.assets && result.assets.length > 0) {
           const uploadResult = await uploadProfilePicture(result.assets[0].uri);
           if (uploadResult.success) {
-            Alert.alert('Başarılı', uploadResult.message);
+            const title = language === 'en' ? 'Success' : 'Başarılı';
+            Alert.alert(title, uploadResult.message);
           } else {
-            Alert.alert('Hata', uploadResult.message || 'Profil fotoğrafı yüklenirken hata oluştu');
+            const title = language === 'en' ? 'Error' : 'Hata';
+            const message = uploadResult.message || (language === 'en' 
+              ? 'Error uploading profile picture' 
+              : 'Profil fotoğrafı yüklenirken hata oluştu');
+            Alert.alert(title, message);
           }
         }
       }
     } catch (error) {
-      console.error('Profile picture change error:', error);
-      const message = 'Profil fotoğrafı yüklenirken hata oluştu';
-      showAlert('Hata', message, 'error');
+      const title = language === 'en' ? 'Error' : 'Hata';
+      const message = language === 'en' 
+        ? 'Error uploading profile picture' 
+        : 'Profil fotoğrafı yüklenirken hata oluştu';
+      showAlert(title, message, 'error');
     }
   };
 
@@ -259,9 +270,11 @@ export default function ProfileScreen() {
         }
       );
     } catch (error) {
-      console.error('Profile picture delete error:', error);
-      const message = getText('language') === 'en' ? 'Error deleting profile picture' : 'Profil fotoğrafı silinirken hata oluştu';
-      showAlert('Hata', message, 'error');
+      const title = language === 'en' ? 'Error' : 'Hata';
+      const message = language === 'en' 
+        ? 'Error deleting profile picture' 
+        : 'Profil fotoğrafı silinirken hata oluştu';
+      showAlert(title, message, 'error');
     }
   };
 
@@ -288,7 +301,7 @@ export default function ProfileScreen() {
               <Image 
                 source={{ uri: user.profile_picture }}
                 style={styles.profileImage}
-                onError={() => console.log('Error loading profile image')}
+                onError={() => {}}
               />
             ) : (
               <Text style={styles.profileInitials}>

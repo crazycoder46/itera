@@ -15,8 +15,7 @@ export default function EditNoteScreen({ route, navigation }) {
   const [alertVisible, setAlertVisible] = useState(false);
   const [alertConfig, setAlertConfig] = useState({});
 
-  // Debug log
-  console.log('EditNoteScreen - Initial content:', note.content);
+
 
   const showAlert = (title, message, type = 'info', onConfirm = null) => {
     setAlertConfig({
@@ -37,19 +36,6 @@ export default function EditNoteScreen({ route, navigation }) {
 
     setSaving(true);
     try {
-      console.log('=== SAVING NOTE ===');
-      console.log('Current content state:', content);
-      console.log('Content length:', content.length);
-      console.log('Has images:', content.includes('<img'));
-      
-      // İçerikteki resimlerin boyutlarını kontrol et
-      const imgMatches = content.match(/<img[^>]*>/g);
-      if (imgMatches) {
-        console.log('Found images in content:');
-        imgMatches.forEach((imgTag, index) => {
-          console.log(`Image ${index}:`, imgTag);
-        });
-      }
       
       const response = await apiCall(`/api/notes/${note.id}`, {
         method: 'PUT',
@@ -71,7 +57,6 @@ export default function EditNoteScreen({ route, navigation }) {
         showAlert(getText('error'), errorMsg + response.message, 'error');
       }
     } catch (error) {
-      console.error('Not güncelleme hatası:', error);
       const errorMsg = getText('errorUpdatingNote');
       showAlert(getText('error'), errorMsg, 'error');
     } finally {

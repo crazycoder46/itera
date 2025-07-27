@@ -41,22 +41,16 @@ export default function BoxDetailScreen({ route, navigation }) {
   const loadBoxNotes = async () => {
     try {
       setLoading(true);
-      console.log('Kutu notları yükleniyor:', box.id);
       const response = await apiCall(`/api/notes?box_type=${box.id}`, {
         method: 'GET'
       });
 
-      console.log('Kutu notları response:', response);
-
       if (response.success) {
         setNotes(response.notes || []);
-        console.log('Kutu notları yüklendi:', response.notes?.length || 0);
       } else {
-        console.error('Notlar yüklenemedi:', response.message);
         setNotes([]);
       }
     } catch (error) {
-      console.error('API hatası:', error);
       setNotes([]);
     } finally {
       setLoading(false);

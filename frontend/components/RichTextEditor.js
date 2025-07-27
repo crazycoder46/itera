@@ -18,8 +18,6 @@ export default function RichTextEditor({ initialContent = '', onContentChange })
   // Resim yükleme fonksiyonu
   const uploadImage = async (imageUri, noteId = null) => {
     try {
-      console.log('Uploading image:', imageUri);
-      
       // Base64 veriyi blob'a çevir
       const response = await fetch(imageUri);
       const blob = await response.blob();
@@ -33,7 +31,6 @@ export default function RichTextEditor({ initialContent = '', onContentChange })
         formData.append('noteId', noteId);
       }
       
-      console.log('Calling API...');
       const apiResponse = await apiCall('/api/notes/upload-image', {
         method: 'POST',
         body: formData,
@@ -42,15 +39,12 @@ export default function RichTextEditor({ initialContent = '', onContentChange })
         }
       });
       
-      console.log('API Response:', apiResponse);
-      
       if (apiResponse.success) {
         return apiResponse.imageUrl;
       } else {
         throw new Error(apiResponse.message || 'Resim yüklenemedi');
       }
     } catch (error) {
-      console.error('Resim yükleme hatası:', error);
       throw new Error('Bağlantı hatası: ' + error.message);
     }
   };
@@ -67,8 +61,6 @@ export default function RichTextEditor({ initialContent = '', onContentChange })
       });
 
       if (!result.canceled && result.assets[0]) {
-        console.log('Seçilen resim:', result.assets[0]);
-        
         try {
           // Önce placeholder göster - Base64 ile
           const placeholderImageUrl = 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNDAwIiBoZWlnaHQ9IjMwMCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cmVjdCB3aWR0aD0iNDAwIiBoZWlnaHQ9IjMwMCIgZmlsbD0iIzNiODJmNiIvPjx0ZXh0IHg9IjUwJSIgeT0iNTAlIiBmb250LWZhbWlseT0iQXJpYWwsIHNhbnMtc2VyaWYiIGZvbnQtc2l6ZT0iMTgiIGZpbGw9IndoaXRlIiB0ZXh0LWFuY2hvcj0ibWlkZGxlIiBkeT0iLjNlbSI+WcO8a2xlbml5b3IuLi48L3RleHQ+PC9zdmc+';
@@ -91,8 +83,6 @@ export default function RichTextEditor({ initialContent = '', onContentChange })
           // Gerçek resmi yükle
           const imageUrl = await uploadImage(result.assets[0].uri);
           const fullImageUrl = imageUrl; // Cloudinary URL'i direkt kullan
-          
-          console.log('Yüklenen resim URL:', fullImageUrl);
           
           // Gerçek resimle değiştir
           if (isWeb && iframeRef.current) {
