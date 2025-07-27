@@ -2,13 +2,26 @@ import React, { useState, useEffect } from 'react';
 import { View, Text, TouchableOpacity, ScrollView, TextInput, Alert, Modal, StyleSheet } from 'react-native';
 import { useAuth } from '../context/AuthContext';
 import { useTheme } from '../context/ThemeContext';
+import CustomAlert from '../components/CustomAlert';
 
 export default function SharedBrainsScreen({ navigation }) {
   const { user, apiCall, language } = useAuth();
   const { colors, getText } = useTheme();
+  const [alertVisible, setAlertVisible] = useState(false);
+  const [alertConfig, setAlertConfig] = useState({});
   
   // Premium kontrolü
   const isPremium = user?.is_premium || false;
+
+  const showAlert = (title, message, type = 'info', onConfirm = null) => {
+    setAlertConfig({
+      title,
+      message,
+      type,
+      onConfirm: onConfirm || (() => setAlertVisible(false))
+    });
+    setAlertVisible(true);
+  };
 
   // Premium olmayan kullanıcılar için "Çok Yakında" ekranı
   if (!isPremium) {
@@ -48,13 +61,11 @@ export default function SharedBrainsScreen({ navigation }) {
           <TouchableOpacity 
             style={styles.upgradeButton}
             onPress={() => {
-              // TODO: Premium upgrade sayfasına yönlendir
-              Alert.alert(
-                language === 'en' ? 'Advanced Package' : 'Advanced Paket',
-                language === 'en' 
-                  ? 'Advanced Package Features:\n\n• High storage capacity\n• Shared Brains\n• Ad-free experience'
-                  : 'Advanced Paket Özellikleri:\n\n• Yüksek depolama alanı\n• Ortak akıl (Shared Brains)\n• Reklamsız deneyim'
-              );
+              const title = language === 'en' ? 'Advanced Package' : 'Advanced Paket';
+              const message = language === 'en' 
+                ? 'Advanced Package Features:\n\n• High storage capacity\n• Shared Brains\n• Ad-free experience'
+                : 'Advanced Paket Özellikleri:\n\n• Yüksek depolama alanı\n• Ortak akıl (Shared Brains)\n• Reklamsız deneyim';
+              showAlert(title, message, 'info');
             }}
           >
             <Text style={styles.upgradeButtonText}>
@@ -96,6 +107,15 @@ export default function SharedBrainsScreen({ navigation }) {
             </View>
           </View>
         </View>
+        
+        {/* Custom Alert */}
+        <CustomAlert
+          visible={alertVisible}
+          title={alertConfig.title}
+          message={alertConfig.message}
+          type={alertConfig.type}
+          onConfirm={alertConfig.onConfirm}
+        />
       </View>
     );
   }

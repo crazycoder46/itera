@@ -1,8 +1,10 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { View, Text, TouchableOpacity } from 'react-native';
+
+import CustomAlert from './components/CustomAlert';
 
 import { AuthProvider, useAuth } from './context/AuthContext';
 import { ThemeProvider, useTheme } from './context/ThemeContext';
@@ -65,20 +67,30 @@ const SharedBrainsPlaceholder = () => {
 function AppHeader() {
   const { language, updateLanguage, isPremium } = useAuth();
   const { colors, getText } = useTheme();
+  const [alertVisible, setAlertVisible] = useState(false);
+  const [alertConfig, setAlertConfig] = useState({});
 
   const toggleLanguage = async () => {
     const newLanguage = language === 'tr' ? 'en' : 'tr';
     await updateLanguage(newLanguage);
   };
 
+  const showAlert = (title, message, type = 'info', onConfirm = null) => {
+    setAlertConfig({
+      title,
+      message,
+      type,
+      onConfirm: onConfirm || (() => setAlertVisible(false))
+    });
+    setAlertVisible(true);
+  };
+
   const handleAdvance = () => {
-    if (typeof window !== 'undefined') {
-      const title = language === 'en' ? 'Advanced Package' : 'Advanced Paket';
-      const message = language === 'en' 
-        ? 'Advanced Package Features:\n\n• High storage capacity\n• Shared Brains\n• Ad-free experience'
-        : 'Advanced Paket Özellikleri:\n\n• Yüksek depolama alanı\n• Ortak akıl (Shared Brains)\n• Reklamsız deneyim';
-      window.alert(`${title}\n\n${message}`);
-    }
+    const title = language === 'en' ? 'Advanced Package' : 'Advanced Paket';
+    const message = language === 'en' 
+      ? 'Advanced Package Features:\n\n• High storage capacity\n• Shared Brains\n• Ad-free experience'
+      : 'Advanced Paket Özellikleri:\n\n• Yüksek depolama alanı\n• Ortak akıl (Shared Brains)\n• Reklamsız deneyim';
+    showAlert(title, message, 'info');
   };
 
   return (
@@ -148,6 +160,15 @@ function AppHeader() {
           </TouchableOpacity>
         )}
       </View>
+      
+      {/* Custom Alert */}
+      <CustomAlert
+        visible={alertVisible}
+        title={alertConfig.title}
+        message={alertConfig.message}
+        type={alertConfig.type}
+        onConfirm={alertConfig.onConfirm}
+      />
     </View>
   );
 }
