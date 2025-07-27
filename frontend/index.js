@@ -2,6 +2,24 @@ import { registerRootComponent } from 'expo';
 import { Platform } from 'react-native';
 import App from './App';
 
+// Google Analytics for Web
+if (Platform.OS === 'web') {
+  // Google Analytics gtag.js
+  const script1 = document.createElement('script');
+  script1.async = true;
+  script1.src = 'https://www.googletagmanager.com/gtag/js?id=G-6957MVS7HL';
+  document.head.appendChild(script1);
+
+  const script2 = document.createElement('script');
+  script2.innerHTML = `
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+    gtag('config', 'G-6957MVS7HL');
+  `;
+  document.head.appendChild(script2);
+}
+
 // SEO Meta Tags and Structured Data for Web
 if (Platform.OS === 'web') {
   // Set document title

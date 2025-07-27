@@ -27,7 +27,10 @@
     },
     "web": {
       "favicon": "./assets/favicon.png",
-      "bundler": "metro"
+      "bundler": "metro",
+      "googleAnalytics": {
+        "measurementId": "G-6957MVS7HL"
+      }
     },
     "platforms": ["ios", "android", "web"]
   }
