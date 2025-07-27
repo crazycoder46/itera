@@ -220,13 +220,6 @@ export default function LandingScreen({ navigation }) {
       {/* Transparent Navbar */}
       <View style={styles.navbar} accessibilityRole="navigation" accessibilityLabel="Ana navigasyon">
         <View style={styles.logoContainer}>
-          <Image 
-            source={require('../landing_images/logo.png')} 
-            style={styles.logoImage}
-            resizeMode="contain"
-            accessibilityLabel="Itera logosu"
-            alt="Itera - Bilimsel Öğrenme Uygulaması Logosu"
-          />
           <Text style={[styles.logoText, { color: colors.primary }]} accessibilityRole="header" accessibilityLevel={1}>Itera</Text>
         </View>
         
@@ -997,9 +990,17 @@ export default function LandingScreen({ navigation }) {
                 {language === 'en' ? 'Terms of Service' : 'Kullanım Şartları'}
               </Text>
             </TouchableOpacity>
+            <TouchableOpacity onPress={() => window.open('mailto:itera.app@mail.com', '_blank')}>
+              <Text style={[styles.footerLink, { color: colors.primary }]}>
+                {language === 'en' ? 'Contact Us' : 'İletişim'}
+              </Text>
+            </TouchableOpacity>
           </View>
           <Text style={[styles.footerText, { color: colors.textSecondary }]}>
             © 2024 Itera. {language === 'en' ? 'Empowering learners worldwide.' : 'Dünya çapında öğrencileri güçlendiriyor.'}
+          </Text>
+          <Text style={[styles.footerText, { color: colors.textSecondary, marginTop: 8 }]}>
+            {language === 'en' ? 'Contact:' : 'İletişim:'} itera.app@mail.com
           </Text>
         </View>
       </ScrollView>
