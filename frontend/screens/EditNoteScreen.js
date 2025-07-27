@@ -3,7 +3,6 @@ import { View, Text, TouchableOpacity, StyleSheet, ScrollView, TextInput, Alert 
 import { useAuth } from '../context/AuthContext';
 import { useTheme } from '../context/ThemeContext';
 import EditRichTextEditor from '../components/EditRichTextEditor';
-import CustomAlert from '../components/CustomAlert';
 
 export default function EditNoteScreen({ route, navigation }) {
   const { note, box } = route.params;
@@ -12,25 +11,18 @@ export default function EditNoteScreen({ route, navigation }) {
   const [title, setTitle] = useState(note.title);
   const [content, setContent] = useState(note.content);
   const [saving, setSaving] = useState(false);
-  const [alertVisible, setAlertVisible] = useState(false);
-  const [alertConfig, setAlertConfig] = useState({ title: '', message: '', onConfirm: null });
 
   // Debug log
   console.log('EditNoteScreen - Initial content:', note.content);
 
-  const showAlert = (title, message, onConfirm = null) => {
-    setAlertConfig({ title, message, onConfirm });
-    setAlertVisible(true);
-  };
-
-  const hideAlert = () => {
-    setAlertVisible(false);
-  };
-
   const handleSave = async () => {
     if (!title.trim()) {
       const errorMsg = getText('enterNoteTitle');
-      showAlert(getText('error'), errorMsg);
+      if (typeof window !== 'undefined') {
+        window.alert(errorMsg);
+      } else {
+        Alert.alert(getText('error'), errorMsg);
+      }
       return;
     }
 
@@ -61,17 +53,29 @@ export default function EditNoteScreen({ route, navigation }) {
 
       if (response.success) {
         const successMsg = getText('noteUpdatedSuccessfully');
-        showAlert(getText('success'), successMsg, () => {
-          navigation.goBack();
-        });
+        if (typeof window !== 'undefined') {
+          window.alert(successMsg);
+        } else {
+          Alert.alert(getText('success'), successMsg);
+        }
+        
+        navigation.goBack();
       } else {
         const errorMsg = getText('errorUpdatingNote');
-        showAlert(getText('error'), errorMsg + response.message);
+        if (typeof window !== 'undefined') {
+          window.alert(errorMsg + response.message);
+        } else {
+          Alert.alert(getText('error'), errorMsg + response.message);
+        }
       }
     } catch (error) {
       console.error('Not güncelleme hatası:', error);
       const errorMsg = getText('errorUpdatingNote');
-      showAlert(getText('error'), errorMsg);
+      if (typeof window !== 'undefined') {
+        window.alert(errorMsg);
+      } else {
+        Alert.alert(getText('error'), errorMsg);
+      }
     } finally {
       setSaving(false);
     }
@@ -178,18 +182,6 @@ export default function EditNoteScreen({ route, navigation }) {
 
         <View style={styles.spacer} />
       </ScrollView>
-      
-      <CustomAlert
-        visible={alertVisible}
-        title={alertConfig.title}
-        message={alertConfig.message}
-        onConfirm={() => {
-          hideAlert();
-          if (alertConfig.onConfirm) {
-            alertConfig.onConfirm();
-          }
-        }}
-      />
     </View>
   );
 }

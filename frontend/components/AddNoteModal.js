@@ -2,23 +2,11 @@ import React, { useState } from 'react';
 import { View, Text, TouchableOpacity, StyleSheet, Modal, TextInput, ScrollView, Alert } from 'react-native';
 import { useTheme } from '../context/ThemeContext';
 import RichTextEditor from './RichTextEditor';
-import CustomAlert from './CustomAlert';
 
 export default function AddNoteModal({ visible, onClose, onSave, boxType, boxName }) {
   const { getText } = useTheme();
   const [title, setTitle] = useState('');
   const [content, setContent] = useState('');
-  const [alertVisible, setAlertVisible] = useState(false);
-  const [alertConfig, setAlertConfig] = useState({ title: '', message: '', onConfirm: null });
-
-  const showAlert = (title, message, onConfirm = null) => {
-    setAlertConfig({ title, message, onConfirm });
-    setAlertVisible(true);
-  };
-
-  const hideAlert = () => {
-    setAlertVisible(false);
-  };
 
   const getTemplates = () => ({
     blank: {
@@ -265,7 +253,11 @@ export default function AddNoteModal({ visible, onClose, onSave, boxType, boxNam
   const handleSave = () => {
     if (!title.trim()) {
       const errorMsg = getText('enterNoteTitle');
-      showAlert(getText('error'), errorMsg);
+      if (typeof window !== 'undefined') {
+        window.alert(errorMsg);
+      } else {
+        Alert.alert(getText('error'), errorMsg);
+      }
       return;
     }
 
@@ -373,18 +365,6 @@ export default function AddNoteModal({ visible, onClose, onSave, boxType, boxNam
 
           <View style={styles.spacer} />
         </ScrollView>
-        
-        <CustomAlert
-          visible={alertVisible}
-          title={alertConfig.title}
-          message={alertConfig.message}
-          onConfirm={() => {
-            hideAlert();
-            if (alertConfig.onConfirm) {
-              alertConfig.onConfirm();
-            }
-          }}
-        />
       </View>
     </Modal>
   );

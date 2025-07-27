@@ -485,8 +485,8 @@ export default function CalendarScreen({ navigation }) {
                         <div
                           key={index}
                           style={{
-                            width: '8px',
-                            height: '8px',
+                            width: '12px',
+                            height: '12px',
                             borderRadius: '50%',
                             backgroundColor: dot.color,
                             margin: '0 1px',
@@ -498,9 +498,9 @@ export default function CalendarScreen({ navigation }) {
                         <View
                           key={index}
                           style={{
-                            width: 8,
-                            height: 8,
-                            borderRadius: 4,
+                            width: 12,
+                            height: 12,
+                            borderRadius: 6,
                             backgroundColor: dot.color,
                             marginHorizontal: 1,
                             borderWidth: 1,
