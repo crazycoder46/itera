@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
@@ -6,6 +6,7 @@ import { View, Text, TouchableOpacity } from 'react-native';
 
 import { AuthProvider, useAuth } from './context/AuthContext';
 import { ThemeProvider, useTheme } from './context/ThemeContext';
+import CustomAlert from './components/CustomAlert';
 import LandingScreen from './screens/LandingScreen';
 import LoginScreen from './screens/LoginScreen';
 import RegisterScreen from './screens/RegisterScreen';
@@ -71,10 +72,20 @@ function AppHeader() {
     await updateLanguage(newLanguage);
   };
 
+  const [alertVisible, setAlertVisible] = useState(false);
+  const [alertConfig, setAlertConfig] = useState({ title: '', message: '', onConfirm: null });
+
+  const showAlert = (title, message, onConfirm = null) => {
+    setAlertConfig({ title, message, onConfirm });
+    setAlertVisible(true);
+  };
+
+  const hideAlert = () => {
+    setAlertVisible(false);
+  };
+
   const handleAdvance = () => {
-    if (typeof window !== 'undefined') {
-      window.alert(getText('premiumFeatures'));
-    }
+    showAlert(getText('premiumFeatures'), getText('premiumFeatures'));
   };
 
   return (
@@ -361,6 +372,17 @@ export default function App() {
     <AuthProvider>
       <ThemeProvider>
         <AppContent />
+        <CustomAlert
+          visible={alertVisible}
+          title={alertConfig.title}
+          message={alertConfig.message}
+          onConfirm={() => {
+            hideAlert();
+            if (alertConfig.onConfirm) {
+              alertConfig.onConfirm();
+            }
+          }}
+        />
       </ThemeProvider>
     </AuthProvider>
   );

@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { View, Text, TouchableOpacity, StyleSheet, ScrollView, Alert } from 'react-native';
 import { useAuth } from '../context/AuthContext';
+import CustomAlert from '../components/CustomAlert';
 
 export default function ReviewScreen({ navigation }) {
   const { apiCall } = useAuth();
@@ -9,6 +10,8 @@ export default function ReviewScreen({ navigation }) {
   const [loading, setLoading] = useState(true);
   const [reviewComplete, setReviewComplete] = useState(false);
   const [results, setResults] = useState({ remembered: 0, forgotten: 0 });
+  const [alertVisible, setAlertVisible] = useState(false);
+  const [alertConfig, setAlertConfig] = useState({ title: '', message: '', onConfirm: null });
 
   useEffect(() => {
     loadReviewNotes();
@@ -68,15 +71,20 @@ export default function ReviewScreen({ navigation }) {
           setReviewComplete(true);
         }
       } else {
-        if (typeof window !== 'undefined') {
-          window.alert('Tekrar kaydedilirken hata oluştu: ' + response.message);
-        } else {
-          Alert.alert('Hata', 'Tekrar kaydedilirken hata oluştu: ' + response.message);
-        }
+        showAlert('Hata', 'Tekrar kaydedilirken hata oluştu: ' + response.message);
       }
     } catch (error) {
       console.error('Tekrar kaydetme hatası:', error);
     }
+  };
+
+  const showAlert = (title, message, onConfirm = null) => {
+    setAlertConfig({ title, message, onConfirm });
+    setAlertVisible(true);
+  };
+
+  const hideAlert = () => {
+    setAlertVisible(false);
   };
 
   const renderMarkdown = (content) => {
@@ -183,6 +191,18 @@ export default function ReviewScreen({ navigation }) {
             <Text style={styles.finishButtonText}>Ana Sayfaya Dön</Text>
           </TouchableOpacity>
         </View>
+        
+        <CustomAlert
+          visible={alertVisible}
+          title={alertConfig.title}
+          message={alertConfig.message}
+          onConfirm={() => {
+            hideAlert();
+            if (alertConfig.onConfirm) {
+              alertConfig.onConfirm();
+            }
+          }}
+        />
       </View>
     );
   }

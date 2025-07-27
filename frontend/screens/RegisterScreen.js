@@ -3,6 +3,7 @@ import { View, Text, TextInput, TouchableOpacity, Alert, KeyboardAvoidingView, P
 import { useAuth } from '../context/AuthContext';
 import { useTheme } from '../context/ThemeContext';
 import SimpleCaptcha from '../components/SimpleCaptcha';
+import CustomAlert from '../components/CustomAlert';
 
 export default function RegisterScreen({ navigation }) {
   const [firstName, setFirstName] = useState('');
@@ -14,8 +15,19 @@ export default function RegisterScreen({ navigation }) {
   const [privacyAccepted, setPrivacyAccepted] = useState(false);
   const [termsAccepted, setTermsAccepted] = useState(false);
   const [captchaVerified, setCaptchaVerified] = useState(false);
+  const [alertVisible, setAlertVisible] = useState(false);
+  const [alertConfig, setAlertConfig] = useState({ title: '', message: '', onConfirm: null });
   const { register, language, updateLanguage } = useAuth();
   const { colors } = useTheme();
+
+  const showAlert = (title, message, onConfirm = null) => {
+    setAlertConfig({ title, message, onConfirm });
+    setAlertVisible(true);
+  };
+
+  const hideAlert = () => {
+    setAlertVisible(false);
+  };
 
   const toggleLanguage = async () => {
     const newLanguage = language === 'en' ? 'tr' : 'en';
@@ -99,24 +111,11 @@ export default function RegisterScreen({ navigation }) {
         ? 'Registration successful! Redirecting to login...' 
         : 'Kayıt başarılı! Giriş sayfasına yönlendiriliyorsunuz...';
       
-      if (typeof window !== 'undefined') {
-        window.alert(successMsg);
-        // Web'de alert sonrası yönlendirme
-        setTimeout(() => {
-          navigation.navigate('Login');
-        }, 500);
-      } else {
-        Alert.alert(
-          language === 'en' ? 'Success' : 'Başarılı', 
-          successMsg,
-          [
-            {
-              text: 'OK',
-              onPress: () => navigation.navigate('Login')
-            }
-          ]
-        );
-      }
+      showAlert(
+        language === 'en' ? 'Success' : 'Başarılı', 
+        successMsg,
+        () => navigation.navigate('Login')
+      );
     } else {
       const errorMsg = result.message || (language === 'en' ? 'Registration failed' : 'Kayıt başarısız');
       Alert.alert(language === 'en' ? 'Error' : 'Hata', errorMsg);
@@ -303,6 +302,18 @@ export default function RegisterScreen({ navigation }) {
           </View>
         </View>
       </ScrollView>
+      
+      <CustomAlert
+        visible={alertVisible}
+        title={alertConfig.title}
+        message={alertConfig.message}
+        onConfirm={() => {
+          hideAlert();
+          if (alertConfig.onConfirm) {
+            alertConfig.onConfirm();
+          }
+        }}
+      />
     </KeyboardAvoidingView>
   );
 }
