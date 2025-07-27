@@ -3,6 +3,7 @@ import { View, Text, TouchableOpacity, Alert, StyleSheet, ScrollView } from 'rea
 import { useAuth } from '../context/AuthContext';
 import { useTheme } from '../context/ThemeContext';
 import AddNoteModal from '../components/AddNoteModal';
+import CustomAlert from '../components/CustomAlert';
 
 export default function HomeScreen({ navigation }) {
   const { user, logout, testMode, apiCall } = useAuth();
@@ -12,6 +13,8 @@ export default function HomeScreen({ navigation }) {
   const [showAddNoteModal, setShowAddNoteModal] = useState(false);
   const [selectedBox, setSelectedBox] = useState(null);
   const [dailyReviewCompleted, setDailyReviewCompleted] = useState(false);
+  const [alertVisible, setAlertVisible] = useState(false);
+  const [alertConfig, setAlertConfig] = useState({ title: '', message: '', onConfirm: null });
 
   // Leitner kutuları tanımı
   const leitnerBoxes = [
@@ -137,31 +140,22 @@ export default function HomeScreen({ navigation }) {
     }
   };
 
+  const showAlert = (title, message, onConfirm = null) => {
+    setAlertConfig({ title, message, onConfirm });
+    setAlertVisible(true);
+  };
+
+  const hideAlert = () => {
+    setAlertVisible(false);
+  };
+
   const handleLogout = () => {
     console.log('Çıkış butonuna tıklandı!');
-    
-    // Web'de confirm kullan, mobilde Alert
-    if (typeof window !== 'undefined') {
-      // Web ortamı
-      const confirmed = window.confirm('Çıkış yapmak istediğinizden emin misiniz?');
-      if (confirmed) {
-        console.log('Çıkış Yap onaylandı');
-        logout();
-      }
-    } else {
-      // Mobil ortam
-      Alert.alert(
-        'Çıkış Yap',
-        'Çıkış yapmak istediğinizden emin misiniz?',
-        [
-          { text: 'İptal', style: 'cancel' },
-          { text: 'Çıkış Yap', onPress: async () => {
-            console.log('Çıkış Yap butonuna basıldı');
-            await logout();
-          }, style: 'destructive' }
-        ]
-      );
-    }
+    showAlert(
+      'Çıkış Yap',
+      'Çıkış yapmak istediğinizden emin misiniz?',
+      logout
+    );
   };
 
   const handleBoxPress = (box) => {
@@ -182,27 +176,15 @@ export default function HomeScreen({ navigation }) {
         // Notları ve tekrar sayısını yeniden yükle
         loadNotes();
         const successMsg = getText('language') === 'en' ? 'Note added successfully!' : 'Not başarıyla eklendi!';
-        if (typeof window !== 'undefined') {
-          window.alert(successMsg);
-        } else {
-          Alert.alert(getText('language') === 'en' ? 'Success' : 'Başarılı', successMsg);
-        }
+        showAlert(getText('language') === 'en' ? 'Success' : 'Başarılı', successMsg);
       } else {
         const errorMsg = getText('language') === 'en' ? 'Error adding note: ' : 'Not eklenirken hata oluştu: ';
-        if (typeof window !== 'undefined') {
-          window.alert(errorMsg + response.message);
-        } else {
-          Alert.alert(getText('language') === 'en' ? 'Error' : 'Hata', errorMsg + response.message);
-        }
+        showAlert(getText('language') === 'en' ? 'Error' : 'Hata', errorMsg + response.message);
       }
     } catch (error) {
       console.error('Not ekleme hatası:', error);
       const errorMsg = getText('language') === 'en' ? 'Error adding note' : 'Not eklenirken hata oluştu';
-      if (typeof window !== 'undefined') {
-        window.alert(errorMsg);
-      } else {
-        Alert.alert(getText('language') === 'en' ? 'Error' : 'Hata', errorMsg);
-      }
+      showAlert(getText('language') === 'en' ? 'Error' : 'Hata', errorMsg);
     }
   };
 
@@ -210,11 +192,7 @@ export default function HomeScreen({ navigation }) {
     // Eğer günlük tekrar tamamlanmışsa, yeni notlar eklense bile tekrar başlatma
     if (dailyReviewCompleted) {
       const completedMsg = getText('language') === 'en' ? 'Great Job! You completed your review today.' : 'Harika İş! Bugün tekrarını tamamladın.';
-      if (typeof window !== 'undefined') {
-        window.alert(completedMsg);
-      } else {
-        Alert.alert(getText('language') === 'en' ? 'Congratulations!' : 'Tebrikler!', completedMsg);
-      }
+      showAlert(getText('language') === 'en' ? 'Congratulations!' : 'Tebrikler!', completedMsg);
       return;
     }
 
@@ -222,11 +200,7 @@ export default function HomeScreen({ navigation }) {
       navigation.navigate('Review');
     } else {
       const noReviewMsg = getText('language') === 'en' ? 'Great Job! That\'s all for today.' : 'Harika İş! Bugünlük bu kadar.';
-      if (typeof window !== 'undefined') {
-        window.alert(noReviewMsg);
-      } else {
-        Alert.alert(getText('language') === 'en' ? 'Congratulations!' : 'Tebrikler!', noReviewMsg);
-      }
+      showAlert(getText('language') === 'en' ? 'Congratulations!' : 'Tebrikler!', noReviewMsg);
     }
   };
 
@@ -321,6 +295,19 @@ export default function HomeScreen({ navigation }) {
         onSave={handleSaveNote}
         boxType={selectedBox?.id}
         boxName={selectedBox?.name}
+      />
+      
+      {/* Custom Alert */}
+      <CustomAlert
+        visible={alertVisible}
+        title={alertConfig.title}
+        message={alertConfig.message}
+        onConfirm={() => {
+          hideAlert();
+          if (alertConfig.onConfirm) {
+            alertConfig.onConfirm();
+          }
+        }}
       />
     </View>
   );
