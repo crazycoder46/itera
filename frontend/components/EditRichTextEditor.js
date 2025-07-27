@@ -553,10 +553,19 @@ export default function EditRichTextEditor({ initialContent = '', onContentChang
                     
                     img.style.width = newWidth + 'px'
                     img.style.height = newHeight + 'px'
+                    img.setAttribute('width', newWidth)
+                    img.setAttribute('height', newHeight)
                     container.style.width = newWidth + 'px'
                     container.style.height = newHeight + 'px'
                     
-                    // DOM'u güncelle, TipTap editörü otomatik olarak content'i güncelleyecek
+                    // TipTap editörünün node'unu güncelle
+                    const pos = getPos()
+                    if (pos !== undefined) {
+                      updateAttributes({
+                        width: newWidth,
+                        height: newHeight
+                      })
+                    }
                   }
                   
                                     const handleMouseUp = () => {
@@ -627,10 +636,19 @@ export default function EditRichTextEditor({ initialContent = '', onContentChang
                     
                     img.style.width = newWidth + 'px'
                     img.style.height = newHeight + 'px'
+                    img.setAttribute('width', newWidth)
+                    img.setAttribute('height', newHeight)
                     container.style.width = newWidth + 'px'
                     container.style.height = newHeight + 'px'
                     
-                    // DOM'u güncelle, TipTap editörü otomatik olarak content'i güncelleyecek
+                    // TipTap editörünün node'unu güncelle
+                    const pos = getPos()
+                    if (pos !== undefined) {
+                      updateAttributes({
+                        width: newWidth,
+                        height: newHeight
+                      })
+                    }
                   }
                   
                                     const handleTouchEnd = () => {
