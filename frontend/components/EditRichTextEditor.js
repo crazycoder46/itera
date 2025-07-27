@@ -556,11 +556,7 @@ export default function EditRichTextEditor({ initialContent = '', onContentChang
                     container.style.width = newWidth + 'px'
                     container.style.height = newHeight + 'px'
                     
-                    // Resize sırasında da attribute'ları güncelle
-                    updateAttributes({
-                      width: newWidth,
-                      height: newHeight
-                    })
+                    // DOM'u güncelle, TipTap editörü otomatik olarak content'i güncelleyecek
                   }
                   
                   const handleMouseUp = () => {
@@ -625,11 +621,7 @@ export default function EditRichTextEditor({ initialContent = '', onContentChang
                     container.style.width = newWidth + 'px'
                     container.style.height = newHeight + 'px'
                     
-                    // Resize sırasında da attribute'ları güncelle
-                    updateAttributes({
-                      width: newWidth,
-                      height: newHeight
-                    })
+                    // DOM'u güncelle, TipTap editörü otomatik olarak content'i güncelleyecek
                   }
                   
                   const handleTouchEnd = () => {
