@@ -73,7 +73,11 @@ function AppHeader() {
 
   const handleAdvance = () => {
     if (typeof window !== 'undefined') {
-      window.alert(getText('premiumFeatures'));
+      const title = language === 'en' ? 'Advanced Package' : 'Advanced Paket';
+      const message = language === 'en' 
+        ? 'Advanced Package Features:\n\n• High storage capacity\n• Shared Brains\n• Ad-free experience'
+        : 'Advanced Paket Özellikleri:\n\n• Yüksek depolama alanı\n• Ortak akıl (Shared Brains)\n• Reklamsız deneyim';
+      window.alert(`${title}\n\n${message}`);
     }
   };
 
