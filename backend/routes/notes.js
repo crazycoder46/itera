@@ -1,40 +1,11 @@
 const express = require('express');
 const pool = require('../config/database');
 const auth = require('../middleware/auth');
-const multer = require('multer');
+const { upload: imageUpload, cloudinary } = require('../config/cloudinary');
 const path = require('path');
 const fs = require('fs');
 
 const router = express.Router();
-
-// Resim yükleme için multer yapılandırması
-const imageStorage = multer.diskStorage({
-  destination: function (req, file, cb) {
-    const uploadDir = path.join(__dirname, '../uploads/note-images');
-    if (!fs.existsSync(uploadDir)) {
-      fs.mkdirSync(uploadDir, { recursive: true });
-    }
-    cb(null, uploadDir);
-  },
-  filename: function (req, file, cb) {
-    const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1E9);
-    cb(null, 'note-' + uniqueSuffix + path.extname(file.originalname));
-  }
-});
-
-const imageUpload = multer({ 
-  storage: imageStorage,
-  limits: {
-    fileSize: 10 * 1024 * 1024 // 10MB limit
-  },
-  fileFilter: function (req, file, cb) {
-    if (file.mimetype.startsWith('image/')) {
-      cb(null, true);
-    } else {
-      cb(new Error('Only image files are allowed!'), false);
-    }
-  }
-});
 
 // Get all notes for user
 router.get('/', auth, async (req, res) => {
@@ -177,19 +148,18 @@ router.delete('/:id', auth, async (req, res) => {
       [id]
     );
     
-    // Fiziksel dosyaları sil
-    const fs = require('fs');
-    const path = require('path');
-    
+    // Cloudinary'den resimleri sil
     for (const image of images.rows) {
-      const filePath = path.join(__dirname, '..', image.image_url);
       try {
-        if (fs.existsSync(filePath)) {
-          fs.unlinkSync(filePath);
-          console.log('Deleted file:', filePath);
-        }
-      } catch (fileError) {
-        console.error('Error deleting file:', fileError);
+        // URL'den public ID'yi çıkar
+        const urlParts = image.image_url.split('/');
+        const publicId = urlParts[urlParts.length - 1].split('.')[0];
+        
+        // Cloudinary'den sil
+        await cloudinary.uploader.destroy(publicId);
+        console.log('Deleted from Cloudinary:', publicId);
+      } catch (cloudinaryError) {
+        console.error('Error deleting from Cloudinary:', cloudinaryError);
       }
     }
     
@@ -757,7 +727,7 @@ router.get('/:id', auth, async (req, res) => {
   }
 });
 
-// Kullanılmayan resimleri temizle
+// Cloudinary cleanup endpoint'i (manuel kullanım için)
 router.delete('/cleanup-unused-images', auth, async (req, res) => {
   try {
     // 1 saatten eski ve note_id'si NULL olan resimleri bul
@@ -769,19 +739,18 @@ router.delete('/cleanup-unused-images', auth, async (req, res) => {
     
     console.log(`Found ${unusedImages.rows.length} unused images to clean up`);
     
-    // Fiziksel dosyaları sil
-    const fs = require('fs');
-    const path = require('path');
-    
+    // Cloudinary'den resimleri sil
     for (const image of unusedImages.rows) {
-      const filePath = path.join(__dirname, '..', image.image_url);
       try {
-        if (fs.existsSync(filePath)) {
-          fs.unlinkSync(filePath);
-          console.log('Deleted unused file:', filePath);
-        }
-      } catch (fileError) {
-        console.error('Error deleting file:', fileError);
+        // URL'den public ID'yi çıkar
+        const urlParts = image.image_url.split('/');
+        const publicId = urlParts[urlParts.length - 1].split('.')[0];
+        
+        // Cloudinary'den sil
+        await cloudinary.uploader.destroy(publicId);
+        console.log('Deleted from Cloudinary:', publicId);
+      } catch (cloudinaryError) {
+        console.error('Error deleting from Cloudinary:', cloudinaryError);
       }
     }
     
@@ -794,7 +763,7 @@ router.delete('/cleanup-unused-images', auth, async (req, res) => {
     
     res.json({
       success: true,
-      message: `${deleteResult.rowCount} kullanılmayan resim temizlendi`
+      message: `${deleteResult.rowCount} kullanılmayan resim Cloudinary'den temizlendi`
     });
   } catch (error) {
     console.error('Cleanup error:', error);
@@ -805,7 +774,7 @@ router.delete('/cleanup-unused-images', auth, async (req, res) => {
   }
 });
 
-// Resim yükleme endpoint'i
+// Resim yükleme endpoint'i (Cloudinary)
 router.post('/upload-image', auth, (req, res) => {
   imageUpload.single('image')(req, res, async (err) => {
     if (err) {
@@ -823,8 +792,9 @@ router.post('/upload-image', auth, (req, res) => {
         });
       }
 
-      // Resim URL'ini oluştur
-      const imageUrl = `/uploads/note-images/${req.file.filename}`;
+      // Cloudinary'den gelen URL'i kullan
+      const imageUrl = req.file.path; // Cloudinary URL'i
+      const publicId = req.file.filename; // Cloudinary public ID
 
       // noteId varsa kullan, yoksa NULL
       const noteId = req.body.noteId ? parseInt(req.body.noteId) : null;
@@ -839,7 +809,8 @@ router.post('/upload-image', auth, (req, res) => {
         success: true,
         imageUrl,
         imageId: imageRecord.rows[0].id,
-        message: 'Resim başarıyla yüklendi'
+        publicId: publicId,
+        message: 'Resim başarıyla Cloudinary\'ye yüklendi'
       });
     } catch (error) {
       console.error('Resim yükleme hatası:', error);

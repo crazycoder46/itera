@@ -1,46 +1,13 @@
 const express = require('express');
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
-const multer = require('multer');
+const { profileUpload, cloudinary } = require('../config/cloudinary');
 const path = require('path');
 const fs = require('fs');
 const pool = require('../config/database');
 const auth = require('../middleware/auth');
 
 const router = express.Router();
-
-// Multer configuration for profile pictures
-const storage = multer.diskStorage({
-  destination: function (req, file, cb) {
-    const uploadDir = path.join(__dirname, '../uploads/profile-pictures');
-    if (!fs.existsSync(uploadDir)) {
-      fs.mkdirSync(uploadDir, { recursive: true });
-    }
-    cb(null, uploadDir);
-  },
-  filename: function (req, file, cb) {
-    const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1E9);
-    cb(null, 'profile-' + uniqueSuffix + path.extname(file.originalname));
-  }
-});
-
-const upload = multer({
-  storage: storage,
-  limits: {
-    fileSize: 5 * 1024 * 1024, // 5MB limit
-  },
-  fileFilter: function (req, file, cb) {
-    const allowedTypes = /jpeg|jpg|png|gif/;
-    const extname = allowedTypes.test(path.extname(file.originalname).toLowerCase());
-    const mimetype = allowedTypes.test(file.mimetype);
-
-    if (mimetype && extname) {
-      return cb(null, true);
-    } else {
-      cb(new Error('Sadece resim dosyaları yüklenebilir (JPEG, JPG, PNG, GIF)'));
-    }
-  }
-});
 
 // Register
 router.post('/register', async (req, res) => {
@@ -197,8 +164,8 @@ router.put('/profile', auth, async (req, res) => {
   }
 });
 
-// Upload profile picture
-router.post('/profile/picture', auth, upload.single('profilePicture'), async (req, res) => {
+// Upload profile picture (Cloudinary)
+router.post('/profile/picture', auth, profileUpload.single('profilePicture'), async (req, res) => {
   try {
     if (!req.file) {
       return res.status(400).json({
@@ -207,12 +174,13 @@ router.post('/profile/picture', auth, upload.single('profilePicture'), async (re
       });
     }
 
-    const profilePicturePath = `/uploads/profile-pictures/${req.file.filename}`;
+    // Cloudinary'den gelen URL'i kullan
+    const profilePictureUrl = req.file.path; // Cloudinary URL'i
 
     // Update user's profile picture in database
     const result = await pool.query(
       'UPDATE users SET profile_picture = $1 WHERE id = $2 RETURNING id, first_name, last_name, email, profile_picture, created_at, is_premium',
-      [profilePicturePath, req.userId]
+      [profilePictureUrl, req.userId]
     );
 
     if (result.rows.length === 0) {
@@ -224,9 +192,9 @@ router.post('/profile/picture', auth, upload.single('profilePicture'), async (re
 
     res.json({
       success: true,
-      message: 'Profil fotoğrafı başarıyla yüklendi',
+      message: 'Profil fotoğrafı başarıyla Cloudinary\'ye yüklendi',
       user: result.rows[0],
-      profilePicture: profilePicturePath
+      profilePicture: profilePictureUrl
     });
   } catch (error) {
     console.error('Profile picture upload error:', error);
@@ -237,7 +205,7 @@ router.post('/profile/picture', auth, upload.single('profilePicture'), async (re
   }
 });
 
-// Delete profile picture
+// Delete profile picture (Cloudinary)
 router.delete('/profile/picture', auth, async (req, res) => {
   try {
     // Get current profile picture
@@ -255,23 +223,30 @@ router.delete('/profile/picture', auth, async (req, res) => {
 
     const currentPicture = userResult.rows[0].profile_picture;
 
-    // Delete file from filesystem if exists
-    if (currentPicture) {
-      const filePath = path.join(__dirname, '..', currentPicture);
-      if (fs.existsSync(filePath)) {
-        fs.unlinkSync(filePath);
+    // Delete from Cloudinary if exists
+    if (currentPicture && currentPicture.includes('cloudinary.com')) {
+      try {
+        // URL'den public ID'yi çıkar
+        const urlParts = currentPicture.split('/');
+        const publicId = urlParts[urlParts.length - 1].split('.')[0];
+        
+        // Cloudinary'den sil
+        await cloudinary.uploader.destroy(publicId);
+        console.log('Deleted profile picture from Cloudinary:', publicId);
+      } catch (cloudinaryError) {
+        console.error('Error deleting from Cloudinary:', cloudinaryError);
       }
     }
 
     // Update database
     const result = await pool.query(
-              'UPDATE users SET profile_picture = NULL WHERE id = $1 RETURNING id, first_name, last_name, email, profile_picture, created_at, is_premium',
+      'UPDATE users SET profile_picture = NULL WHERE id = $1 RETURNING id, first_name, last_name, email, profile_picture, created_at, is_premium',
       [req.userId]
     );
 
     res.json({
       success: true,
-      message: 'Profil fotoğrafı başarıyla silindi',
+      message: 'Profil fotoğrafı başarıyla Cloudinary\'den silindi',
       user: result.rows[0]
     });
   } catch (error) {

@@ -11,7 +11,12 @@
     "test:watch": "jest --watch",
     "test:coverage": "jest --coverage"
   },
-  "keywords": ["itera", "api", "learning", "spaced-repetition"],
+  "keywords": [
+    "itera",
+    "api",
+    "learning",
+    "spaced-repetition"
+  ],
   "author": "Itera Team",
   "license": "ISC",
   "type": "commonjs",
@@ -21,17 +26,19 @@
   },
   "dependencies": {
     "bcryptjs": "^2.4.3",
+    "cloudinary": "^1.41.3",
     "cors": "^2.8.5",
     "dotenv": "^16.4.7",
     "express": "^4.21.2",
     "jsonwebtoken": "^9.0.2",
     "multer": "^2.0.1",
+    "multer-storage-cloudinary": "^4.0.0",
     "pg": "^8.13.1",
     "stripe": "^18.3.0"
   },
   "devDependencies": {
-    "nodemon": "^3.1.9",
     "jest": "^29.7.0",
+    "nodemon": "^3.1.9",
     "supertest": "^6.3.3"
   }
 }

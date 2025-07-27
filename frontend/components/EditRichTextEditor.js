@@ -90,7 +90,7 @@ export default function EditRichTextEditor({ initialContent = '', onContentChang
           
           // Gerçek resmi yükle
           const imageUrl = await uploadImage(result.assets[0].uri);
-          const fullImageUrl = `${process.env.EXPO_PUBLIC_API_URL || 'http://localhost:3000'}${imageUrl}`;
+          const fullImageUrl = imageUrl; // Cloudinary URL'i direkt kullan
           
           console.log('Yüklenen resim URL:', fullImageUrl);
           

@@ -351,7 +351,7 @@ export default function ProfileScreen() {
           <View style={styles.profilePicture}>
             {user?.profile_picture ? (
               <Image 
-                source={{ uri: `${process.env.EXPO_PUBLIC_API_URL || 'http://localhost:3000'}${user.profile_picture}` }}
+                source={{ uri: user.profile_picture }}
                 style={styles.profileImage}
                 onError={() => console.log('Error loading profile image')}
               />
