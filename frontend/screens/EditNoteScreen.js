@@ -3,6 +3,7 @@ import { View, Text, TouchableOpacity, StyleSheet, ScrollView, TextInput, Alert 
 import { useAuth } from '../context/AuthContext';
 import { useTheme } from '../context/ThemeContext';
 import EditRichTextEditor from '../components/EditRichTextEditor';
+import CustomAlert from '../components/CustomAlert';
 
 export default function EditNoteScreen({ route, navigation }) {
   const { note, box } = route.params;
@@ -11,18 +12,26 @@ export default function EditNoteScreen({ route, navigation }) {
   const [title, setTitle] = useState(note.title);
   const [content, setContent] = useState(note.content);
   const [saving, setSaving] = useState(false);
+  const [alertVisible, setAlertVisible] = useState(false);
+  const [alertConfig, setAlertConfig] = useState({});
 
   // Debug log
   console.log('EditNoteScreen - Initial content:', note.content);
 
+  const showAlert = (title, message, type = 'info', onConfirm = null) => {
+    setAlertConfig({
+      title,
+      message,
+      type,
+      onConfirm: onConfirm || (() => setAlertVisible(false))
+    });
+    setAlertVisible(true);
+  };
+
   const handleSave = async () => {
     if (!title.trim()) {
       const errorMsg = getText('enterNoteTitle');
-      if (typeof window !== 'undefined') {
-        window.alert(errorMsg);
-      } else {
-        Alert.alert(getText('error'), errorMsg);
-      }
+      showAlert(getText('error'), errorMsg, 'error');
       return;
     }
 
@@ -53,29 +62,18 @@ export default function EditNoteScreen({ route, navigation }) {
 
       if (response.success) {
         const successMsg = getText('noteUpdatedSuccessfully');
-        if (typeof window !== 'undefined') {
-          window.alert(successMsg);
-        } else {
-          Alert.alert(getText('success'), successMsg);
-        }
-        
-        navigation.goBack();
+        showAlert(getText('success'), successMsg, 'success', () => {
+          setAlertVisible(false);
+          navigation.goBack();
+        });
       } else {
         const errorMsg = getText('errorUpdatingNote');
-        if (typeof window !== 'undefined') {
-          window.alert(errorMsg + response.message);
-        } else {
-          Alert.alert(getText('error'), errorMsg + response.message);
-        }
+        showAlert(getText('error'), errorMsg + response.message, 'error');
       }
     } catch (error) {
       console.error('Not güncelleme hatası:', error);
       const errorMsg = getText('errorUpdatingNote');
-      if (typeof window !== 'undefined') {
-        window.alert(errorMsg);
-      } else {
-        Alert.alert(getText('error'), errorMsg);
-      }
+      showAlert(getText('error'), errorMsg, 'error');
     } finally {
       setSaving(false);
     }
@@ -83,29 +81,15 @@ export default function EditNoteScreen({ route, navigation }) {
 
   const handleCancel = () => {
     if (title !== note.title || content !== note.content) {
-      const confirmDiscard = () => {
-        const confirmMsg = getText('changesNotSaved');
-        if (typeof window !== 'undefined') {
-          return window.confirm(confirmMsg);
-        } else {
-          return new Promise((resolve) => {
-            Alert.alert(
-              getText('changesNotSaved'),
-              getText('areYouSureYouWantToExit'),
-              [
-                { text: getText('stay'), onPress: () => resolve(false), style: 'cancel' },
-                { text: getText('exit'), onPress: () => resolve(true), style: 'destructive' }
-              ]
-            );
-          });
-        }
-      };
-
-      confirmDiscard().then((confirmed) => {
-        if (confirmed) {
+      showAlert(
+        getText('changesNotSaved'),
+        getText('areYouSureYouWantToExit'),
+        'warning',
+        () => {
+          setAlertVisible(false);
           navigation.goBack();
         }
-      });
+      );
     } else {
       navigation.goBack();
     }
@@ -182,6 +166,18 @@ export default function EditNoteScreen({ route, navigation }) {
 
         <View style={styles.spacer} />
       </ScrollView>
+      
+      {/* Custom Alert */}
+      <CustomAlert
+        visible={alertVisible}
+        title={alertConfig.title}
+        message={alertConfig.message}
+        type={alertConfig.type}
+        onConfirm={alertConfig.onConfirm}
+        onCancel={() => setAlertVisible(false)}
+        confirmText={getText('ok')}
+        cancelText={getText('cancel')}
+      />
     </View>
   );
 }
