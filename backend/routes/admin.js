@@ -2,14 +2,6 @@ const express = require('express');
 const router = express.Router();
 const pool = require('../config/database');
 
-// Test endpoint
-router.get('/test', (req, res) => {
-  res.json({ 
-    success: true, 
-    message: 'Admin endpoint is working' 
-  });
-});
-
 // Admin endpoint to manage user premium status
 router.post('/set-premium', async (req, res) => {
   try {
