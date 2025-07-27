@@ -220,6 +220,13 @@ export default function LandingScreen({ navigation }) {
       {/* Transparent Navbar */}
       <View style={styles.navbar} accessibilityRole="navigation" accessibilityLabel="Ana navigasyon">
         <View style={styles.logoContainer}>
+          <Image 
+            source={require('../landing_images/logo.png')} 
+            style={styles.logoImage}
+            resizeMode="contain"
+            accessibilityLabel="Itera logosu"
+            alt="Itera - Bilimsel Öğrenme Uygulaması Logosu"
+          />
           <Text style={[styles.logoText, { color: colors.primary }]} accessibilityRole="header" accessibilityLevel={1}>Itera</Text>
         </View>
         

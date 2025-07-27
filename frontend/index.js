@@ -23,7 +23,7 @@ if (Platform.OS === 'web') {
 // SEO Meta Tags and Structured Data for Web
 if (Platform.OS === 'web') {
   // Set document title
-  document.title = 'Itera - Bilimsel Öğrenme Uygulaması | Leitner Sistemi ile Kalıcı Öğrenme';
+  document.title = 'Itera';
   
   // Create and append meta tags
   const createMetaTag = (name, content, property = false) => {
