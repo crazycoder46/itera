@@ -30,7 +30,7 @@ Allow: /login
 Allow: /register
 
 # Sitemap location
-Sitemap: https://itera.app/sitemap.xml
+Sitemap: https://iterapp.org/sitemap.xml
 
 # Crawl delay (optional, in seconds)
 Crawl-delay: 1 
