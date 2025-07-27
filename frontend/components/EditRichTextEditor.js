@@ -571,7 +571,24 @@ export default function EditRichTextEditor({ initialContent = '', onContentChang
                       
                       // Resize işleminden sonra content'i güncelle
                       setTimeout(() => {
-                        notifyContentChange(editor.getHTML())
+                        // TipTap editörünün content'ini zorla güncelle
+                        const currentContent = editor.getHTML()
+                        console.log('Content after mouse resize:', currentContent);
+                        
+                        // Resim boyutlarını kontrol et
+                        const editorEl = document.querySelector('#editor');
+                        const images = editorEl ? editorEl.querySelectorAll('img') : [];
+                        images.forEach((img, index) => {
+                          console.log('Image ' + index + ' after mouse resize:', {
+                            src: img.src,
+                            width: img.getAttribute('width'),
+                            height: img.getAttribute('height'),
+                            styleWidth: img.style.width,
+                            styleHeight: img.style.height
+                          });
+                        });
+                        
+                        notifyContentChange(currentContent)
                       }, 100);
                     }
                   }
@@ -623,7 +640,24 @@ export default function EditRichTextEditor({ initialContent = '', onContentChang
                       
                       // Resize işleminden sonra content'i güncelle
                       setTimeout(() => {
-                        notifyContentChange(editor.getHTML())
+                        // TipTap editörünün content'ini zorla güncelle
+                        const currentContent = editor.getHTML()
+                        console.log('Content after touch resize:', currentContent);
+                        
+                        // Resim boyutlarını kontrol et
+                        const editorEl = document.querySelector('#editor');
+                        const images = editorEl ? editorEl.querySelectorAll('img') : [];
+                        images.forEach((img, index) => {
+                          console.log('Image ' + index + ' after touch resize:', {
+                            src: img.src,
+                            width: img.getAttribute('width'),
+                            height: img.getAttribute('height'),
+                            styleWidth: img.style.width,
+                            styleHeight: img.style.height
+                          });
+                        });
+                        
+                        notifyContentChange(currentContent)
                       }, 100);
                     }
                   }
