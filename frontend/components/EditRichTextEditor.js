@@ -568,6 +568,16 @@ export default function EditRichTextEditor({ initialContent = '', onContentChang
                       isResizing = false
                       document.removeEventListener('mousemove', handleMouseMove)
                       document.removeEventListener('mouseup', handleMouseUp)
+                      
+                      // Resize işleminden sonra content'i güncelle
+                      setTimeout(() => {
+                        const content = editor.getHTML()
+                        console.log('Content after resize:', content);
+                        window.parent.postMessage(JSON.stringify({
+                          type: 'CONTENT_CHANGED',
+                          content: content
+                        }), '*')
+                      }, 100);
                     }
                   }
                   
@@ -615,6 +625,16 @@ export default function EditRichTextEditor({ initialContent = '', onContentChang
                       isResizing = false
                       document.removeEventListener('touchmove', handleTouchMove)
                       document.removeEventListener('touchend', handleTouchEnd)
+                      
+                      // Resize işleminden sonra content'i güncelle
+                      setTimeout(() => {
+                        const content = editor.getHTML()
+                        console.log('Content after touch resize:', content);
+                        window.parent.postMessage(JSON.stringify({
+                          type: 'CONTENT_CHANGED',
+                          content: content
+                        }), '*')
+                      }, 100);
                     }
                   }
                   
