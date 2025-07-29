@@ -68,7 +68,24 @@ router.post('/init-database', async (req, res) => {
       )
     `);
     
-    // Shared brains table
+    // Shared notes table
+    await pool.query(`
+      CREATE TABLE IF NOT EXISTS shared_notes (
+        id SERIAL PRIMARY KEY,
+        sender_id INTEGER REFERENCES users(id) ON DELETE CASCADE,
+        receiver_id INTEGER REFERENCES users(id) ON DELETE CASCADE,
+        original_note_id INTEGER REFERENCES notes(id) ON DELETE CASCADE,
+        title VARCHAR(200) NOT NULL,
+        content TEXT NOT NULL,
+        box_type VARCHAR(20) DEFAULT 'daily',
+        is_accepted BOOLEAN DEFAULT FALSE,
+        is_deleted_by_sender BOOLEAN DEFAULT FALSE,
+        is_deleted_by_receiver BOOLEAN DEFAULT FALSE,
+        shared_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+      )
+    `);
+    
+    // Shared brains table (legacy)
     await pool.query(`
       CREATE TABLE IF NOT EXISTS shared_brains (
         id SERIAL PRIMARY KEY,
