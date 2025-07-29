@@ -238,4 +238,49 @@ router.post('/fix-columns', async (req, res) => {
   }
 });
 
+// Create shared_notes table manually
+router.post('/create-shared-notes', async (req, res) => {
+  try {
+    console.log('Creating shared_notes table...');
+    
+    // Create shared_notes table
+    await pool.query(`
+      CREATE TABLE IF NOT EXISTS shared_notes (
+        id SERIAL PRIMARY KEY,
+        sender_id INTEGER REFERENCES users(id) ON DELETE CASCADE,
+        receiver_id INTEGER REFERENCES users(id) ON DELETE CASCADE,
+        original_note_id INTEGER REFERENCES notes(id) ON DELETE CASCADE,
+        title VARCHAR(500) NOT NULL,
+        content TEXT NOT NULL,
+        box_type VARCHAR(50) NOT NULL,
+        shared_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+        is_accepted BOOLEAN DEFAULT FALSE,
+        is_deleted_by_sender BOOLEAN DEFAULT FALSE,
+        is_deleted_by_receiver BOOLEAN DEFAULT FALSE
+      )
+    `);
+    
+    // Create indexes
+    await pool.query('CREATE INDEX IF NOT EXISTS idx_shared_notes_sender ON shared_notes(sender_id)');
+    await pool.query('CREATE INDEX IF NOT EXISTS idx_shared_notes_receiver ON shared_notes(receiver_id)');
+    await pool.query('CREATE INDEX IF NOT EXISTS idx_shared_notes_shared_at ON shared_notes(shared_at)');
+    
+    console.log('shared_notes table created successfully!');
+    
+    res.json({
+      success: true,
+      message: 'shared_notes table created successfully!',
+      timestamp: new Date().toISOString()
+    });
+    
+  } catch (error) {
+    console.error('Create shared_notes error:', error);
+    res.status(500).json({
+      success: false,
+      message: 'Create shared_notes failed',
+      error: error.message
+    });
+  }
+});
+
 module.exports = router; 
