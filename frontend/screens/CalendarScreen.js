@@ -112,10 +112,6 @@ export default function CalendarScreen({ navigation }) {
     today.setHours(today.getHours(), 0, 0, 0);
     const todayStr = today.toISOString().split('T')[0];
     
-    console.log(`📅 Takvim - Bugün (kullanıcı zamanı): ${todayStr}`);
-    console.log(`📅 Takvim - Kontrol edilen gün: ${dateStr}`);
-    console.log(`📅 Takvim - Bugün mü?: ${dateStr === todayStr}`);
-    
     // O gün için notları filtrele
     const dayNotes = calendarData.notes.filter(note => note.review_date === dateStr);
     
