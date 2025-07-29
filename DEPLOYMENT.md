@@ -338,8 +338,6 @@ curl https://itera-backend.onrender.com/health
 - [ ] Error monitoring (Sentry)
 - [ ] Performance monitoring
 - [ ] Backup stratejisi
-- [ ] Premium features development
-- [ ] Mobile app store deployment
 
 ### Deployment Tarihi
 
