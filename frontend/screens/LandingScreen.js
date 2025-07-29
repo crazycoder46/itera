@@ -987,12 +987,24 @@ export default function LandingScreen({ navigation }) {
                 {language === 'en' ? 'FAQ' : 'SSS'}
               </Text>
             </TouchableOpacity>
-            <TouchableOpacity onPress={() => navigation.navigate('PrivacyPolicy')}>
+            <TouchableOpacity onPress={() => {
+              if (typeof window !== 'undefined') {
+                window.open('https://itera-frontend-omega.vercel.app/privacy-policy', '_blank');
+              } else {
+                navigation.navigate('PrivacyPolicy');
+              }
+            }}>
               <Text style={[styles.footerLink, { color: colors.primary }]}>
                 {language === 'en' ? 'Privacy Policy' : 'Gizlilik Politikası'}
               </Text>
             </TouchableOpacity>
-            <TouchableOpacity onPress={() => navigation.navigate('TermsOfService')}>
+            <TouchableOpacity onPress={() => {
+              if (typeof window !== 'undefined') {
+                window.open('https://itera-frontend-omega.vercel.app/terms-of-service', '_blank');
+              } else {
+                navigation.navigate('TermsOfService');
+              }
+            }}>
               <Text style={[styles.footerLink, { color: colors.primary }]}>
                 {language === 'en' ? 'Terms of Service' : 'Kullanım Şartları'}
               </Text>
