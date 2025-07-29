@@ -989,7 +989,7 @@ export default function LandingScreen({ navigation }) {
             </TouchableOpacity>
             <TouchableOpacity onPress={() => {
               if (typeof window !== 'undefined') {
-                window.open('https://itera-frontend-omega.vercel.app/privacy-policy', '_blank');
+                window.location.href = '/privacy-policy';
               } else {
                 navigation.navigate('PrivacyPolicy');
               }
@@ -1000,7 +1000,7 @@ export default function LandingScreen({ navigation }) {
             </TouchableOpacity>
             <TouchableOpacity onPress={() => {
               if (typeof window !== 'undefined') {
-                window.open('https://itera-frontend-omega.vercel.app/terms-of-service', '_blank');
+                window.location.href = '/terms-of-service';
               } else {
                 navigation.navigate('TermsOfService');
               }

@@ -91,10 +91,8 @@ const PaddleCheckout = ({ onSuccess, onCancel, language = 'tr' }) => {
         user_id: user?.id,
         plan: plan
       }),
-      success_url: 'https://itera-frontend-omega.vercel.app/payment-success',
-      cancel_url: 'https://itera-frontend-omega.vercel.app/payment-cancel',
-      terms_url: 'https://itera-frontend-omega.vercel.app/terms-of-service',
-      privacy_url: 'https://itera-frontend-omega.vercel.app/privacy-policy'
+      success_url: `${window.location.origin}/payment-success`,
+      cancel_url: `${window.location.origin}/payment-cancel`
     });
     
     return `${baseUrl}?${params.toString()}`;

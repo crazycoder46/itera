@@ -235,7 +235,13 @@ export default function RegisterScreen({ navigation }) {
                 <Text style={[styles.checkboxText, { color: colors.text }]}>
                   {language === 'en' ? 'I have read and accept the ' : 'Okudum ve kabul ediyorum: '}
                 </Text>
-                <TouchableOpacity onPress={() => navigation.navigate('PrivacyPolicy')}>
+                <TouchableOpacity onPress={() => {
+                  if (typeof window !== 'undefined') {
+                    window.location.href = '/privacy-policy';
+                  } else {
+                    navigation.navigate('PrivacyPolicy');
+                  }
+                }}>
                   <Text style={[styles.linkInText, { color: colors.primary }]}>
                     {language === 'en' ? 'Privacy Policy' : 'Gizlilik Politikası'}
                   </Text>
@@ -257,7 +263,13 @@ export default function RegisterScreen({ navigation }) {
                 <Text style={[styles.checkboxText, { color: colors.text }]}>
                   {language === 'en' ? 'I have read and accept the ' : 'Okudum ve kabul ediyorum: '}
                 </Text>
-                <TouchableOpacity onPress={() => navigation.navigate('TermsOfService')}>
+                <TouchableOpacity onPress={() => {
+                  if (typeof window !== 'undefined') {
+                    window.location.href = '/terms-of-service';
+                  } else {
+                    navigation.navigate('TermsOfService');
+                  }
+                }}>
                   <Text style={[styles.linkInText, { color: colors.primary }]}>
                     {language === 'en' ? 'Terms of Service' : 'Kullanım Şartları'}
                   </Text>

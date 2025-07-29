@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
-import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
+import { createBottomTabNavigator } from '@react-navigation/native-stack';
 import { View, Text, TouchableOpacity } from 'react-native';
 
 import CustomAlert from './components/CustomAlert';
@@ -26,6 +26,29 @@ import FAQScreen from './screens/FAQScreen';
 
 const Stack = createNativeStackNavigator();
 const Tab = createBottomTabNavigator();
+
+// URL routing hook
+const useURLRouting = () => {
+  const [initialRoute, setInitialRoute] = useState('Landing');
+  
+  useEffect(() => {
+    if (typeof window !== 'undefined') {
+      const path = window.location.pathname;
+      
+      if (path === '/terms-of-service') {
+        setInitialRoute('TermsOfService');
+      } else if (path === '/privacy-policy') {
+        setInitialRoute('PrivacyPolicy');
+      } else if (path === '/faq') {
+        setInitialRoute('FAQ');
+      } else {
+        setInitialRoute('Landing');
+      }
+    }
+  }, []);
+  
+  return initialRoute;
+};
 
 // Tab Icons
 const HomeIcon = ({ color }) => (
@@ -254,6 +277,7 @@ function MainTabs() {
 function AuthStack() {
   const { language, updateLanguage } = useAuth();
   const { colors } = useTheme();
+  const initialRoute = useURLRouting();
 
   const toggleLanguage = async () => {
     const newLanguage = language === 'tr' ? 'en' : 'tr';
@@ -261,7 +285,10 @@ function AuthStack() {
   };
 
   return (
-    <Stack.Navigator screenOptions={{ headerShown: false }}>
+    <Stack.Navigator 
+      screenOptions={{ headerShown: false }}
+      initialRouteName={initialRoute}
+    >
       <Stack.Screen name="Landing" component={LandingScreen} />
       <Stack.Screen name="PrivacyPolicy" component={PrivacyPolicyScreen} />
       <Stack.Screen name="TermsOfService" component={TermsOfServiceScreen} />
