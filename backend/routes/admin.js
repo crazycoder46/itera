@@ -2,18 +2,78 @@ const express = require('express');
 const router = express.Router();
 const pool = require('../config/database');
 
-// Admin endpoint to manage user premium status
-router.post('/set-premium', async (req, res) => {
+// Admin authentication middleware
+const authenticateAdmin = (req, res, next) => {
+  const { adminSecret } = req.body;
+  if (adminSecret !== 'itera_admin_2024') {
+    return res.status(401).json({ 
+      success: false, 
+      message: 'Unauthorized' 
+    });
+  }
+  next();
+};
+
+// Get admin statistics
+router.post('/statistics', authenticateAdmin, async (req, res) => {
   try {
-    const { email, isPremium, adminSecret } = req.body;
-    
-    // Simple admin authentication (you can change this secret)
-    if (adminSecret !== 'itera_admin_2024') {
-      return res.status(401).json({ 
-        success: false, 
-        message: 'Unauthorized' 
-      });
-    }
+    // Total users count
+    const usersResult = await pool.query('SELECT COUNT(*) as total_users FROM users');
+    const totalUsers = parseInt(usersResult.rows[0].total_users);
+
+    // Total notes count
+    const notesResult = await pool.query('SELECT COUNT(*) as total_notes FROM notes');
+    const totalNotes = parseInt(notesResult.rows[0].total_notes);
+
+    // Premium users count
+    const premiumResult = await pool.query('SELECT COUNT(*) as premium_users FROM users WHERE is_premium = true');
+    const premiumUsers = parseInt(premiumResult.rows[0].premium_users);
+
+    // Total images count
+    const imagesResult = await pool.query('SELECT COUNT(*) as total_images FROM note_images');
+    const totalImages = parseInt(imagesResult.rows[0].total_images);
+
+    // Recent registrations (last 7 days)
+    const recentUsersResult = await pool.query(`
+      SELECT COUNT(*) as recent_users 
+      FROM users 
+      WHERE created_at >= NOW() - INTERVAL '7 days'
+    `);
+    const recentUsers = parseInt(recentUsersResult.rows[0].recent_users);
+
+    // Recent notes (last 7 days)
+    const recentNotesResult = await pool.query(`
+      SELECT COUNT(*) as recent_notes 
+      FROM notes 
+      WHERE created_at >= NOW() - INTERVAL '7 days'
+    `);
+    const recentNotes = parseInt(recentNotesResult.rows[0].recent_notes);
+
+    res.json({
+      success: true,
+      statistics: {
+        totalUsers,
+        totalNotes,
+        premiumUsers,
+        totalImages,
+        recentUsers,
+        recentNotes
+      }
+    });
+
+  } catch (error) {
+    console.error('Admin statistics error:', error);
+    res.status(500).json({ 
+      success: false, 
+      message: 'Server error' 
+    });
+  }
+});
+
+// Admin endpoint to manage user premium status
+router.post('/set-premium', authenticateAdmin, async (req, res) => {
+  try {
+    const { email, isPremium } = req.body;
     
     if (!email) {
       return res.status(400).json({ 

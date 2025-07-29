@@ -1002,6 +1002,11 @@ export default function LandingScreen({ navigation }) {
                 {language === 'en' ? 'Contact Us' : 'İletişim'}
               </Text>
             </TouchableOpacity>
+            <TouchableOpacity onPress={() => navigation.navigate('AdminLogin')}>
+              <Text style={[styles.footerLink, { color: colors.textSecondary, fontSize: 10 }]}>
+                🔐 Admin
+              </Text>
+            </TouchableOpacity>
           </View>
           <Text style={[styles.footerText, { color: colors.textSecondary }]}>
             © 2024 Itera. {language === 'en' ? 'Empowering learners worldwide.' : 'Dünya çapında öğrencileri güçlendiriyor.'}

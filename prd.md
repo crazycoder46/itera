@@ -121,9 +121,9 @@ Ekranın sol üstünde Itera yazısının devamında 4 sekmeli bir bar bulunur: 
     - [x] **Deployment Hazırlıkları:** Production için gerekli konfigürasyon dosyaları, environment variables ve build script'leri hazırlandı.
     - [x] **Database Migration:** Production veritabanı için init-db.sql dosyası oluşturuldu.
     - [x] **Deployment Rehberi:** DEPLOYMENT.md dosyasında detaylı deployment adımları dokümante edildi.
-    - [ ] **Veritabanı:** Render PostgreSQL'de canlı veritabanının oluşturulması.
-    - [ ] **Backend:** Render.com'da backend API'ın deploy edilmesi.
-    - [ ] **Frontend:** Vercel'de frontend'in deploy edilmesi.
+    - [x] **Veritabanı:** Render PostgreSQL'de canlı veritabanının oluşturulması.
+    - [x] **Backend:** Render.com'da backend API'ın deploy edilmesi.
+    - [x] **Frontend:** Vercel'de frontend'in deploy edilmesi.
 
 
 ### Faz 5: Mobil Platform Adaptasyonu ve Yayınlam (Proje Sonrası)
