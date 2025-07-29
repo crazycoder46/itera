@@ -182,10 +182,13 @@ const PremiumManagementScreen = ({ navigation }) => {
 
               <View style={styles.userInfo}>
                 <Text style={[styles.userInfoLabel, { color: colors.textSecondary }]}>
-                  Premium Bitiş:
+                  Premium Durumu:
                 </Text>
-                <Text style={[styles.userInfoValue, { color: colors.text }]}>
-                  {formatDate(userStatus.premium_expires_at)}
+                <Text style={[
+                  styles.userInfoValue, 
+                  { color: userStatus.is_premium ? '#4CAF50' : '#F44336' }
+                ]}>
+                  {userStatus.is_premium ? '⭐ Aktif' : '❌ Pasif'}
                 </Text>
               </View>
 

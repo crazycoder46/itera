@@ -85,13 +85,9 @@ router.post('/set-premium', authenticateAdmin, async (req, res) => {
     // Update user premium status
     const query = `
       UPDATE users 
-      SET is_premium = $1, 
-          premium_expires_at = CASE 
-            WHEN $1 = true THEN NOW() + INTERVAL '1 year'
-            ELSE NULL 
-          END
+      SET is_premium = $1
       WHERE email = $2
-      RETURNING id, email, is_premium, premium_expires_at
+      RETURNING id, email, is_premium
     `;
     
     const result = await pool.query(query, [isPremium, email]);
@@ -132,7 +128,7 @@ router.get('/user-status/:email', async (req, res) => {
     }
     
     const query = `
-      SELECT id, email, is_premium, premium_expires_at, created_at
+      SELECT id, email, is_premium, created_at
       FROM users 
       WHERE email = $1
     `;
