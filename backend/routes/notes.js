@@ -305,10 +305,6 @@ router.get('/review', auth, async (req, res) => {
       // Kullanıcının kayıt tarihinden bugüne kadar geçen gün sayısını hesapla
       const daysSinceRegistration = Math.floor((today - created) / (1000 * 60 * 60 * 24));
       
-      console.log(`📊 Kullanıcı kayıt tarihi: ${created.toISOString().split('T')[0]}`);
-      console.log(`📊 Bugün (kullanıcı zamanı): ${todayStr}`);
-      console.log(`📊 Kayıt tarihinden bu yana geçen gün: ${daysSinceRegistration}`);
-      
       switch(boxType) {
         case 'daily':
           return true; // Her gün açılır
@@ -317,28 +313,24 @@ router.get('/review', auth, async (req, res) => {
           // Kayıt tarihinden 2 gün sonra başlayıp 2'şer gün arayla
           const firstOpen2 = 2; // 2. günde başlar
           const shouldOpen2 = daysSinceRegistration >= firstOpen2 && (daysSinceRegistration - firstOpen2) % 2 === 0;
-          console.log(`📦 every_2_days: ${shouldOpen2} (${daysSinceRegistration} gün)`);
           return shouldOpen2;
           
         case 'every_4_days':
           // Kayıt tarihinden 4 gün sonra başlayıp 4'er gün arayla
           const firstOpen4 = 4; // 4. günde başlar
           const shouldOpen4 = daysSinceRegistration >= firstOpen4 && (daysSinceRegistration - firstOpen4) % 4 === 0;
-          console.log(`📦 every_4_days: ${shouldOpen4} (${daysSinceRegistration} gün)`);
           return shouldOpen4;
           
         case 'weekly':
           // Kayıt tarihinden 7 gün sonra başlayıp 7'şer gün arayla
           const firstOpen7 = 7; // 7. günde başlar
           const shouldOpen7 = daysSinceRegistration >= firstOpen7 && (daysSinceRegistration - firstOpen7) % 7 === 0;
-          console.log(`📦 weekly: ${shouldOpen7} (${daysSinceRegistration} gün)`);
           return shouldOpen7;
           
         case 'every_2_weeks':
           // Kayıt tarihinden 14 gün sonra başlayıp 14'er gün arayla
           const firstOpen14 = 14; // 14. günde başlar
           const shouldOpen14 = daysSinceRegistration >= firstOpen14 && (daysSinceRegistration - firstOpen14) % 14 === 0;
-          console.log(`📦 every_2_weeks: ${shouldOpen14} (${daysSinceRegistration} gün)`);
           return shouldOpen14;
           
         default:
@@ -381,8 +373,6 @@ router.get('/review', auth, async (req, res) => {
 // Get today's review count
 router.get('/today-review-count', auth, async (req, res) => {
   try {
-    console.log('🔍 Today review count endpoint çağrıldı');
-    
     // Kullanıcı bilgilerini al
     const userInfo = await pool.query(
       'SELECT created_at, timezone_offset FROM users WHERE id = $1',
@@ -390,7 +380,6 @@ router.get('/today-review-count', auth, async (req, res) => {
     );
     
     if (userInfo.rows.length === 0) {
-      console.log('❌ Kullanıcı bulunamadı');
       return res.status(404).json({ 
         success: false,
         message: 'Kullanıcı bulunamadı' 
@@ -398,9 +387,7 @@ router.get('/today-review-count', auth, async (req, res) => {
     }
     
     const userCreatedAt = new Date(userInfo.rows[0].created_at);
-    const userTimezoneOffset = userInfo.rows[0].timezone_offset || 180; // Default GMT+3
-    
-    console.log(`👤 Kullanıcı kayıt tarihi: ${userCreatedAt.toISOString()}`);
+    const userTimezoneOffset = userInfo.rows[0].timezone_offset || 180;
     
     // Kullanıcının yerel zamanını kullan
     const today = new Date();
@@ -408,12 +395,20 @@ router.get('/today-review-count', auth, async (req, res) => {
     today.setHours(today.getHours(), 0, 0, 0);
     const todayStr = today.toISOString().split('T')[0];
     
-    console.log(`📅 Bugün (kullanıcı zamanı): ${todayStr}`);
-    
-    // Kasa açılma günlerini kontrol et - sadece kullanıcı kayıt tarihine göre
+    // Kasa açılma günlerini kontrol et - takvim mantığıyla aynı
     const shouldBoxOpenToday = (userCreatedAt, boxType) => {
       const created = new Date(userCreatedAt);
+      const today = new Date();
+      
+      // Kullanıcının zaman dilimini kullan
+      const userTimezoneOffset = userInfo.rows[0].timezone_offset || 180; // Default GMT+3
+      today.setMinutes(today.getMinutes() + userTimezoneOffset);
+      today.setHours(today.getHours(), 0, 0, 0);
+      
       const todayStr = today.toISOString().split('T')[0];
+      
+      // Kullanıcının kayıt tarihinden bugüne kadar geçen gün sayısını hesapla
+      const daysSinceRegistration = Math.floor((today - created) / (1000 * 60 * 60 * 24));
       
       switch(boxType) {
         case 'daily':
@@ -489,23 +484,14 @@ router.get('/today-review-count', auth, async (req, res) => {
       [req.userId]
     );
     
-    console.log(`📝 Toplam not sayısı: ${allNotes.rows.length}`);
-    
     // Bugün açılması gereken kasaları belirle
     const boxesToOpen = ['daily', 'every_2_days', 'every_4_days', 'weekly', 'every_2_weeks'].filter(boxType => 
       shouldBoxOpenToday(userCreatedAt, boxType)
     );
     
-    console.log(`📦 Bugün açılması gereken kutular: ${boxesToOpen.join(', ')}`);
-    
     // Sadece açılması gereken kasalardaki notları al
     const reviewNotes = allNotes.rows.filter(note => {
       return boxesToOpen.includes(note.box_type);
-    });
-    
-    console.log(`🎯 Tekrar edilecek not sayısı: ${reviewNotes.length}`);
-    reviewNotes.forEach((note, index) => {
-      console.log(`   ${index + 1}. ${note.title} (${note.box_type})`);
     });
     
     res.json({
@@ -513,10 +499,10 @@ router.get('/today-review-count', auth, async (req, res) => {
       count: reviewNotes.length
     });
   } catch (error) {
-    console.error('❌ Today review count hatası:', error);
+    console.error('Today review count error:', error);
     res.status(500).json({ 
       success: false,
-      message: 'Server hatası' 
+      message: 'Günlük tekrar sayısı alınırken hata oluştu' 
     });
   }
 });
