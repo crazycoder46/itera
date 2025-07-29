@@ -395,6 +395,8 @@ router.get('/review', auth, async (req, res) => {
 // Get today's review count
 router.get('/today-review-count', auth, async (req, res) => {
   try {
+    console.log('🔍 Today review count endpoint çağrıldı');
+    
     // Kullanıcı bilgilerini al
     const userInfo = await pool.query(
       'SELECT created_at, timezone_offset FROM users WHERE id = $1',
@@ -402,6 +404,7 @@ router.get('/today-review-count', auth, async (req, res) => {
     );
     
     if (userInfo.rows.length === 0) {
+      console.log('❌ Kullanıcı bulunamadı');
       return res.status(404).json({ 
         success: false,
         message: 'Kullanıcı bulunamadı' 
@@ -411,11 +414,15 @@ router.get('/today-review-count', auth, async (req, res) => {
     const userCreatedAt = new Date(userInfo.rows[0].created_at);
     const userTimezoneOffset = userInfo.rows[0].timezone_offset || 180; // Default GMT+3
     
+    console.log(`👤 Kullanıcı kayıt tarihi: ${userCreatedAt.toISOString()}`);
+    
     // Kullanıcının yerel zamanını kullan
     const today = new Date();
     today.setMinutes(today.getMinutes() + userTimezoneOffset);
     today.setHours(today.getHours(), 0, 0, 0);
     const todayStr = today.toISOString().split('T')[0];
+    
+    console.log(`📅 Bugün (kullanıcı zamanı): ${todayStr}`);
     
     // Kasa açılma günlerini kontrol et - sadece kullanıcı kayıt tarihine göre
     const shouldBoxOpenToday = (userCreatedAt, boxType) => {
@@ -496,14 +503,23 @@ router.get('/today-review-count', auth, async (req, res) => {
       [req.userId]
     );
     
+    console.log(`📝 Toplam not sayısı: ${allNotes.rows.length}`);
+    
     // Bugün açılması gereken kasaları belirle
     const boxesToOpen = ['daily', 'every_2_days', 'every_4_days', 'weekly', 'every_2_weeks'].filter(boxType => 
       shouldBoxOpenToday(userCreatedAt, boxType)
     );
     
+    console.log(`📦 Bugün açılması gereken kutular: ${boxesToOpen.join(', ')}`);
+    
     // Sadece açılması gereken kasalardaki notları al
     const reviewNotes = allNotes.rows.filter(note => {
       return boxesToOpen.includes(note.box_type);
+    });
+    
+    console.log(`🎯 Tekrar edilecek not sayısı: ${reviewNotes.length}`);
+    reviewNotes.forEach((note, index) => {
+      console.log(`   ${index + 1}. ${note.title} (${note.box_type})`);
     });
     
     res.json({
@@ -511,7 +527,7 @@ router.get('/today-review-count', auth, async (req, res) => {
       count: reviewNotes.length
     });
   } catch (error) {
-    console.error(error);
+    console.error('❌ Today review count hatası:', error);
     res.status(500).json({ 
       success: false,
       message: 'Server hatası' 
