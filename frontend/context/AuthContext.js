@@ -40,12 +40,6 @@ export const AuthProvider = ({ children }) => {
       
       if (storedLanguage) {
         setLanguage(storedLanguage);
-      } else {
-        // İlk kez açılıyorsa cihaz dilini tespit et
-        const deviceLanguage = navigator.language || navigator.userLanguage || 'tr';
-        const detectedLanguage = deviceLanguage.startsWith('tr') ? 'tr' : 'en';
-        setLanguage(detectedLanguage);
-        await AsyncStorage.setItem('language', detectedLanguage);
       }
       
       if (storedTheme) {

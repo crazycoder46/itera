@@ -23,9 +23,6 @@ import ReviewScreen from './screens/ReviewScreen';
 import PrivacyPolicyScreen from './screens/PrivacyPolicyScreen';
 import TermsOfServiceScreen from './screens/TermsOfServiceScreen';
 import FAQScreen from './screens/FAQScreen';
-import AdminLoginScreen from './screens/AdminLoginScreen';
-import AdminPanelScreen from './screens/AdminPanelScreen';
-import PremiumManagementScreen from './screens/PremiumManagementScreen';
 
 const Stack = createNativeStackNavigator();
 const Tab = createBottomTabNavigator();
@@ -269,9 +266,6 @@ function AuthStack() {
       <Stack.Screen name="PrivacyPolicy" component={PrivacyPolicyScreen} />
       <Stack.Screen name="TermsOfService" component={TermsOfServiceScreen} />
       <Stack.Screen name="FAQ" component={FAQScreen} />
-      <Stack.Screen name="AdminLogin" component={AdminLoginScreen} />
-      <Stack.Screen name="AdminPanel" component={AdminPanelScreen} />
-      <Stack.Screen name="PremiumManagement" component={PremiumManagementScreen} />
       <Stack.Screen name="Login">
         {(props) => (
           <View style={{ flex: 1, backgroundColor: colors.background }}>
@@ -365,9 +359,6 @@ function AppStack() {
       <Stack.Screen name="NoteDetail" component={NoteDetailScreen} />
       <Stack.Screen name="EditNote" component={EditNoteScreen} />
       <Stack.Screen name="Review" component={ReviewScreen} />
-      <Stack.Screen name="AdminLogin" component={AdminLoginScreen} />
-      <Stack.Screen name="AdminPanel" component={AdminPanelScreen} />
-      <Stack.Screen name="PremiumManagement" component={PremiumManagementScreen} />
     </Stack.Navigator>
   );
 }

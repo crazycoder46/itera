@@ -23,7 +23,6 @@ router.post('/init-database', async (req, res) => {
         theme VARCHAR(10) DEFAULT 'light',
         timezone_offset INTEGER DEFAULT 180,
         is_premium BOOLEAN DEFAULT FALSE,
-        premium_expires_at TIMESTAMP,
         share_code VARCHAR(10) UNIQUE,
         created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
         updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
@@ -68,24 +67,7 @@ router.post('/init-database', async (req, res) => {
       )
     `);
     
-    // Shared notes table
-    await pool.query(`
-      CREATE TABLE IF NOT EXISTS shared_notes (
-        id SERIAL PRIMARY KEY,
-        sender_id INTEGER REFERENCES users(id) ON DELETE CASCADE,
-        receiver_id INTEGER REFERENCES users(id) ON DELETE CASCADE,
-        original_note_id INTEGER REFERENCES notes(id) ON DELETE CASCADE,
-        title VARCHAR(200) NOT NULL,
-        content TEXT NOT NULL,
-        box_type VARCHAR(20) DEFAULT 'daily',
-        is_accepted BOOLEAN DEFAULT FALSE,
-        is_deleted_by_sender BOOLEAN DEFAULT FALSE,
-        is_deleted_by_receiver BOOLEAN DEFAULT FALSE,
-        shared_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-      )
-    `);
-    
-    // Shared brains table (legacy)
+    // Shared brains table
     await pool.query(`
       CREATE TABLE IF NOT EXISTS shared_brains (
         id SERIAL PRIMARY KEY,
@@ -113,10 +95,10 @@ router.post('/init-database', async (req, res) => {
       CREATE OR REPLACE FUNCTION generate_share_code() RETURNS VARCHAR(10) AS $$
       DECLARE
           chars TEXT := 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
-          result VARCHAR(10) := 'USR';
+          result VARCHAR(10) := '';
           i INTEGER;
       BEGIN
-          FOR i IN 1..7 LOOP
+          FOR i IN 1..10 LOOP
               result := result || substr(chars, floor(random() * length(chars) + 1)::INTEGER, 1);
           END LOOP;
           RETURN result;
@@ -218,23 +200,6 @@ router.post('/fix-columns', async (req, res) => {
       ADD COLUMN IF NOT EXISTS mime_type VARCHAR(100)
     `);
     
-    // Add missing columns to users table
-    await pool.query(`
-      ALTER TABLE users 
-      ADD COLUMN IF NOT EXISTS is_premium BOOLEAN DEFAULT FALSE
-    `);
-    
-    await pool.query(`
-      ALTER TABLE users 
-      ADD COLUMN IF NOT EXISTS premium_expires_at TIMESTAMP
-    `);
-    
-    // Add share_code column if not exists
-    await pool.query(`
-      ALTER TABLE users 
-      ADD COLUMN IF NOT EXISTS share_code VARCHAR(10) UNIQUE
-    `);
-    
     console.log('Missing columns fixed successfully!');
     
     res.json({
@@ -248,63 +213,6 @@ router.post('/fix-columns', async (req, res) => {
     res.status(500).json({
       success: false,
       message: 'Column fix failed',
-      error: error.message
-    });
-  }
-});
-
-// Generate share codes for existing users
-router.post('/generate-share-codes', async (req, res) => {
-  try {
-    console.log('Generating share codes for existing users...');
-    
-    // Get users without share codes
-    const usersResult = await pool.query(`
-      SELECT id FROM users WHERE share_code IS NULL
-    `);
-    
-    let updatedCount = 0;
-    
-    for (const user of usersResult.rows) {
-      // Generate unique share code
-      let shareCode;
-      let isUnique = false;
-      
-      while (!isUnique) {
-        shareCode = 'USR' + Math.random().toString(36).substring(2, 9).toUpperCase();
-        
-        // Check if code is unique
-        const existingResult = await pool.query(`
-          SELECT id FROM users WHERE share_code = $1
-        `, [shareCode]);
-        
-        if (existingResult.rows.length === 0) {
-          isUnique = true;
-        }
-      }
-      
-      // Update user with share code
-      await pool.query(`
-        UPDATE users SET share_code = $1 WHERE id = $2
-      `, [shareCode, user.id]);
-      
-      updatedCount++;
-    }
-    
-    console.log(`Share codes generated for ${updatedCount} users successfully!`);
-    
-    res.json({
-      success: true,
-      message: `Share codes generated for ${updatedCount} users successfully!`,
-      updatedCount,
-      timestamp: new Date().toISOString()
-    });
-    
-  } catch (error) {
-    console.error('Share code generation error:', error);
-    res.status(500).json({
-      success: false,
-      message: 'Share code generation failed',
       error: error.message
     });
   }
