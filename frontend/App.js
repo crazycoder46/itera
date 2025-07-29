@@ -269,6 +269,9 @@ function AuthStack() {
       <Stack.Screen name="PrivacyPolicy" component={PrivacyPolicyScreen} />
       <Stack.Screen name="TermsOfService" component={TermsOfServiceScreen} />
       <Stack.Screen name="FAQ" component={FAQScreen} />
+      <Stack.Screen name="AdminLogin" component={AdminLoginScreen} />
+      <Stack.Screen name="AdminPanel" component={AdminPanelScreen} />
+      <Stack.Screen name="PremiumManagement" component={PremiumManagementScreen} />
       <Stack.Screen name="Login">
         {(props) => (
           <View style={{ flex: 1, backgroundColor: colors.background }}>
