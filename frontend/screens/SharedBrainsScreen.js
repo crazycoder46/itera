@@ -152,8 +152,8 @@ export default function SharedBrainsScreen({ navigation }) {
         setMyShareCode(tempShareCode);
       }
 
-      // Notlarımı al
-      const myNotesResponse = await apiCall('/shared/my-notes');
+      // Notlarımı al (geçici olarak direkt notes API'den)
+      const myNotesResponse = await apiCall('/api/notes');
       if (myNotesResponse.success) {
         setMyNotes(myNotesResponse.notes);
       }
