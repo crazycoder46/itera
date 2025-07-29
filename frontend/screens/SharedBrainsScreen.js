@@ -36,86 +36,92 @@ export default function SharedBrainsScreen({ navigation }) {
   if (!isPremium) {
     return (
       <View style={[styles.container, { backgroundColor: colors.background }]}>
-        <View style={styles.comingSoonContainer}>
-          {/* Icon */}
-          <Text style={styles.comingSoonIcon}>🧠</Text>
-          
-          {/* Title */}
-          <Text style={[styles.comingSoonTitle, { color: colors.text }]}>
-            {language === 'en' ? 'Shared Brains' : 'Ortak Akıl'}
-          </Text>
-          
-          {/* Subtitle */}
-          <Text style={[styles.comingSoonSubtitle, { color: colors.textSecondary }]}>
-            {language === 'en' 
-              ? 'Coming Very Soon!' 
-              : 'Çok Yakında!'}
-          </Text>
-          
-          {/* Description */}
-          <Text style={[styles.comingSoonDescription, { color: colors.textSecondary }]}>
-            {language === 'en' 
-              ? 'Share your notes with friends and collaborate on learning. This premium feature will be available soon!'
-              : 'Notlarınızı arkadaşlarınızla paylaşın ve birlikte öğrenin. Bu premium özellik çok yakında kullanıma sunulacak!'}
-          </Text>
-          
-          {/* Premium Badge */}
-          <View style={styles.premiumBadge}>
-            <Text style={styles.premiumBadgeText}>
-              {language === 'en' ? '✨ Premium Feature' : '✨ Premium Özellik'}
+        <ScrollView 
+          style={styles.scrollView}
+          contentContainerStyle={styles.scrollViewContent}
+          showsVerticalScrollIndicator={false}
+        >
+          <View style={styles.comingSoonContainer}>
+            {/* Icon */}
+            <Text style={styles.comingSoonIcon}>🧠</Text>
+            
+            {/* Title */}
+            <Text style={[styles.comingSoonTitle, { color: colors.text }]}>
+              {language === 'en' ? 'Shared Brains' : 'Ortak Akıl'}
             </Text>
+            
+            {/* Subtitle */}
+            <Text style={[styles.comingSoonSubtitle, { color: colors.textSecondary }]}>
+              {language === 'en' 
+                ? 'Coming Very Soon!' 
+                : 'Çok Yakında!'}
+            </Text>
+            
+            {/* Description */}
+            <Text style={[styles.comingSoonDescription, { color: colors.textSecondary }]}>
+              {language === 'en' 
+                ? 'Share your notes with friends and collaborate on learning. This premium feature will be available soon!'
+                : 'Notlarınızı arkadaşlarınızla paylaşın ve birlikte öğrenin. Bu premium özellik çok yakında kullanıma sunulacak!'}
+            </Text>
+            
+            {/* Premium Badge */}
+            <View style={styles.premiumBadge}>
+              <Text style={styles.premiumBadgeText}>
+                {language === 'en' ? '✨ Premium Feature' : '✨ Premium Özellik'}
+              </Text>
+            </View>
+            
+            {/* Upgrade Button */}
+            <TouchableOpacity 
+              style={styles.upgradeButton}
+              onPress={() => {
+                const title = language === 'en' ? 'Advanced Package' : 'Advanced Paket';
+                const message = language === 'en' 
+                  ? 'Advanced Package Features:\n\n• High storage capacity\n• Shared Brains\n• Ad-free experience'
+                  : 'Advanced Paket Özellikleri:\n\n• Yüksek depolama alanı\n• Ortak akıl (Shared Brains)\n• Reklamsız deneyim';
+                showAlert(title, message, 'info');
+              }}
+            >
+              <Text style={styles.upgradeButtonText}>
+                {language === 'en' ? 'Upgrade to Premium' : 'Premium\'a Yükselt'}
+              </Text>
+            </TouchableOpacity>
+            
+            {/* Features List */}
+            <View style={styles.featuresList}>
+              <Text style={[styles.featuresTitle, { color: colors.text }]}>
+                {language === 'en' ? 'What you\'ll get:' : 'Neler kazanacaksınız:'}
+              </Text>
+              
+              <View style={styles.featureItem}>
+                <Text style={styles.featureIcon}>📤</Text>
+                <Text style={[styles.featureText, { color: colors.textSecondary }]}>
+                  {language === 'en' 
+                    ? 'Share notes with friends'
+                    : 'Arkadaşlarınızla not paylaşın'}
+                </Text>
+              </View>
+              
+              <View style={styles.featureItem}>
+                <Text style={styles.featureIcon}>📥</Text>
+                <Text style={[styles.featureText, { color: colors.textSecondary }]}>
+                  {language === 'en' 
+                    ? 'Receive shared notes'
+                    : 'Paylaşılan notları alın'}
+                </Text>
+              </View>
+              
+              <View style={styles.featureItem}>
+                <Text style={styles.featureIcon}>🤝</Text>
+                <Text style={[styles.featureText, { color: colors.textSecondary }]}>
+                  {language === 'en' 
+                    ? 'Collaborate on learning'
+                    : 'Birlikte öğrenin'}
+                </Text>
+              </View>
+            </View>
           </View>
-          
-          {/* Upgrade Button */}
-          <TouchableOpacity 
-            style={styles.upgradeButton}
-            onPress={() => {
-              const title = language === 'en' ? 'Advanced Package' : 'Advanced Paket';
-              const message = language === 'en' 
-                ? 'Advanced Package Features:\n\n• High storage capacity\n• Shared Brains\n• Ad-free experience'
-                : 'Advanced Paket Özellikleri:\n\n• Yüksek depolama alanı\n• Ortak akıl (Shared Brains)\n• Reklamsız deneyim';
-              showAlert(title, message, 'info');
-            }}
-          >
-            <Text style={styles.upgradeButtonText}>
-              {language === 'en' ? 'Upgrade to Premium' : 'Premium\'a Yükselt'}
-            </Text>
-          </TouchableOpacity>
-          
-          {/* Features List */}
-          <View style={styles.featuresList}>
-            <Text style={[styles.featuresTitle, { color: colors.text }]}>
-              {language === 'en' ? 'What you\'ll get:' : 'Neler kazanacaksınız:'}
-            </Text>
-            
-            <View style={styles.featureItem}>
-              <Text style={styles.featureIcon}>📤</Text>
-              <Text style={[styles.featureText, { color: colors.textSecondary }]}>
-                {language === 'en' 
-                  ? 'Share notes with friends'
-                  : 'Arkadaşlarınızla not paylaşın'}
-              </Text>
-            </View>
-            
-            <View style={styles.featureItem}>
-              <Text style={styles.featureIcon}>📥</Text>
-              <Text style={[styles.featureText, { color: colors.textSecondary }]}>
-                {language === 'en' 
-                  ? 'Receive shared notes'
-                  : 'Paylaşılan notları alın'}
-              </Text>
-            </View>
-            
-            <View style={styles.featureItem}>
-              <Text style={styles.featureIcon}>🤝</Text>
-              <Text style={[styles.featureText, { color: colors.textSecondary }]}>
-                {language === 'en' 
-                  ? 'Collaborate on learning'
-                  : 'Birlikte öğrenin'}
-              </Text>
-            </View>
-          </View>
-        </View>
+        </ScrollView>
         
         {/* Custom Alert */}
         <CustomAlert
@@ -536,16 +542,24 @@ export default function SharedBrainsScreen({ navigation }) {
   }
 
   const styles = StyleSheet.create({
-    container: {
-      flex: 1,
-    },
+      container: {
+    flex: 1,
+  },
+  scrollView: {
+    flex: 1,
+  },
+  scrollViewContent: {
+    flexGrow: 1,
+    justifyContent: 'center',
+  },
   comingSoonContainer: {
-      flex: 1,
-      justifyContent: 'center',
-      alignItems: 'center',
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
     paddingHorizontal: 32,
-      paddingVertical: 48,
-    },
+    paddingVertical: 48,
+    minHeight: '100%',
+  },
   comingSoonIcon: {
     fontSize: 80,
     marginBottom: 24,
