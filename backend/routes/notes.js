@@ -651,6 +651,7 @@ router.get('/calendar/:year/:month', auth, async (req, res) => {
     res.json({
       success: true,
       userCreatedAt: userCreatedAt.toISOString().split('T')[0],
+      userTimezoneOffset: userTimezoneOffset,
       notes: allNotes,
       completedDays,
       month: parseInt(month),
