@@ -103,7 +103,18 @@ export default function CalendarScreen({ navigation }) {
     }
 
     const dateStr = `${year}-${String(month).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
-    const today = new Date().toISOString().split('T')[0];
+    
+    // Kullanıcının zaman dilimini kullanarak bugünü hesapla
+    const today = new Date();
+    if (calendarData.userTimezoneOffset) {
+      today.setMinutes(today.getMinutes() + calendarData.userTimezoneOffset);
+    }
+    today.setHours(today.getHours(), 0, 0, 0);
+    const todayStr = today.toISOString().split('T')[0];
+    
+    console.log(`📅 Takvim - Bugün (kullanıcı zamanı): ${todayStr}`);
+    console.log(`📅 Takvim - Kontrol edilen gün: ${dateStr}`);
+    console.log(`📅 Takvim - Bugün mü?: ${dateStr === todayStr}`);
     
     // O gün için notları filtrele
     const dayNotes = calendarData.notes.filter(note => note.review_date === dateStr);
@@ -125,7 +136,7 @@ export default function CalendarScreen({ navigation }) {
     return {
       dots,
       isCompleted: calendarData.completedDays.includes(dateStr),
-      isToday: dateStr === today,
+      isToday: dateStr === todayStr,
       notes: dayNotes
     };
   };
