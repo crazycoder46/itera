@@ -140,25 +140,25 @@ export default function SharedBrainsScreen({ navigation }) {
     setLoading(true);
     try {
       // Kendi share code'unu al
-      const codeResponse = await apiCall('GET', '/api/shared/my-code');
+      const codeResponse = await apiCall('/api/shared/my-code', { method: 'GET' });
       if (codeResponse.success) {
         setMyShareCode(codeResponse.shareCode);
       }
 
       // Kendi notlarını al
-      const notesResponse = await apiCall('GET', '/api/shared/my-notes');
+      const notesResponse = await apiCall('/api/shared/my-notes', { method: 'GET' });
       if (notesResponse.success) {
         setMyNotes(notesResponse.notes);
       }
 
       // Gelen notları al
-      const receivedResponse = await apiCall('GET', '/api/shared/received');
+      const receivedResponse = await apiCall('/api/shared/received', { method: 'GET' });
       if (receivedResponse.success) {
         setReceivedNotes(receivedResponse.notes);
       }
 
       // Gönderilen notları al
-      const sentResponse = await apiCall('GET', '/api/shared/sent');
+      const sentResponse = await apiCall('/api/shared/sent', { method: 'GET' });
       if (sentResponse.success) {
         setSentNotes(sentResponse.notes);
       }
@@ -180,9 +180,12 @@ export default function SharedBrainsScreen({ navigation }) {
     }
 
     try {
-      const response = await apiCall('POST', '/api/shared/share-note', {
-        noteId: selectedNote.id,
-        shareCode: shareCode.trim()
+      const response = await apiCall('/api/shared/share-note', {
+        method: 'POST',
+        body: JSON.stringify({
+          noteId: selectedNote.id,
+          shareCode: shareCode.trim()
+        })
       });
 
       if (response.success) {
@@ -209,7 +212,7 @@ export default function SharedBrainsScreen({ navigation }) {
 
   const handleAcceptNote = async (noteId) => {
     try {
-      const response = await apiCall('POST', `/api/shared/accept-note/${noteId}`);
+      const response = await apiCall(`/api/shared/accept-note/${noteId}`, { method: 'POST' });
       if (response.success) {
         showAlert(
           language === 'en' ? 'Success' : 'Başarılı',
@@ -230,7 +233,7 @@ export default function SharedBrainsScreen({ navigation }) {
   const handleDeleteNote = async (noteId, type) => {
     try {
       const endpoint = type === 'received' ? `/api/shared/received/${noteId}` : `/api/shared/sent/${noteId}`;
-      const response = await apiCall('DELETE', endpoint);
+      const response = await apiCall(endpoint, { method: 'DELETE' });
       if (response.success) {
         showAlert(
           language === 'en' ? 'Success' : 'Başarılı',
@@ -502,31 +505,31 @@ export default function SharedBrainsScreen({ navigation }) {
         type={alertConfig.type}
         onConfirm={alertConfig.onConfirm}
       />
-    </View>
-  );
-}
+      </View>
+    );
+  }
 
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-  },
+  const styles = StyleSheet.create({
+    container: {
+      flex: 1,
+    },
   comingSoonContainer: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
+      flex: 1,
+      justifyContent: 'center',
+      alignItems: 'center',
     paddingHorizontal: 32,
-    paddingVertical: 48,
-  },
+      paddingVertical: 48,
+    },
   comingSoonIcon: {
     fontSize: 80,
     marginBottom: 24,
   },
   comingSoonTitle: {
     fontSize: 32,
-    fontWeight: 'bold',
+      fontWeight: 'bold',
     textAlign: 'center',
-    marginBottom: 12,
-  },
+      marginBottom: 12,
+    },
   comingSoonSubtitle: {
     fontSize: 20,
     fontWeight: '600',
@@ -543,14 +546,14 @@ const styles = StyleSheet.create({
   premiumBadge: {
     backgroundColor: '#fbbf24',
     paddingHorizontal: 16,
-    paddingVertical: 8,
+      paddingVertical: 8,
     borderRadius: 20,
     marginBottom: 24,
-  },
+    },
   premiumBadgeText: {
     color: '#92400e',
-    fontSize: 14,
-    fontWeight: 'bold',
+      fontSize: 14,
+      fontWeight: 'bold',
   },
   upgradeButton: {
     backgroundColor: '#3b82f6',
@@ -561,9 +564,9 @@ const styles = StyleSheet.create({
   },
   upgradeButtonText: {
     color: 'white',
-    fontSize: 16,
-    fontWeight: 'bold',
-  },
+      fontSize: 16,
+      fontWeight: 'bold',
+    },
   featuresList: {
     alignItems: 'flex-start',
     maxWidth: 300,
@@ -572,20 +575,20 @@ const styles = StyleSheet.create({
     fontSize: 18,
     fontWeight: '600',
     marginBottom: 16,
-  },
-  featureItem: {
-    flexDirection: 'row',
-    alignItems: 'center',
+    },
+    featureItem: {
+      flexDirection: 'row',
+      alignItems: 'center',
     marginBottom: 12,
-  },
-  featureIcon: {
+    },
+    featureIcon: {
     fontSize: 20,
     marginRight: 12,
-  },
-  featureText: {
-    fontSize: 16,
-    flex: 1,
-  },
+    },
+    featureText: {
+      fontSize: 16,
+      flex: 1,
+    },
   // Premium kullanıcılar için stiller
   header: {
     paddingHorizontal: 20,
