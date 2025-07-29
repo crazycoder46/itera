@@ -263,7 +263,7 @@ export default function SharedBrainsScreen({ navigation }) {
           🧠 {language === 'en' ? 'Shared Brains' : 'Ortak Akıl'}
         </Text>
         <Text style={[styles.shareCode, { color: colors.primary }]}>
-          {language === 'en' ? 'My Code:' : 'Kodum:'} {myShareCode}
+          {language === 'en' ? 'My Code:' : 'Kodum:'} {myShareCode || 'Loading...'}
         </Text>
       </View>
 
