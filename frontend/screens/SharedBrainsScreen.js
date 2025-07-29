@@ -218,14 +218,18 @@ export default function SharedBrainsScreen({ navigation }) {
           language === 'en' ? 'Success' : 'Başarılı',
           language === 'en' ? 'Note added to your notes!' : 'Not notlarınıza eklendi!',
           'success',
-          loadData
+          () => {
+            setAlertVisible(false);
+            loadData();
+          }
         );
       }
     } catch (error) {
       showAlert(
         language === 'en' ? 'Error' : 'Hata',
         error.message || (language === 'en' ? 'Failed to accept note' : 'Not kabul edilemedi'),
-        'error'
+        'error',
+        () => setAlertVisible(false)
       );
     }
   };
@@ -239,14 +243,18 @@ export default function SharedBrainsScreen({ navigation }) {
           language === 'en' ? 'Success' : 'Başarılı',
           language === 'en' ? 'Note deleted!' : 'Not silindi!',
           'success',
-          loadData
+          () => {
+            setAlertVisible(false);
+            loadData();
+          }
         );
       }
     } catch (error) {
       showAlert(
         language === 'en' ? 'Error' : 'Hata',
         error.message || (language === 'en' ? 'Failed to delete note' : 'Not silinemedi'),
-        'error'
+        'error',
+        () => setAlertVisible(false)
       );
     }
   };
@@ -272,6 +280,24 @@ export default function SharedBrainsScreen({ navigation }) {
               {language === 'en' ? 'Add to Notes' : 'Notlara Ekle'}
             </Text>
           </TouchableOpacity>
+          <TouchableOpacity 
+            style={[styles.actionButton, { backgroundColor: '#ef4444' }]}
+            onPress={() => handleDeleteNote(item.id, 'received')}
+          >
+            <Text style={styles.actionButtonText}>
+              {language === 'en' ? 'Delete' : 'Sil'}
+            </Text>
+          </TouchableOpacity>
+        </View>
+      )}
+      
+      {type === 'received' && item.is_accepted && (
+        <View style={styles.noteActions}>
+          <View style={styles.acceptedStatus}>
+            <Text style={[styles.acceptedText, { color: colors.textSecondary }]}>
+              {language === 'en' ? '✓ Added to notes' : '✓ Notlara eklendi'}
+            </Text>
+          </View>
           <TouchableOpacity 
             style={[styles.actionButton, { backgroundColor: '#ef4444' }]}
             onPress={() => handleDeleteNote(item.id, 'received')}
@@ -654,6 +680,15 @@ export default function SharedBrainsScreen({ navigation }) {
     color: 'white',
     fontSize: 14,
     fontWeight: '600',
+  },
+  acceptedStatus: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  acceptedText: {
+    fontSize: 14,
+    fontWeight: '500',
   },
   shareTab: {
     gap: 20,
