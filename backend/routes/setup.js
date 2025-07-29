@@ -67,6 +67,23 @@ router.post('/init-database', async (req, res) => {
       )
     `);
     
+    // Shared notes table (Premium feature)
+    await pool.query(`
+      CREATE TABLE IF NOT EXISTS shared_notes (
+        id SERIAL PRIMARY KEY,
+        sender_id INTEGER REFERENCES users(id) ON DELETE CASCADE,
+        receiver_id INTEGER REFERENCES users(id) ON DELETE CASCADE,
+        original_note_id INTEGER REFERENCES notes(id) ON DELETE CASCADE,
+        title VARCHAR(500) NOT NULL,
+        content TEXT NOT NULL,
+        box_type VARCHAR(50) NOT NULL,
+        shared_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+        is_accepted BOOLEAN DEFAULT FALSE,
+        is_deleted_by_sender BOOLEAN DEFAULT FALSE,
+        is_deleted_by_receiver BOOLEAN DEFAULT FALSE
+      )
+    `);
+    
     // Shared brains table
     await pool.query(`
       CREATE TABLE IF NOT EXISTS shared_brains (
@@ -89,6 +106,9 @@ router.post('/init-database', async (req, res) => {
     await pool.query('CREATE INDEX IF NOT EXISTS idx_shared_brains_receiver ON shared_brains(receiver_id)');
     await pool.query('CREATE INDEX IF NOT EXISTS idx_shared_brains_sender ON shared_brains(sender_id)');
     await pool.query('CREATE INDEX IF NOT EXISTS idx_users_share_code ON users(share_code)');
+    await pool.query('CREATE INDEX IF NOT EXISTS idx_shared_notes_sender ON shared_notes(sender_id)');
+    await pool.query('CREATE INDEX IF NOT EXISTS idx_shared_notes_receiver ON shared_notes(receiver_id)');
+    await pool.query('CREATE INDEX IF NOT EXISTS idx_shared_notes_shared_at ON shared_notes(shared_at)');
     
     // Create functions and triggers
     await pool.query(`
