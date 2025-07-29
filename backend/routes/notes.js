@@ -392,6 +392,133 @@ router.get('/review', auth, async (req, res) => {
   }
 });
 
+// Get today's review count
+router.get('/today-review-count', auth, async (req, res) => {
+  try {
+    // Kullanıcı bilgilerini al
+    const userInfo = await pool.query(
+      'SELECT created_at, timezone_offset FROM users WHERE id = $1',
+      [req.userId]
+    );
+    
+    if (userInfo.rows.length === 0) {
+      return res.status(404).json({ 
+        success: false,
+        message: 'Kullanıcı bulunamadı' 
+      });
+    }
+    
+    const userCreatedAt = new Date(userInfo.rows[0].created_at);
+    const userTimezoneOffset = userInfo.rows[0].timezone_offset || 180; // Default GMT+3
+    
+    // Kullanıcının yerel zamanını kullan
+    const today = new Date();
+    today.setMinutes(today.getMinutes() + userTimezoneOffset);
+    today.setHours(today.getHours(), 0, 0, 0);
+    const todayStr = today.toISOString().split('T')[0];
+    
+    // Kasa açılma günlerini kontrol et - sadece kullanıcı kayıt tarihine göre
+    const shouldBoxOpenToday = (userCreatedAt, boxType) => {
+      const created = new Date(userCreatedAt);
+      const todayStr = today.toISOString().split('T')[0];
+      
+      switch(boxType) {
+        case 'daily':
+          return true; // Her gün açılır
+          
+        case 'every_2_days':
+          // Kullanıcı kayıt tarihinden 2 gün sonra başlayıp 2'şer gün arayla
+          const firstOpen2 = new Date(created);
+          firstOpen2.setDate(firstOpen2.getDate() + 2);
+          
+          let current2 = new Date(firstOpen2);
+          while (current2.toISOString().split('T')[0] <= todayStr) {
+            if (current2.toISOString().split('T')[0] === todayStr) {
+              return true;
+            }
+            current2.setDate(current2.getDate() + 2);
+          }
+          return false;
+          
+        case 'every_4_days':
+          // Kullanıcı kayıt tarihinden 4 gün sonra başlayıp 4'er gün arayla
+          const firstOpen4 = new Date(created);
+          firstOpen4.setDate(firstOpen4.getDate() + 4);
+          
+          let current4 = new Date(firstOpen4);
+          while (current4.toISOString().split('T')[0] <= todayStr) {
+            if (current4.toISOString().split('T')[0] === todayStr) {
+              return true;
+            }
+            current4.setDate(current4.getDate() + 4);
+          }
+          return false;
+          
+        case 'weekly':
+          // Kullanıcı kayıt tarihinden 7 gün sonra başlayıp 7'şer gün arayla
+          const firstOpen7 = new Date(created);
+          firstOpen7.setDate(firstOpen7.getDate() + 7);
+          
+          let current7 = new Date(firstOpen7);
+          while (current7.toISOString().split('T')[0] <= todayStr) {
+            if (current7.toISOString().split('T')[0] === todayStr) {
+              return true;
+            }
+            current7.setDate(current7.getDate() + 7);
+          }
+          return false;
+          
+        case 'every_2_weeks':
+          // Kullanıcı kayıt tarihinden 14 gün sonra başlayıp 14'er gün arayla
+          const firstOpen14 = new Date(created);
+          firstOpen14.setDate(firstOpen14.getDate() + 14);
+          
+          let current14 = new Date(firstOpen14);
+          while (current14.toISOString().split('T')[0] <= todayStr) {
+            if (current14.toISOString().split('T')[0] === todayStr) {
+              return true;
+            }
+            current14.setDate(current14.getDate() + 14);
+          }
+          return false;
+          
+        default:
+          return false;
+      }
+    };
+    
+    // Tüm notları al (learned hariç)
+    const allNotes = await pool.query(
+      `SELECT * FROM notes 
+       WHERE user_id = $1 
+       AND box_type != 'learned'
+       ORDER BY created_at ASC`,
+      [req.userId]
+    );
+    
+    // Bugün açılması gereken kasaları belirle
+    const boxesToOpen = ['daily', 'every_2_days', 'every_4_days', 'weekly', 'every_2_weeks'].filter(boxType => 
+      shouldBoxOpenToday(userCreatedAt, boxType)
+    );
+    
+    // Sadece açılması gereken kasalardaki notları al
+    const reviewNotes = allNotes.rows.filter(note => {
+      return boxesToOpen.includes(note.box_type);
+    });
+    
+    res.json({
+      success: true,
+      count: reviewNotes.length
+    });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ 
+      success: false,
+      message: 'Server hatası' 
+    });
+  }
+});
+
 // Get calendar data
 router.get('/calendar/:year/:month', auth, async (req, res) => {
   try {
