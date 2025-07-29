@@ -23,6 +23,7 @@ router.post('/init-database', async (req, res) => {
         theme VARCHAR(10) DEFAULT 'light',
         timezone_offset INTEGER DEFAULT 180,
         is_premium BOOLEAN DEFAULT FALSE,
+        premium_expires_at TIMESTAMP,
         share_code VARCHAR(10) UNIQUE,
         created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
         updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
@@ -198,6 +199,17 @@ router.post('/fix-columns', async (req, res) => {
     await pool.query(`
       ALTER TABLE note_images 
       ADD COLUMN IF NOT EXISTS mime_type VARCHAR(100)
+    `);
+    
+    // Add missing columns to users table
+    await pool.query(`
+      ALTER TABLE users 
+      ADD COLUMN IF NOT EXISTS is_premium BOOLEAN DEFAULT FALSE
+    `);
+    
+    await pool.query(`
+      ALTER TABLE users 
+      ADD COLUMN IF NOT EXISTS premium_expires_at TIMESTAMP
     `);
     
     console.log('Missing columns fixed successfully!');
