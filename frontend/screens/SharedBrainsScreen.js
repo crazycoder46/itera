@@ -146,10 +146,10 @@ export default function SharedBrainsScreen({ navigation }) {
   // Premium kullanıcılar için gerçek Shared Brains özelliği
   const loadData = async () => {
     try {
-      // Share code'u al
-      const shareCodeResponse = await apiCall('/shared/my-code');
-      if (shareCodeResponse.success) {
-        setMyShareCode(shareCodeResponse.shareCode);
+      // Share code'u al (geçici olarak kullanıcı ID'sinden oluştur)
+      if (user && user.id) {
+        const tempShareCode = 'USR' + user.id.toString().padStart(7, '0');
+        setMyShareCode(tempShareCode);
       }
 
       // Notlarımı al
