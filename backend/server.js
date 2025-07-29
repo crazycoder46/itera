@@ -62,6 +62,9 @@ app.use('/api/analytics', require('./routes/analytics'));
 // Admin routes
 app.use('/api/admin', require('./routes/admin'));
 
+// Payment routes
+app.use('/api/payment', require('./routes/payment'));
+
 // Error handling middleware
 app.use((err, req, res, next) => {
   console.error('Error:', err);

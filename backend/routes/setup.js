@@ -110,6 +110,33 @@ router.post('/init-database', async (req, res) => {
     await pool.query('CREATE INDEX IF NOT EXISTS idx_shared_notes_receiver ON shared_notes(receiver_id)');
     await pool.query('CREATE INDEX IF NOT EXISTS idx_shared_notes_shared_at ON shared_notes(shared_at)');
     
+    // Subscriptions table
+    await pool.query(`
+      CREATE TABLE IF NOT EXISTS subscriptions (
+        id SERIAL PRIMARY KEY,
+        paddle_subscription_id VARCHAR(255) UNIQUE NOT NULL,
+        user_id INTEGER REFERENCES users(id) ON DELETE CASCADE,
+        email VARCHAR(100) NOT NULL,
+        status VARCHAR(50) DEFAULT 'active' CHECK (status IN ('active', 'cancelled', 'past_due', 'paused')),
+        next_bill_date TIMESTAMP,
+        cancel_url VARCHAR(500),
+        update_url VARCHAR(500),
+        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+        updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+      )
+    `);
+    
+    // Add premium_expires_at column to users table
+    await pool.query(`
+      ALTER TABLE users ADD COLUMN IF NOT EXISTS premium_expires_at TIMESTAMP
+    `);
+    
+    // Create subscription indexes
+    await pool.query('CREATE INDEX IF NOT EXISTS idx_subscriptions_user_id ON subscriptions(user_id)');
+    await pool.query('CREATE INDEX IF NOT EXISTS idx_subscriptions_paddle_id ON subscriptions(paddle_subscription_id)');
+    await pool.query('CREATE INDEX IF NOT EXISTS idx_subscriptions_status ON subscriptions(status)');
+    await pool.query('CREATE INDEX IF NOT EXISTS idx_users_premium_expires ON users(premium_expires_at)');
+    
     // Create functions and triggers
     await pool.query(`
       CREATE OR REPLACE FUNCTION generate_share_code() RETURNS VARCHAR(10) AS $$

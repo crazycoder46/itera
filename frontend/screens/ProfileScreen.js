@@ -4,6 +4,7 @@ import * as ImagePicker from 'expo-image-picker';
 import { useAuth } from '../context/AuthContext';
 import { useTheme } from '../context/ThemeContext';
 import CustomAlert from '../components/CustomAlert';
+import PaddleCheckout from '../components/PaddleCheckout';
 
 export default function ProfileScreen() {
   const { user, setUser, logout, testMode, updateProfile, uploadProfilePicture, deleteProfilePicture, language, updateLanguage, updateTheme, isPremium } = useAuth();
@@ -14,6 +15,7 @@ export default function ProfileScreen() {
   const [showThemeModal, setShowThemeModal] = useState(false);
   const [alertVisible, setAlertVisible] = useState(false);
   const [alertConfig, setAlertConfig] = useState({});
+  const [showPaymentModal, setShowPaymentModal] = useState(false);
   const [editedUser, setEditedUser] = useState({
     first_name: user?.first_name || '',
     last_name: user?.last_name || '',
@@ -174,7 +176,16 @@ export default function ProfileScreen() {
   };
 
   const handleUpgrade = () => {
-    showAlert('Premium', getText('premiumFeatures'), 'info');
+    setShowPaymentModal(true);
+  };
+
+  const handlePaymentSuccess = () => {
+    setShowPaymentModal(false);
+    showAlert('Başarılı', 'Advanced plan başarıyla aktifleştirildi!', 'success');
+  };
+
+  const handlePaymentCancel = () => {
+    setShowPaymentModal(false);
   };
 
   const handleLanguageSelect = async (languageCode) => {
@@ -650,6 +661,24 @@ export default function ProfileScreen() {
                 {getText('close')}
               </Text>
             </TouchableOpacity>
+          </View>
+        </View>
+      </Modal>
+      
+      {/* Payment Modal */}
+      <Modal
+        visible={showPaymentModal}
+        transparent={true}
+        animationType="slide"
+        onRequestClose={handlePaymentCancel}
+      >
+        <View style={styles.modalOverlay}>
+          <View style={[styles.modalContent, { backgroundColor: colors.card }]}>
+            <PaddleCheckout
+              onSuccess={handlePaymentSuccess}
+              onCancel={handlePaymentCancel}
+              language={language}
+            />
           </View>
         </View>
       </Modal>
