@@ -133,7 +133,8 @@ export default function ReviewScreen({ navigation }) {
       }
     }
     
-    navigation.goBack();
+    // HomeScreen'e tekrar tamamlandı bilgisi gönder
+    navigation.navigate('Home', { reviewCompleted: true });
   };
 
   if (loading) {

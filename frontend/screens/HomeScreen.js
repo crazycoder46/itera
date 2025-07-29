@@ -132,7 +132,7 @@ export default function HomeScreen({ navigation }) {
       });
       
       if (response.success) {
-        setDailyReviewCompleted(response.completed || false);
+        setDailyReviewCompleted(response.isCompleted || false);
       }
     } catch (error) {
       console.error('Günlük tekrar durumu kontrol hatası:', error);
