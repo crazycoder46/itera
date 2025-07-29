@@ -179,7 +179,7 @@ export default function ReviewScreen({ navigation }) {
 
           <TouchableOpacity
             style={styles.finishButton}
-            onPress={handleFinishReview}
+            onPress={() => navigation.navigate('Home')}
           >
             <Text style={styles.finishButtonText}>Ana Sayfaya Dön</Text>
           </TouchableOpacity>
