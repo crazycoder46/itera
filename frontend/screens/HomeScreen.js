@@ -100,17 +100,22 @@ export default function HomeScreen({ navigation }) {
 
   const loadTodayReviewCount = async () => {
     try {
+      console.log('🔍 Today review count yükleniyor...');
       const response = await apiCall('/api/notes/today-review-count', {
         method: 'GET'
       });
       
+      console.log('📊 Today review count response:', response);
+      
       if (response.success) {
+        console.log(`✅ Today review count: ${response.count}`);
         setTodayReviewCount(response.count || 0);
       } else {
+        console.log('❌ Today review count başarısız:', response.message);
         setTodayReviewCount(0);
       }
     } catch (error) {
-      console.error('Tekrar sayısı yükleme hatası:', error);
+      console.error('❌ Tekrar sayısı yükleme hatası:', error);
       setTodayReviewCount(0);
     }
   };
@@ -189,16 +194,23 @@ export default function HomeScreen({ navigation }) {
   };
 
   const handleStartReview = () => {
+    console.log('🚀 Tekrar başlatılıyor...');
+    console.log(`📊 todayReviewCount: ${todayReviewCount}`);
+    console.log(`📊 dailyReviewCompleted: ${dailyReviewCompleted}`);
+    
     // Eğer günlük tekrar tamamlanmışsa, yeni notlar eklense bile tekrar başlatma
     if (dailyReviewCompleted) {
+      console.log('✅ Günlük tekrar zaten tamamlanmış');
       const completedMsg = getText('language') === 'en' ? 'Great Job! You completed your review today.' : 'Harika İş! Bugün tekrarını tamamladın.';
       showAlert(getText('language') === 'en' ? 'Congratulations!' : 'Tebrikler!', completedMsg, 'success');
       return;
     }
 
     if (todayReviewCount > 0) {
+      console.log(`🎯 ${todayReviewCount} not ile tekrar başlatılıyor`);
       navigation.navigate('Review');
     } else {
+      console.log('✅ Bugün tekrar edilecek not yok');
       const noReviewMsg = getText('language') === 'en' ? 'Great Job! That\'s all for today.' : 'Harika İş! Bugünlük bu kadar.';
       showAlert(getText('language') === 'en' ? 'Congratulations!' : 'Tebrikler!', noReviewMsg, 'success');
     }
