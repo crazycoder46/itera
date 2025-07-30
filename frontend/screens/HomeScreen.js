@@ -67,22 +67,16 @@ export default function HomeScreen({ navigation }) {
     checkDailyReviewStatus();
   }, []);
 
-  // Sayfa odaklandığında notları yenile
+  // Sayfa odaklandığında notları yenile ve review durumunu kontrol et
   useEffect(() => {
     const unsubscribe = navigation.addListener('focus', () => {
       loadNotes();
       checkDailyReviewStatus();
-    });
-
-    return unsubscribe;
-  }, [navigation]);
-
-  // ReviewScreen'den döndüğünde state'i güncelle
-  useEffect(() => {
-    const unsubscribe = navigation.addListener('focus', (e) => {
-      // ReviewScreen'den döndüğünde daily review status'u kontrol et
-      if (e.target?.name === 'Home') {
-        checkDailyReviewStatus();
+      
+      // Review tamamlandıysa state'i güncelle
+      const params = navigation.getState()?.routes?.find(route => route.name === 'Home')?.params;
+      if (params?.reviewCompleted) {
+        setDailyReviewCompleted(true);
         loadTodayReviewCount();
       }
     });

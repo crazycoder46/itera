@@ -2,15 +2,10 @@ const express = require('express');
 const cors = require('cors');
 const path = require('path');
 const pool = require('./config/database');
-const { initSentry, setUserContext, addBreadcrumb } = require('./config/sentry');
-const { performanceMiddleware, trackResponseTime } = require('./config/performance');
 require('dotenv').config();
 
 const app = express();
 const PORT = process.env.PORT || 3000;
-
-// Initialize Sentry
-initSentry();
 
 // CORS configuration for production
 const corsOptions = {
@@ -22,21 +17,6 @@ const corsOptions = {
 // Middleware
 app.use(cors(corsOptions));
 app.use(express.json());
-
-// Performance monitoring middleware
-app.use(performanceMiddleware);
-app.use(trackResponseTime);
-
-// Sentry middleware for error tracking
-app.use((req, res, next) => {
-  addBreadcrumb(`${req.method} ${req.path}`, 'api', {
-    method: req.method,
-    path: req.path,
-    userAgent: req.get('User-Agent'),
-    ip: req.ip
-  });
-  next();
-});
 
 // Serve static files (profile pictures)
 app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
@@ -64,18 +44,6 @@ app.get('/api/test', (req, res) => {
   res.json({ success: true, message: 'API is working!' });
 });
 
-// Performance metrics endpoint
-app.get('/api/performance', (req, res) => {
-  const { collectMetrics } = require('./config/performance');
-  const metrics = collectMetrics();
-  
-  res.json({
-    success: true,
-    metrics,
-    timestamp: new Date().toISOString()
-  });
-});
-
 // Auth routes
 app.use('/api/auth', require('./routes/auth'));
 
@@ -100,16 +68,6 @@ app.use('/api/payment', require('./routes/payment'));
 // Error handling middleware
 app.use((err, req, res, next) => {
   console.error('Error:', err);
-  
-  // Capture error in Sentry
-  const { captureError } = require('./config/sentry');
-  captureError(err, {
-    url: req.url,
-    method: req.method,
-    userAgent: req.get('User-Agent'),
-    ip: req.ip
-  });
-  
   res.status(500).json({ 
     success: false, 
     message: process.env.NODE_ENV === 'production' ? 'Internal server error' : err.message 

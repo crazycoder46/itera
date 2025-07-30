@@ -6,8 +6,6 @@ import { View, Text, TouchableOpacity } from 'react-native';
 
 import CustomAlert from './components/CustomAlert';
 import { trackPageView, trackUserAction } from './utils/analytics';
-import { initSentry, setUserContext, addBreadcrumb } from './config/sentry';
-import { initPerformanceMonitoring, trackPageLoad } from './config/performance';
 
 import { AuthProvider, useAuth } from './context/AuthContext';
 import { ThemeProvider, useTheme } from './context/ThemeContext';
@@ -370,17 +368,6 @@ function AppContent() {
   const { user, loading } = useAuth();
   const [initialRoute, setInitialRoute] = useState(null);
 
-  // Initialize Sentry and Performance Monitoring
-  useEffect(() => {
-    initSentry();
-    initPerformanceMonitoring();
-  }, []);
-
-  // Set user context when user changes
-  useEffect(() => {
-    setUserContext(user);
-  }, [user]);
-
   // Check URL path on mount
   useEffect(() => {
     if (typeof window !== 'undefined') {
@@ -397,7 +384,6 @@ function AppContent() {
   useEffect(() => {
     trackPageView('app_launch');
     trackUserAction('app_opened', 'App Lifecycle');
-    trackPageLoad('App Launch');
   }, []);
 
   // Track authentication state changes
