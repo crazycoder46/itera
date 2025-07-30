@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
-import { createBottomTabNavigator } from '@react-navigation/native-stack';
+import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { View, Text, TouchableOpacity } from 'react-native';
 
 import CustomAlert from './components/CustomAlert';
@@ -26,29 +26,6 @@ import FAQScreen from './screens/FAQScreen';
 
 const Stack = createNativeStackNavigator();
 const Tab = createBottomTabNavigator();
-
-// URL routing hook
-const useURLRouting = () => {
-  const [initialRoute, setInitialRoute] = useState('Landing');
-  
-  useEffect(() => {
-    if (typeof window !== 'undefined') {
-      const path = window.location.pathname;
-      
-      if (path === '/terms-of-service') {
-        setInitialRoute('TermsOfService');
-      } else if (path === '/privacy-policy') {
-        setInitialRoute('PrivacyPolicy');
-      } else if (path === '/faq') {
-        setInitialRoute('FAQ');
-      } else {
-        setInitialRoute('Landing');
-      }
-    }
-  }, []);
-  
-  return initialRoute;
-};
 
 // Tab Icons
 const HomeIcon = ({ color }) => (
@@ -277,7 +254,6 @@ function MainTabs() {
 function AuthStack() {
   const { language, updateLanguage } = useAuth();
   const { colors } = useTheme();
-  const initialRoute = useURLRouting();
 
   const toggleLanguage = async () => {
     const newLanguage = language === 'tr' ? 'en' : 'tr';
@@ -285,10 +261,7 @@ function AuthStack() {
   };
 
   return (
-    <Stack.Navigator 
-      screenOptions={{ headerShown: false }}
-      initialRouteName={initialRoute}
-    >
+    <Stack.Navigator screenOptions={{ headerShown: false }}>
       <Stack.Screen name="Landing" component={LandingScreen} />
       <Stack.Screen name="PrivacyPolicy" component={PrivacyPolicyScreen} />
       <Stack.Screen name="TermsOfService" component={TermsOfServiceScreen} />
@@ -393,6 +366,19 @@ function AppStack() {
 // Main App Component
 function AppContent() {
   const { user, loading } = useAuth();
+  const [initialRoute, setInitialRoute] = useState(null);
+
+  // Check URL path on mount
+  useEffect(() => {
+    if (typeof window !== 'undefined') {
+      const path = window.location.pathname;
+      if (path === '/privacy-policy') {
+        setInitialRoute('PrivacyPolicy');
+      } else if (path === '/terms-of-service') {
+        setInitialRoute('TermsOfService');
+      }
+    }
+  }, []);
 
   // Track app initialization
   useEffect(() => {
@@ -420,7 +406,7 @@ function AppContent() {
   }
 
   return (
-    <NavigationContainer>
+    <NavigationContainer initialRouteName={initialRoute}>
       {user ? <AppStack /> : <AuthStack />}
     </NavigationContainer>
   );

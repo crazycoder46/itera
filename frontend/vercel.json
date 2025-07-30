@@ -12,11 +12,11 @@
   ],
   "rewrites": [
     {
-      "source": "/terms-of-service",
+      "source": "/privacy-policy",
       "destination": "/index.html"
     },
     {
-      "source": "/privacy-policy", 
+      "source": "/terms-of-service", 
       "destination": "/index.html"
     },
     {

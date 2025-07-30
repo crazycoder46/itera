@@ -987,24 +987,12 @@ export default function LandingScreen({ navigation }) {
                 {language === 'en' ? 'FAQ' : 'SSS'}
               </Text>
             </TouchableOpacity>
-            <TouchableOpacity onPress={() => {
-              if (typeof window !== 'undefined') {
-                window.location.href = '/privacy-policy';
-              } else {
-                navigation.navigate('PrivacyPolicy');
-              }
-            }}>
+            <TouchableOpacity onPress={() => navigation.navigate('PrivacyPolicy')}>
               <Text style={[styles.footerLink, { color: colors.primary }]}>
                 {language === 'en' ? 'Privacy Policy' : 'Gizlilik Politikası'}
               </Text>
             </TouchableOpacity>
-            <TouchableOpacity onPress={() => {
-              if (typeof window !== 'undefined') {
-                window.location.href = '/terms-of-service';
-              } else {
-                navigation.navigate('TermsOfService');
-              }
-            }}>
+            <TouchableOpacity onPress={() => navigation.navigate('TermsOfService')}>
               <Text style={[styles.footerLink, { color: colors.primary }]}>
                 {language === 'en' ? 'Terms of Service' : 'Kullanım Şartları'}
               </Text>
