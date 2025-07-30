@@ -106,9 +106,17 @@ export default function HomeScreen({ navigation }) {
     }
   };
 
+  // Bugünün tarihini tarayıcıdan al
+  function getUserLocalDateStr() {
+    const d = new Date();
+    d.setHours(0, 0, 0, 0);
+    return d.toISOString().split('T')[0];
+  }
+
   const loadTodayReviewCount = async () => {
     try {
-      const response = await apiCall('/api/notes/today-review-count', {
+      const todayStr = getUserLocalDateStr();
+      const response = await apiCall(`/api/notes/today-review-count?userLocalDate=${todayStr}`, {
         method: 'GET'
       });
       
@@ -140,7 +148,8 @@ export default function HomeScreen({ navigation }) {
 
   const checkDailyReviewStatus = async () => {
     try {
-      const response = await apiCall('/api/notes/daily-review-status', {
+      const todayStr = getUserLocalDateStr();
+      const response = await apiCall(`/api/notes/daily-review-status?userLocalDate=${todayStr}`, {
         method: 'GET'
       });
       
