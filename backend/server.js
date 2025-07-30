@@ -3,6 +3,7 @@ const cors = require('cors');
 const path = require('path');
 const pool = require('./config/database');
 const { initSentry, setUserContext, addBreadcrumb } = require('./config/sentry');
+const { performanceMiddleware, trackResponseTime } = require('./config/performance');
 require('dotenv').config();
 
 const app = express();
@@ -21,6 +22,10 @@ const corsOptions = {
 // Middleware
 app.use(cors(corsOptions));
 app.use(express.json());
+
+// Performance monitoring middleware
+app.use(performanceMiddleware);
+app.use(trackResponseTime);
 
 // Sentry middleware for error tracking
 app.use((req, res, next) => {
@@ -57,6 +62,18 @@ app.get('/health', (req, res) => {
 // Test endpoint
 app.get('/api/test', (req, res) => {
   res.json({ success: true, message: 'API is working!' });
+});
+
+// Performance metrics endpoint
+app.get('/api/performance', (req, res) => {
+  const { collectMetrics } = require('./config/performance');
+  const metrics = collectMetrics();
+  
+  res.json({
+    success: true,
+    metrics,
+    timestamp: new Date().toISOString()
+  });
 });
 
 // Auth routes
