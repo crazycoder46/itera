@@ -133,8 +133,8 @@ export default function ReviewScreen({ navigation }) {
       }
     }
     
-    // HomeScreen'e tekrar tamamlandı bilgisi gönder
-    navigation.navigate('Home', { reviewCompleted: true });
+    // HomeScreen'e dön ve state'i güncelle
+    navigation.navigate('Home');
   };
 
   if (loading) {
@@ -179,7 +179,7 @@ export default function ReviewScreen({ navigation }) {
 
           <TouchableOpacity
             style={styles.finishButton}
-            onPress={() => navigation.navigate('Home')}
+            onPress={handleFinishReview}
           >
             <Text style={styles.finishButtonText}>Ana Sayfaya Dön</Text>
           </TouchableOpacity>

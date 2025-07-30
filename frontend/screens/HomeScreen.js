@@ -77,6 +77,19 @@ export default function HomeScreen({ navigation }) {
     return unsubscribe;
   }, [navigation]);
 
+  // ReviewScreen'den döndüğünde state'i güncelle
+  useEffect(() => {
+    const unsubscribe = navigation.addListener('focus', (e) => {
+      // ReviewScreen'den döndüğünde daily review status'u kontrol et
+      if (e.target?.name === 'Home') {
+        checkDailyReviewStatus();
+        loadTodayReviewCount();
+      }
+    });
+
+    return unsubscribe;
+  }, [navigation]);
+
   const loadNotes = async () => {
     try {
       const response = await apiCall('/api/notes', {
