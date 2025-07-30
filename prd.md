@@ -125,6 +125,8 @@ Ekranın sol üstünde Itera yazısının devamında 4 sekmeli bir bar bulunur: 
     - [x] **Backend:** Render.com'da backend API'ın deploy edilmesi.
     - [x] **Frontend:** Vercel'de frontend'in deploy edilmesi.
 
+### FAZ 4.2 ÖDEME SAYFASI YAPIMI
+- [ ] **Paddle ile Ödeme sayfası yapalım premium için** 
 
 ### Faz 5: Mobil Platform Adaptasyonu ve Yayınlam (Proje Sonrası)
 - [ ] **Mobil Arayüz (UI/UX) İyileştirmeleri:** Web'de geliştirilen arayüzün mobil ekranlara ve dokunmatik kontrollere göre elden geçirilmesi.

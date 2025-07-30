@@ -74,10 +74,11 @@ export default function HomeScreen({ navigation }) {
       checkDailyReviewStatus();
       
       // Review tamamlandıysa state'i güncelle
-      const params = navigation.getState()?.routes?.find(route => route.name === 'Home')?.params;
-      if (params?.reviewCompleted) {
+      const currentRoute = navigation.getState()?.routes?.find(route => route.name === 'Home');
+      if (currentRoute?.params?.reviewCompleted) {
         setDailyReviewCompleted(true);
-        loadTodayReviewCount();
+        setTodayReviewCount(0); // Tekrar sayısını sıfırla
+        console.log('Review completed, updating state');
       }
     });
 
@@ -112,7 +113,12 @@ export default function HomeScreen({ navigation }) {
       });
       
       if (response.success) {
-        setTodayReviewCount(response.count || 0);
+        // Eğer günlük tekrar tamamlanmışsa count'u 0 yap
+        if (dailyReviewCompleted) {
+          setTodayReviewCount(0);
+        } else {
+          setTodayReviewCount(response.count || 0);
+        }
       } else {
         setTodayReviewCount(0);
       }
@@ -139,7 +145,13 @@ export default function HomeScreen({ navigation }) {
       });
       
       if (response.success) {
-        setDailyReviewCompleted(response.isCompleted || false);
+        const isCompleted = response.isCompleted || false;
+        setDailyReviewCompleted(isCompleted);
+        
+        // Eğer günlük tekrar tamamlanmışsa count'u sıfırla
+        if (isCompleted) {
+          setTodayReviewCount(0);
+        }
       }
     } catch (error) {
       console.error('Günlük tekrar durumu kontrol hatası:', error);
