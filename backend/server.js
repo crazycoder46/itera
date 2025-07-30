@@ -2,10 +2,14 @@ const express = require('express');
 const cors = require('cors');
 const path = require('path');
 const pool = require('./config/database');
+const { initSentry, setUserContext, addBreadcrumb } = require('./config/sentry');
 require('dotenv').config();
 
 const app = express();
 const PORT = process.env.PORT || 3000;
+
+// Initialize Sentry
+initSentry();
 
 // CORS configuration for production
 const corsOptions = {
@@ -17,6 +21,17 @@ const corsOptions = {
 // Middleware
 app.use(cors(corsOptions));
 app.use(express.json());
+
+// Sentry middleware for error tracking
+app.use((req, res, next) => {
+  addBreadcrumb(`${req.method} ${req.path}`, 'api', {
+    method: req.method,
+    path: req.path,
+    userAgent: req.get('User-Agent'),
+    ip: req.ip
+  });
+  next();
+});
 
 // Serve static files (profile pictures)
 app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
@@ -68,6 +83,16 @@ app.use('/api/payment', require('./routes/payment'));
 // Error handling middleware
 app.use((err, req, res, next) => {
   console.error('Error:', err);
+  
+  // Capture error in Sentry
+  const { captureError } = require('./config/sentry');
+  captureError(err, {
+    url: req.url,
+    method: req.method,
+    userAgent: req.get('User-Agent'),
+    ip: req.ip
+  });
+  
   res.status(500).json({ 
     success: false, 
     message: process.env.NODE_ENV === 'production' ? 'Internal server error' : err.message 

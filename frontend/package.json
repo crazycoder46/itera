@@ -16,6 +16,7 @@
     "@react-navigation/bottom-tabs": "^7.4.1",
     "@react-navigation/native": "^7.1.14",
     "@react-navigation/native-stack": "^7.3.19",
+    "@sentry/react-native": "^6.19.0",
     "@tiptap/core": "^2.25.0",
     "@tiptap/extension-dropcursor": "^2.25.0",
     "@tiptap/extension-gapcursor": "^2.25.0",

@@ -6,6 +6,7 @@ import { View, Text, TouchableOpacity } from 'react-native';
 
 import CustomAlert from './components/CustomAlert';
 import { trackPageView, trackUserAction } from './utils/analytics';
+import { initSentry, setUserContext, addBreadcrumb } from './config/sentry';
 
 import { AuthProvider, useAuth } from './context/AuthContext';
 import { ThemeProvider, useTheme } from './context/ThemeContext';
@@ -367,6 +368,16 @@ function AppStack() {
 function AppContent() {
   const { user, loading } = useAuth();
   const [initialRoute, setInitialRoute] = useState(null);
+
+  // Initialize Sentry
+  useEffect(() => {
+    initSentry();
+  }, []);
+
+  // Set user context when user changes
+  useEffect(() => {
+    setUserContext(user);
+  }, [user]);
 
   // Check URL path on mount
   useEffect(() => {
