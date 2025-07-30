@@ -302,36 +302,65 @@ router.get('/review', auth, async (req, res) => {
       
       const todayStr = today.toISOString().split('T')[0];
       
-      // Kullanıcının kayıt tarihinden bugüne kadar geçen gün sayısını hesapla
-      const daysSinceRegistration = Math.floor((today - created) / (1000 * 60 * 60 * 24));
-      
       switch(boxType) {
         case 'daily':
           return true; // Her gün açılır
           
         case 'every_2_days':
-          // Kayıt tarihinden 2 gün sonra başlayıp 2'şer gün arayla
-          const firstOpen2 = 2; // 2. günde başlar
-          const shouldOpen2 = daysSinceRegistration >= firstOpen2 && (daysSinceRegistration - firstOpen2) % 2 === 0;
-          return shouldOpen2;
+          // Kullanıcı kayıt tarihinden 2 gün sonra başlayıp 2'şer gün arayla
+          const firstOpen2 = new Date(created);
+          firstOpen2.setDate(firstOpen2.getDate() + 2);
+          
+          let current2 = new Date(firstOpen2);
+          while (current2.toISOString().split('T')[0] <= todayStr) {
+            if (current2.toISOString().split('T')[0] === todayStr) {
+              return true;
+            }
+            current2.setDate(current2.getDate() + 2);
+          }
+          return false;
           
         case 'every_4_days':
-          // Kayıt tarihinden 4 gün sonra başlayıp 4'er gün arayla
-          const firstOpen4 = 4; // 4. günde başlar
-          const shouldOpen4 = daysSinceRegistration >= firstOpen4 && (daysSinceRegistration - firstOpen4) % 4 === 0;
-          return shouldOpen4;
+          // Kullanıcı kayıt tarihinden 4 gün sonra başlayıp 4'er gün arayla
+          const firstOpen4 = new Date(created);
+          firstOpen4.setDate(firstOpen4.getDate() + 4);
+          
+          let current4 = new Date(firstOpen4);
+          while (current4.toISOString().split('T')[0] <= todayStr) {
+            if (current4.toISOString().split('T')[0] === todayStr) {
+              return true;
+            }
+            current4.setDate(current4.getDate() + 4);
+          }
+          return false;
           
         case 'weekly':
-          // Kayıt tarihinden 7 gün sonra başlayıp 7'şer gün arayla
-          const firstOpen7 = 7; // 7. günde başlar
-          const shouldOpen7 = daysSinceRegistration >= firstOpen7 && (daysSinceRegistration - firstOpen7) % 7 === 0;
-          return shouldOpen7;
+          // Kullanıcı kayıt tarihinden 7 gün sonra başlayıp 7'şer gün arayla
+          const firstOpen7 = new Date(created);
+          firstOpen7.setDate(firstOpen7.getDate() + 7);
+          
+          let current7 = new Date(firstOpen7);
+          while (current7.toISOString().split('T')[0] <= todayStr) {
+            if (current7.toISOString().split('T')[0] === todayStr) {
+              return true;
+            }
+            current7.setDate(current7.getDate() + 7);
+          }
+          return false;
           
         case 'every_2_weeks':
-          // Kayıt tarihinden 14 gün sonra başlayıp 14'er gün arayla
-          const firstOpen14 = 14; // 14. günde başlar
-          const shouldOpen14 = daysSinceRegistration >= firstOpen14 && (daysSinceRegistration - firstOpen14) % 14 === 0;
-          return shouldOpen14;
+          // Kullanıcı kayıt tarihinden 14 gün sonra başlayıp 14'er gün arayla
+          const firstOpen14 = new Date(created);
+          firstOpen14.setDate(firstOpen14.getDate() + 14);
+          
+          let current14 = new Date(firstOpen14);
+          while (current14.toISOString().split('T')[0] <= todayStr) {
+            if (current14.toISOString().split('T')[0] === todayStr) {
+              return true;
+            }
+            current14.setDate(current14.getDate() + 14);
+          }
+          return false;
           
         default:
           return false;
