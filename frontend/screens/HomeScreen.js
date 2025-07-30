@@ -74,11 +74,10 @@ export default function HomeScreen({ navigation }) {
       checkDailyReviewStatus();
       
       // Review tamamlandıysa state'i güncelle
-      const currentRoute = navigation.getState()?.routes?.find(route => route.name === 'Home');
-      if (currentRoute?.params?.reviewCompleted) {
+      const params = navigation.getState()?.routes?.find(route => route.name === 'Home')?.params;
+      if (params?.reviewCompleted) {
         setDailyReviewCompleted(true);
         setTodayReviewCount(0); // Tekrar sayısını sıfırla
-        console.log('Review completed, updating state');
       }
     });
 
@@ -106,17 +105,9 @@ export default function HomeScreen({ navigation }) {
     }
   };
 
-  // Bugünün tarihini tarayıcıdan al
-  function getUserLocalDateStr() {
-    const d = new Date();
-    d.setHours(0, 0, 0, 0);
-    return d.toISOString().split('T')[0];
-  }
-
   const loadTodayReviewCount = async () => {
     try {
-      const todayStr = getUserLocalDateStr();
-      const response = await apiCall(`/api/notes/today-review-count?userLocalDate=${todayStr}`, {
+      const response = await apiCall('/api/notes/today-review-count', {
         method: 'GET'
       });
       
@@ -148,8 +139,7 @@ export default function HomeScreen({ navigation }) {
 
   const checkDailyReviewStatus = async () => {
     try {
-      const todayStr = getUserLocalDateStr();
-      const response = await apiCall(`/api/notes/daily-review-status?userLocalDate=${todayStr}`, {
+      const response = await apiCall('/api/notes/daily-review-status', {
         method: 'GET'
       });
       

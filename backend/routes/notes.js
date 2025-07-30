@@ -7,24 +7,6 @@ const fs = require('fs');
 
 const router = express.Router();
 
-// UTC bazlı tarih hesaplama fonksiyonu
-function getTodayWithOffset(offsetMinutes) {
-  const now = new Date();
-  const utc = now.getTime() + (now.getTimezoneOffset() * 60000);
-  const userDate = new Date(utc + (offsetMinutes * 60000));
-  userDate.setHours(0, 0, 0, 0);
-  return userDate;
-}
-
-function getTodayStringFromRequest(req, userTimezoneOffset) {
-  // Öncelik: userLocalDate parametresi (body veya query)
-  const userLocalDate = req.body?.userLocalDate || req.query?.userLocalDate;
-  if (userLocalDate) return userLocalDate;
-  // Eski algoritma (UTC+offset)
-  const todayDate = getTodayWithOffset(userTimezoneOffset);
-  return todayDate.toISOString().split('T')[0];
-}
-
 // Get all notes for user
 router.get('/', auth, async (req, res) => {
   try {
@@ -303,64 +285,54 @@ router.get('/review', auth, async (req, res) => {
     const userTimezoneOffset = userInfo.rows[0].timezone_offset || 180; // Default GMT+3
     
     // Kullanıcının yerel zamanını kullan
-    const todayDate = getTodayWithOffset(userTimezoneOffset);
-    const today = getTodayStringFromRequest(req, userTimezoneOffset);
+    const today = new Date();
+    today.setMinutes(today.getMinutes() + userTimezoneOffset);
+    today.setHours(today.getHours(), 0, 0, 0);
+    const todayStr = today.toISOString().split('T')[0];
     
-    // Takvim sekmesiyle aynı algoritma kullan
+    // Kasa açılma günlerini kontrol et - takvim mantığıyla aynı
     const shouldBoxOpenToday = (userCreatedAt, boxType) => {
       const created = new Date(userCreatedAt);
-      const todayDate2 = getTodayWithOffset(userTimezoneOffset);
-      const todayStr = todayDate2.toISOString().split('T')[0];
+      let interval, startOffset;
       
       switch(boxType) {
         case 'daily':
           return true; // Her gün açılır
           
         case 'every_2_days':
+          interval = 2;
+          startOffset = 2;
+          break;
         case 'every_4_days':
+          interval = 4;
+          startOffset = 4;
+          break;
         case 'weekly':
+          interval = 7;
+          startOffset = 7;
+          break;
         case 'every_2_weeks':
-          // Takvim sekmesiyle aynı mantık
-          let interval, startOffset;
-          
-          switch(boxType) {
-            case 'every_2_days':
-              interval = 2;
-              startOffset = 2;
-              break;
-            case 'every_4_days':
-              interval = 4;
-              startOffset = 4;
-              break;
-            case 'weekly':
-              interval = 7;
-              startOffset = 7;
-              break;
-            case 'every_2_weeks':
-              interval = 14;
-              startOffset = 14;
-              break;
-            default:
-              return false;
-          }
-          
-          // İlk pattern tarihi
-          const firstPatternDate = new Date(created);
-          firstPatternDate.setDate(firstPatternDate.getDate() + startOffset);
-          
-          // Bugün pattern tarihlerinden biri mi kontrol et
-          let currentDate = new Date(firstPatternDate);
-          while (currentDate <= todayDate) {
-            if (currentDate.toISOString().split('T')[0] === todayStr) {
-              return true;
-            }
-            currentDate.setDate(currentDate.getDate() + interval);
-          }
-          return false;
-          
+          interval = 14;
+          startOffset = 14;
+          break;
         default:
           return false;
       }
+      
+      // İlk pattern tarihi
+      const firstPatternDate = new Date(created);
+      firstPatternDate.setDate(firstPatternDate.getDate() + startOffset);
+      
+      // Bugün bu pattern'a uyuyor mu kontrol et
+      let currentDate = new Date(firstPatternDate);
+      while (currentDate.toISOString().split('T')[0] <= todayStr) {
+        if (currentDate.toISOString().split('T')[0] === todayStr) {
+          return true;
+        }
+        currentDate.setDate(currentDate.getDate() + interval);
+      }
+      
+      return false;
     };
     
     // Tüm notları al (learned hariç)
@@ -415,64 +387,54 @@ router.get('/today-review-count', auth, async (req, res) => {
     const userTimezoneOffset = userInfo.rows[0].timezone_offset || 180;
     
     // Kullanıcının yerel zamanını kullan
-    const todayDate = getTodayWithOffset(userTimezoneOffset);
-    const today = getTodayStringFromRequest(req, userTimezoneOffset);
+    const today = new Date();
+    today.setMinutes(today.getMinutes() + userTimezoneOffset);
+    today.setHours(today.getHours(), 0, 0, 0);
+    const todayStr = today.toISOString().split('T')[0];
     
-    // Takvim sekmesiyle aynı algoritma kullan
+    // Kasa açılma günlerini kontrol et - takvim mantığıyla aynı
     const shouldBoxOpenToday = (userCreatedAt, boxType) => {
       const created = new Date(userCreatedAt);
-      const todayDate2 = getTodayWithOffset(userTimezoneOffset);
-      const todayStr = todayDate2.toISOString().split('T')[0];
+      let interval, startOffset;
       
       switch(boxType) {
         case 'daily':
           return true; // Her gün açılır
           
         case 'every_2_days':
+          interval = 2;
+          startOffset = 2;
+          break;
         case 'every_4_days':
+          interval = 4;
+          startOffset = 4;
+          break;
         case 'weekly':
+          interval = 7;
+          startOffset = 7;
+          break;
         case 'every_2_weeks':
-          // Takvim sekmesiyle aynı mantık
-          let interval, startOffset;
-          
-          switch(boxType) {
-            case 'every_2_days':
-              interval = 2;
-              startOffset = 2;
-              break;
-            case 'every_4_days':
-              interval = 4;
-              startOffset = 4;
-              break;
-            case 'weekly':
-              interval = 7;
-              startOffset = 7;
-              break;
-            case 'every_2_weeks':
-              interval = 14;
-              startOffset = 14;
-              break;
-            default:
-              return false;
-          }
-          
-          // İlk pattern tarihi
-          const firstPatternDate = new Date(created);
-          firstPatternDate.setDate(firstPatternDate.getDate() + startOffset);
-          
-          // Bugün pattern tarihlerinden biri mi kontrol et
-          let currentDate = new Date(firstPatternDate);
-          while (currentDate <= todayDate) {
-            if (currentDate.toISOString().split('T')[0] === todayStr) {
-              return true;
-            }
-            currentDate.setDate(currentDate.getDate() + interval);
-          }
-          return false;
-          
+          interval = 14;
+          startOffset = 14;
+          break;
         default:
           return false;
       }
+      
+      // İlk pattern tarihi
+      const firstPatternDate = new Date(created);
+      firstPatternDate.setDate(firstPatternDate.getDate() + startOffset);
+      
+      // Bugün bu pattern'a uyuyor mu kontrol et
+      let currentDate = new Date(firstPatternDate);
+      while (currentDate.toISOString().split('T')[0] <= todayStr) {
+        if (currentDate.toISOString().split('T')[0] === todayStr) {
+          return true;
+        }
+        currentDate.setDate(currentDate.getDate() + interval);
+      }
+      
+      return false;
     };
     
     // Tüm notları al (learned hariç)
@@ -665,8 +627,10 @@ router.post('/complete-daily-review', auth, async (req, res) => {
     );
     const userTimezoneOffset = userResult.rows[0]?.timezone_offset || 180;
     
-    // Kullanıcının yerel zamanını kullan - Doğru timezone hesaplama
-    const todayDate = getTodayWithOffset(userTimezoneOffset);
+    // Kullanıcının yerel zamanını kullan
+    const todayDate = new Date();
+    todayDate.setMinutes(todayDate.getMinutes() + userTimezoneOffset);
+    todayDate.setHours(todayDate.getHours(), 0, 0, 0);
     const today = todayDate.toISOString().split('T')[0];
 
     // Tablo var mı kontrol et
@@ -723,9 +687,11 @@ router.get('/daily-review-status', auth, async (req, res) => {
     );
     const userTimezoneOffset = userResult.rows[0]?.timezone_offset || 180;
     
-    // Kullanıcının yerel zamanını kullan - Doğru timezone hesaplama
-    const todayDate = getTodayWithOffset(userTimezoneOffset);
-    const today = getTodayStringFromRequest(req, userTimezoneOffset);
+    // Kullanıcının yerel zamanını kullan
+    const todayDate = new Date();
+    todayDate.setMinutes(todayDate.getMinutes() + userTimezoneOffset);
+    todayDate.setHours(todayDate.getHours(), 0, 0, 0);
+    const today = todayDate.toISOString().split('T')[0];
 
     // Tablo var mı kontrol et
     const tableExists = await pool.query(

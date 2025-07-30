@@ -2,12 +2,6 @@ import React, { useState, useEffect } from 'react';
 import { View, Text, TouchableOpacity, StyleSheet, ScrollView, Alert } from 'react-native';
 import { useAuth } from '../context/AuthContext';
 
-function getUserLocalDateStr() {
-  const d = new Date();
-  d.setHours(0, 0, 0, 0);
-  return d.toISOString().split('T')[0];
-}
-
 export default function ReviewScreen({ navigation }) {
   const { apiCall } = useAuth();
   const [reviewNotes, setReviewNotes] = useState([]);
@@ -24,8 +18,7 @@ export default function ReviewScreen({ navigation }) {
     try {
       setLoading(true);
       console.log('Tekrar notları yükleniyor...');
-      const todayStr = getUserLocalDateStr();
-      const response = await apiCall(`/api/notes/review?userLocalDate=${todayStr}`, {
+      const response = await apiCall('/api/notes/review', {
         method: 'GET'
       });
 
@@ -140,7 +133,7 @@ export default function ReviewScreen({ navigation }) {
       }
     }
     
-    // Ana sayfaya dön ve reviewCompleted parametresini gönder
+    // HomeScreen'e tekrar tamamlandı bilgisi gönder
     navigation.navigate('Home', { reviewCompleted: true });
   };
 
