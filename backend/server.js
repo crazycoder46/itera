@@ -22,10 +22,6 @@ const corsOptions = {
 app.use(cors(corsOptions));
 app.use(express.json());
 
-// Sentry request handler
-const { Sentry } = require('./config/sentry');
-app.use(Sentry.Handlers.requestHandler());
-
 // Sentry middleware for error tracking
 app.use((req, res, next) => {
   addBreadcrumb(`${req.method} ${req.path}`, 'api', {
@@ -83,9 +79,6 @@ app.use('/api/admin', require('./routes/admin'));
 
 // Payment routes
 app.use('/api/payment', require('./routes/payment'));
-
-// Sentry error handler
-app.use(Sentry.Handlers.errorHandler());
 
 // Error handling middleware
 app.use((err, req, res, next) => {

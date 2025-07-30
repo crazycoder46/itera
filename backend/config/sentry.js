@@ -21,12 +21,7 @@ const initSentry = () => {
         }
       }
       return event;
-    },
-    
-    // Integrations
-    integrations: [
-      new Sentry.Integrations.Express()
-    ]
+    }
   });
 };
 
