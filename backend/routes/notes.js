@@ -663,10 +663,10 @@ router.post('/complete-daily-review', auth, async (req, res) => {
     );
     const userTimezoneOffset = userResult.rows[0]?.timezone_offset || 180;
     
-    // Kullanıcının yerel zamanını kullan
+    // Kullanıcının yerel zamanını kullan - UTC+3 için düzeltme
     const todayDate = new Date();
     todayDate.setMinutes(todayDate.getMinutes() + userTimezoneOffset);
-    todayDate.setHours(todayDate.getHours(), 0, 0, 0);
+    todayDate.setHours(0, 0, 0, 0);
     const today = todayDate.toISOString().split('T')[0];
 
     // Tablo var mı kontrol et
@@ -723,10 +723,10 @@ router.get('/daily-review-status', auth, async (req, res) => {
     );
     const userTimezoneOffset = userResult.rows[0]?.timezone_offset || 180;
     
-    // Kullanıcının yerel zamanını kullan
+    // Kullanıcının yerel zamanını kullan - UTC+3 için düzeltme
     const todayDate = new Date();
     todayDate.setMinutes(todayDate.getMinutes() + userTimezoneOffset);
-    todayDate.setHours(todayDate.getHours(), 0, 0, 0);
+    todayDate.setHours(0, 0, 0, 0);
     const today = todayDate.toISOString().split('T')[0];
 
     // Tablo var mı kontrol et
