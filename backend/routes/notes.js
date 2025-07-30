@@ -354,6 +354,14 @@ router.get('/review', auth, async (req, res) => {
       return boxesToOpen.includes(note.box_type);
     });
     
+    // Kutu sırasına göre sırala: daily -> every_2_days -> every_4_days -> weekly -> every_2_weeks
+    const boxOrder = ['daily', 'every_2_days', 'every_4_days', 'weekly', 'every_2_weeks'];
+    reviewNotes.sort((a, b) => {
+      const aIndex = boxOrder.indexOf(a.box_type);
+      const bIndex = boxOrder.indexOf(b.box_type);
+      return aIndex - bIndex;
+    });
+    
     res.json({
       success: true,
       notes: reviewNotes
