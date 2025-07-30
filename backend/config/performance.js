@@ -11,8 +11,10 @@ const performanceMiddleware = (req, res, next) => {
     
     console.log(`API Performance: ${req.method} ${req.path} took ${duration.toFixed(2)}ms`);
     
-    // Add performance header
-    res.setHeader('X-Response-Time', `${duration.toFixed(2)}ms`);
+    // Add performance header only if headers not sent
+    if (!res.headersSent) {
+      res.setHeader('X-Response-Time', `${duration.toFixed(2)}ms`);
+    }
   });
   
   next();
@@ -94,8 +96,10 @@ const trackResponseTime = (req, res, next) => {
     // Log response time
     console.log(`Response Time: ${req.method} ${req.path} - ${duration.toFixed(2)}ms`);
     
-    // Add to response headers
-    res.setHeader('X-Response-Time', `${duration.toFixed(2)}ms`);
+    // Add to response headers only if headers not sent
+    if (!res.headersSent) {
+      res.setHeader('X-Response-Time', `${duration.toFixed(2)}ms`);
+    }
   });
   
   next();

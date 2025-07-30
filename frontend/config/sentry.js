@@ -3,7 +3,7 @@ import * as Sentry from '@sentry/react-native';
 // Sentry initialization
 export const initSentry = () => {
   Sentry.init({
-    dsn: process.env.EXPO_PUBLIC_SENTRY_DSN || 'https://your-sentry-dsn@sentry.io/project-id',
+    dsn: process.env.EXPO_PUBLIC_SENTRY_DSN || null,
     environment: process.env.NODE_ENV || 'development',
     debug: process.env.NODE_ENV === 'development',
     

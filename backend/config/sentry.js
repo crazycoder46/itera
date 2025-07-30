@@ -3,7 +3,7 @@ const Sentry = require('@sentry/node');
 // Sentry initialization
 const initSentry = () => {
   Sentry.init({
-    dsn: process.env.SENTRY_DSN || 'https://your-sentry-dsn@sentry.io/project-id',
+    dsn: process.env.SENTRY_DSN || null,
     environment: process.env.NODE_ENV || 'development',
     debug: process.env.NODE_ENV === 'development',
     
