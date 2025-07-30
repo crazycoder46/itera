@@ -25,9 +25,7 @@ const initSentry = () => {
     
     // Integrations
     integrations: [
-      new Sentry.Integrations.Http({ tracing: true }),
-      new Sentry.Integrations.Express({ app: require('../server') }),
-      new Sentry.Integrations.Postgres()
+      new Sentry.Integrations.Express()
     ]
   });
 };
