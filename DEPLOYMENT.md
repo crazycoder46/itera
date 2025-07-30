@@ -343,6 +343,78 @@ curl https://itera-backend.onrender.com/health
 
 **24 Temmuz 2025** - Başarıyla tamamlandı! 🚀 
 
+## Paddle Ödeme Sistemi Entegrasyonu ✅
+
+### 10. Paddle Kurulum Süreci
+
+#### 10.1. Backend Entegrasyonu
+- ✅ **Payment Routes**: `backend/routes/payment.js` oluşturuldu
+- ✅ **Webhook Endpoints**: Paddle webhook'ları için endpoint'ler
+- ✅ **Subscription Management**: Premium status otomatik güncelleme
+- ✅ **Database Schema**: `subscriptions` tablosu ve `premium_expires_at` kolonu
+- ✅ **Test Endpoints**: Development için test subscription oluşturma
+
+#### 10.2. Frontend Entegrasyonu
+- ✅ **PaddleCheckout Component**: `frontend/components/PaddleCheckout.js` oluşturuldu
+- ✅ **ProfileScreen Integration**: Payment modal entegrasyonu
+- ✅ **URL Paths**: Paddle compliance için özel route'lar
+- ✅ **Vercel Configuration**: `/privacy-policy` ve `/terms-of-service` route'ları
+
+#### 10.3. Paddle Compliance URLs
+- ✅ **Privacy Policy**: `https://itera-frontend-omega.vercel.app/privacy-policy`
+- ✅ **Terms of Service**: `https://itera-frontend-omega.vercel.app/terms-of-service`
+- ✅ **Direct Access**: URL'ler doğrudan erişilebilir
+- ✅ **Multi-language**: TR/EN desteği mevcut
+
+#### 10.4. Webhook Configuration
+**Backend Webhook URL**: `https://itera-backend.onrender.com/api/payment/webhook`
+
+**Required Events**:
+- `subscription_created`
+- `subscription_updated` 
+- `subscription_cancelled`
+- `subscription_payment_succeeded`
+- `subscription_payment_failed`
+
+#### 10.5. Paddle Setup Checklist
+- [ ] Sandbox hesabı oluştur
+- [ ] Website verification tamamla (Privacy Policy & Terms URLs)
+- [ ] Product catalog oluştur (Monthly & Yearly plans)
+- [ ] Product ID'leri al
+- [ ] Webhook URL'ini Paddle'a ekle
+- [ ] Frontend'e Product ID'leri ekle
+- [ ] Test ödemeleri yap
+- [ ] Production'a geç
+
+#### 10.6. Product Configuration
+**Monthly Plan**:
+- Product Name: `Itera Advanced - Monthly`
+- Price: `$9.99/month`
+- Billing Cycle: `Monthly`
+
+**Yearly Plan**:
+- Product Name: `Itera Advanced - Yearly`
+- Price: `$99.99/year` (2 months free)
+- Billing Cycle: `Yearly`
+
+#### 10.7. Test Commands
+```bash
+# Test subscription oluştur
+POST https://itera-backend.onrender.com/api/payment/test-subscription
+
+# Subscription bilgilerini getir
+GET https://itera-backend.onrender.com/api/payment/subscription
+
+# Premium status kontrol
+GET https://itera-backend.onrender.com/api/auth/profile
+```
+
+### 11. Paddle Entegrasyonu Tamamlandı! 🚀
+
+**Tarih**: 25 Temmuz 2025
+**Durum**: Backend ve Frontend entegrasyonu tamamlandı
+**Sonraki Adım**: Paddle hesabında product oluşturma ve test
+
 ## Basit CSS Flexbox Ortalama ✅
 
 ### En Basit Çözüm:
