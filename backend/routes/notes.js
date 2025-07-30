@@ -290,7 +290,7 @@ router.get('/review', auth, async (req, res) => {
     today.setHours(today.getHours(), 0, 0, 0);
     const todayStr = today.toISOString().split('T')[0];
     
-    // Kasa açılma günlerini kontrol et - takvim mantığıyla aynı
+    // Takvim sekmesiyle aynı algoritma kullan
     const shouldBoxOpenToday = (userCreatedAt, boxType) => {
       const created = new Date(userCreatedAt);
       const today = new Date();
@@ -307,58 +307,44 @@ router.get('/review', auth, async (req, res) => {
           return true; // Her gün açılır
           
         case 'every_2_days':
-          // Kullanıcı kayıt tarihinden 2 gün sonra başlayıp 2'şer gün arayla
-          const firstOpen2 = new Date(created);
-          firstOpen2.setDate(firstOpen2.getDate() + 2);
-          
-          let current2 = new Date(firstOpen2);
-          while (current2.toISOString().split('T')[0] <= todayStr) {
-            if (current2.toISOString().split('T')[0] === todayStr) {
-              return true;
-            }
-            current2.setDate(current2.getDate() + 2);
-          }
-          return false;
-          
         case 'every_4_days':
-          // Kullanıcı kayıt tarihinden 4 gün sonra başlayıp 4'er gün arayla
-          const firstOpen4 = new Date(created);
-          firstOpen4.setDate(firstOpen4.getDate() + 4);
-          
-          let current4 = new Date(firstOpen4);
-          while (current4.toISOString().split('T')[0] <= todayStr) {
-            if (current4.toISOString().split('T')[0] === todayStr) {
-              return true;
-            }
-            current4.setDate(current4.getDate() + 4);
-          }
-          return false;
-          
         case 'weekly':
-          // Kullanıcı kayıt tarihinden 7 gün sonra başlayıp 7'şer gün arayla
-          const firstOpen7 = new Date(created);
-          firstOpen7.setDate(firstOpen7.getDate() + 7);
-          
-          let current7 = new Date(firstOpen7);
-          while (current7.toISOString().split('T')[0] <= todayStr) {
-            if (current7.toISOString().split('T')[0] === todayStr) {
-              return true;
-            }
-            current7.setDate(current7.getDate() + 7);
-          }
-          return false;
-          
         case 'every_2_weeks':
-          // Kullanıcı kayıt tarihinden 14 gün sonra başlayıp 14'er gün arayla
-          const firstOpen14 = new Date(created);
-          firstOpen14.setDate(firstOpen14.getDate() + 14);
+          // Takvim sekmesiyle aynı mantık
+          let interval, startOffset;
           
-          let current14 = new Date(firstOpen14);
-          while (current14.toISOString().split('T')[0] <= todayStr) {
-            if (current14.toISOString().split('T')[0] === todayStr) {
+          switch(boxType) {
+            case 'every_2_days':
+              interval = 2;
+              startOffset = 2;
+              break;
+            case 'every_4_days':
+              interval = 4;
+              startOffset = 4;
+              break;
+            case 'weekly':
+              interval = 7;
+              startOffset = 7;
+              break;
+            case 'every_2_weeks':
+              interval = 14;
+              startOffset = 14;
+              break;
+            default:
+              return false;
+          }
+          
+          // İlk pattern tarihi
+          const firstPatternDate = new Date(created);
+          firstPatternDate.setDate(firstPatternDate.getDate() + startOffset);
+          
+          // Bugün pattern tarihlerinden biri mi kontrol et
+          let currentDate = new Date(firstPatternDate);
+          while (currentDate <= today) {
+            if (currentDate.toISOString().split('T')[0] === todayStr) {
               return true;
             }
-            current14.setDate(current14.getDate() + 14);
+            currentDate.setDate(currentDate.getDate() + interval);
           }
           return false;
           
@@ -424,7 +410,7 @@ router.get('/today-review-count', auth, async (req, res) => {
     today.setHours(today.getHours(), 0, 0, 0);
     const todayStr = today.toISOString().split('T')[0];
     
-    // Kasa açılma günlerini kontrol et - takvim mantığıyla aynı
+    // Takvim sekmesiyle aynı algoritma kullan
     const shouldBoxOpenToday = (userCreatedAt, boxType) => {
       const created = new Date(userCreatedAt);
       const today = new Date();
@@ -436,66 +422,49 @@ router.get('/today-review-count', auth, async (req, res) => {
       
       const todayStr = today.toISOString().split('T')[0];
       
-      // Kullanıcının kayıt tarihinden bugüne kadar geçen gün sayısını hesapla
-      const daysSinceRegistration = Math.floor((today - created) / (1000 * 60 * 60 * 24));
-      
       switch(boxType) {
         case 'daily':
           return true; // Her gün açılır
           
         case 'every_2_days':
-          // Kullanıcı kayıt tarihinden 2 gün sonra başlayıp 2'şer gün arayla
-          const firstOpen2 = new Date(created);
-          firstOpen2.setDate(firstOpen2.getDate() + 2);
-          
-          let current2 = new Date(firstOpen2);
-          while (current2.toISOString().split('T')[0] <= todayStr) {
-            if (current2.toISOString().split('T')[0] === todayStr) {
-              return true;
-            }
-            current2.setDate(current2.getDate() + 2);
-          }
-          return false;
-          
         case 'every_4_days':
-          // Kullanıcı kayıt tarihinden 4 gün sonra başlayıp 4'er gün arayla
-          const firstOpen4 = new Date(created);
-          firstOpen4.setDate(firstOpen4.getDate() + 4);
-          
-          let current4 = new Date(firstOpen4);
-          while (current4.toISOString().split('T')[0] <= todayStr) {
-            if (current4.toISOString().split('T')[0] === todayStr) {
-              return true;
-            }
-            current4.setDate(current4.getDate() + 4);
-          }
-          return false;
-          
         case 'weekly':
-          // Kullanıcı kayıt tarihinden 7 gün sonra başlayıp 7'şer gün arayla
-          const firstOpen7 = new Date(created);
-          firstOpen7.setDate(firstOpen7.getDate() + 7);
-          
-          let current7 = new Date(firstOpen7);
-          while (current7.toISOString().split('T')[0] <= todayStr) {
-            if (current7.toISOString().split('T')[0] === todayStr) {
-              return true;
-            }
-            current7.setDate(current7.getDate() + 7);
-          }
-          return false;
-          
         case 'every_2_weeks':
-          // Kullanıcı kayıt tarihinden 14 gün sonra başlayıp 14'er gün arayla
-          const firstOpen14 = new Date(created);
-          firstOpen14.setDate(firstOpen14.getDate() + 14);
+          // Takvim sekmesiyle aynı mantık
+          let interval, startOffset;
           
-          let current14 = new Date(firstOpen14);
-          while (current14.toISOString().split('T')[0] <= todayStr) {
-            if (current14.toISOString().split('T')[0] === todayStr) {
+          switch(boxType) {
+            case 'every_2_days':
+              interval = 2;
+              startOffset = 2;
+              break;
+            case 'every_4_days':
+              interval = 4;
+              startOffset = 4;
+              break;
+            case 'weekly':
+              interval = 7;
+              startOffset = 7;
+              break;
+            case 'every_2_weeks':
+              interval = 14;
+              startOffset = 14;
+              break;
+            default:
+              return false;
+          }
+          
+          // İlk pattern tarihi
+          const firstPatternDate = new Date(created);
+          firstPatternDate.setDate(firstPatternDate.getDate() + startOffset);
+          
+          // Bugün pattern tarihlerinden biri mi kontrol et
+          let currentDate = new Date(firstPatternDate);
+          while (currentDate <= today) {
+            if (currentDate.toISOString().split('T')[0] === todayStr) {
               return true;
             }
-            current14.setDate(current14.getDate() + 14);
+            currentDate.setDate(currentDate.getDate() + interval);
           }
           return false;
           
